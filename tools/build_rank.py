@@ -12,7 +12,7 @@ TOY = 566382   # おもちゃ
 BASES = {
     "rank": ["https://openapi.rakuten.co.jp/ichibaranking/api/IchibaItem/Ranking/20220601", "https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20220601"],
     "genre": ["https://openapi.rakuten.co.jp/ichibagt/api/IchibaGenre/Search/20260701", "https://app.rakuten.co.jp/services/api/IchibaGenre/Search/20140222"],
-    "search": ["https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"],
+    "search": ["https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701", "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"],
 }
 good = {}
 
