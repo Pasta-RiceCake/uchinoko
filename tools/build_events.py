@@ -137,8 +137,8 @@ def crawl(site, today, max_pages=80):
     pages = pages[:8]
     # 日程表はPDFのことが多いので、よさそうなPDFを5つまで読む
     total = 0
-    for lu, (lt, sc) in sorted(pdfs.items(), key=lambda x: -x[1][1])[:8]:
-        if sum(1 for p in pages if "pdf" in p) >= 5:
+    for lu, (lt, sc) in sorted(pdfs.items(), key=lambda x: -x[1][1])[:12]:
+        if sum(1 for p in pages if "pdf" in p) >= 8:
             break
         try:
             fu, ct, b = fetch(lu, limit=9_000_000)
@@ -175,7 +175,7 @@ def ask(city, site, today):
 対象: 子育て支援センターや児童館の催し、親子教室・赤ちゃん教室、離乳食教室、育児相談・身体測定、両親学級・母親学級・プレママ教室、図書館のおはなし会など。
 資料に書いてあることだけを使い、日にちが書いていないもの・書いていない催しは作らないでください。「毎週火曜」などは、{m1}と{m2}のそれぞれの日に分けてください。
 答えはJSONだけで、ほかの文は書かないでください。形:
-{{"events":[{{"date":"YYYY-MM-DD","time":"10:00〜11:30","title":"催しの名前","place":"場所","target":"対象（例：0歳児と保護者）","kind":"{"・".join(KINDS)} のどれか","need":"予約がいるか・持ち物など短く","url":"のっていた資料のURL"}}]}}
+{{"events":[{{"date":"YYYY-MM-DD","time":"10:00〜11:30","title":"催しの名前","place":"場所","target":"対象（例：0歳児と保護者）","kind":"次のどれか1つ: {" / ".join(KINDS)}","need":"予約がいるか・持ち物など短く","url":"のっていた資料のURL"}}]}}
 最大80件。見つからなければ {{"events":[]}}。"""
     last = None
     for model in MODELS:
@@ -208,6 +208,21 @@ def parse(text):
         return []
 
 
+def guess_kind(x):
+    for k in KINDS:
+        if x.startswith(k):
+            return k
+    if re.search("妊|プレママ|プレパパ|両親|母親学級|パパママ|マタニティ", x):
+        return "両親学級・妊婦"
+    if re.search("離乳食|健康|相談|測定|健診|歯", x):
+        return "離乳食・健康"
+    if re.search("支援センター|児童館|ひろば|広場|プラザ", x):
+        return "支援センター・児童館"
+    if re.search("教室|講座|クラス|ベビー|リトミック|おはなし|ふれあい", x):
+        return "親子教室"
+    return "おでかけ・その他"
+
+
 def clean(evs, site, today, srcs=()):
     lo, hi = today.date(), (today + datetime.timedelta(days=75)).date()
     ok_dom = base_domain(host(site)) if site else ""
@@ -233,7 +248,7 @@ def clean(evs, site, today, srcs=()):
         if k in seen:
             continue
         seen.add(k)
-        kind = e.get("kind") if e.get("kind") in KINDS else "おでかけ・その他"
+        kind = guess_kind(str(e.get("kind", "")) + " " + t + " " + str(e.get("place", "")) + " " + str(e.get("target", "")))
         out.append({"d": d.isoformat(), "tm": str(e.get("time", ""))[:30], "t": t, "pl": str(e.get("place", ""))[:60],
                     "to": str(e.get("target", ""))[:40], "k": kind, "n": str(e.get("need", ""))[:80], "u": u})
     out.sort(key=lambda x: (x["d"], x["tm"]))
