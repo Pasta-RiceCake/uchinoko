@@ -81,7 +81,11 @@ def hoiku():
     for s in servers:
         try:
             d = json.loads(get(s, urllib.parse.urlencode({"data": q}).encode(), timeout=400 if one else 1000))
-            break
+            if d.get("elements"):
+                break
+            # 混んでいると、エラーではなく空の答え（remark だけ）が返ることがある。次のサーバーへ
+            print("overpass empty", s, str(d.get("remark", ""))[:200])
+            d = None
         except Exception as e:
             print("overpass", s, e)
     if d is None:
