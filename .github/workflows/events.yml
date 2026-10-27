@@ -12,7 +12,7 @@ on:
     - cron: "30 19 * * *"
 permissions:
   contents: write
-concurrency: data
+concurrency: ${{ github.workflow }}
 jobs:
   events:
     runs-on: ubuntu-latest

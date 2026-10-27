@@ -9,7 +9,7 @@ on:
     - cron: "0 18 3 * *"
 permissions:
   contents: write
-concurrency: data
+concurrency: ${{ github.workflow }}
 jobs:
   build:
     runs-on: ubuntu-latest

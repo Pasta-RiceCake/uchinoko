@@ -5,7 +5,7 @@ on:
     - cron: "0 20 * * 0"
 permissions:
   contents: write
-concurrency: data
+concurrency: ${{ github.workflow }}
 jobs:
   rank:
     runs-on: ubuntu-latest
