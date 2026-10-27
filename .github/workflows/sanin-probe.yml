@@ -4,35 +4,19 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: download
+      - name: osm
         run: |
-          set -e
-          B=https://www.mhlw.go.jp/content/11121000
-          for f in 01-1_hospital_facility_info 01-2_hospital_speciality_hours 02-1_clinic_facility_info 02-2_clinic_speciality_hours 04_maternity_home; do
-            curl -sSL -o $f.zip "$B/${f}_20260601.csv.zip"; unzip -o -q $f.zip -d $f; ls -la $f
-          done
-          curl -sSL -o def.xlsx "$B/001306376.xlsx"; ls -la def.xlsx
-      - name: inspect
-        run: |
-          pip install -q openpyxl
+          q='[out:json][timeout:300];area["ISO3166-1"="JP"]->.jp;(nwr["amenity"~"kindergarten|childcare"](area.jp););out center tags;'
+          curl -sS -m 600 --data-urlencode "data=$q" https://overpass-api.de/api/interpreter -o osm.json; ls -la osm.json
           python3 - <<'PY'
-          import csv,glob,collections,openpyxl
-          wb=openpyxl.load_workbook('def.xlsx',read_only=True)
-          for ws in wb.worksheets:
-            for row in ws.iter_rows(values_only=True):
-              t=' '.join(str(c) for c in row if c)
-              if any(k in t for k in ['分娩','無痛','産科','周産期','助産']): print('DEF',ws.title,'|',t[:200])
-          for p in sorted(glob.glob('*/*.csv')):
-            with open(p,encoding='utf-8-sig') as f:
-              r=csv.reader(f);h=next(r);rows=list(r)
-            print('FILE',p,len(rows),'rows');print('HEAD',h)
-            for i,c in enumerate(h):
-              if any(k in c for k in ['分娩','無痛','産','診療科','科目']):
-                vals=collections.Counter(x[i] for x in rows if i<len(x) and x[i]).most_common(12);print('COL',c,vals)
-            # 値に「無痛」「分娩」を含む列
-            hit=collections.Counter()
-            for x in rows[:200000]:
-              for i,v in enumerate(x):
-                if '無痛' in v or '分娩' in v: hit[h[i] if i<len(h) else i]+=1
-            print('VALHIT',hit.most_common(10))
+          import json,collections
+          d=json.load(open('osm.json'))['elements'];print('total',len(d))
+          n=[e.get('tags',{}).get('name','') for e in d]
+          print('hoiku',sum('保育' in x for x in n),'kodomoen',sum('こども園' in x for x in n),'youchien',sum('幼稚園' in x for x in n),'noname',sum(not x for x in n))
+          addr=collections.Counter(e['tags'].get('addr:city') or e['tags'].get('addr:province','?') for e in d);print(addr.most_common(15))
+          # 地域別（緯度経度の箱）
+          box={'世田谷区':(35.60,35.68,139.58,139.69),'札幌市中心':(43.0,43.1,141.3,141.4),'福岡市':(33.5,33.65,130.3,130.45),'松本市':(36.18,36.28,137.9,138.02)}
+          for k,(a,b,c,dd) in box.items():
+            xs=[e for e in d if a<=(e.get('lat') or e.get('center',{}).get('lat',0))<=b and c<=(e.get('lon') or e.get('center',{}).get('lon',0))<=dd]
+            print(k,len(xs),[x['tags'].get('name') for x in xs[:6]])
           PY
