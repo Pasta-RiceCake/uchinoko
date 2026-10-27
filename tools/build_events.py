@@ -1,12 +1,12 @@
 # 家族のいる市区町村の子育てイベントを、Gemini（無料枠）に公式サイトから探してもらい public/data/events/ に置く
 #  - 1回の実行で MAX_CITIES 市まで。古い市から順に、25日たったら読み直す
 #  - 無料の上限に来たら（429）、そこで止めて、作れた分だけ保存する
-import datetime, json, os, re, sys, time, urllib.parse, urllib.request
+import base64, datetime, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 
 OUT = "public/data/events"
 SITE = os.environ.get("SITE", "https://uchinoko.pocket-app.workers.dev")
 KEY = os.environ.get("GEMINI_API_KEY", "")
-MODELS = [m for m in os.environ.get("GEMINI_MODEL", "gemini-flash-latest,gemini-flash-lite-latest").split(",") if m]
+MODELS = [m for m in os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite,gemini-flash-lite-latest,gemini-3-flash-preview").split(",") if m]
 MAX_CITIES = int(os.environ.get("MAX_CITIES", "40"))
 ONLY = os.environ.get("CITY", "")
 JST = datetime.timezone(datetime.timedelta(hours=9))
@@ -44,32 +44,141 @@ def base_domain(h):
     return ".".join(p[-3:]) if h.endswith((".lg.jp", ".or.jp", ".ne.jp", ".co.jp", ".ac.jp", ".go.jp")) else ".".join(p[-2:])
 
 
+# ---------- 市の公式サイトを読む ----------
+WORDS = ["子育て", "子ども", "こども", "乳幼児", "赤ちゃん", "親子", "支援センター", "児童館", "ひろば", "離乳食", "両親学級", "母親学級", "パパママ", "プレママ", "妊娠", "妊婦", "教室", "講座", "イベント", "催し", "行事", "予定", "カレンダー", "日程", "おはなし会", "育児相談", "健康相談", "保健センター"]
+STRONG = ["支援センター", "児童館", "離乳食", "両親学級", "母親学級", "パパママ", "プレママ", "親子教室", "赤ちゃん", "乳幼児", "ひろば", "おはなし会", "育児相談", "日程", "予定", "カレンダー"]
+
+
+def fetch(u, limit=3_000_000):
+    req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 (uchinoko-techo; +https://uchinoko.pocket-app.workers.dev)"})
+    r = urllib.request.urlopen(req, timeout=40)
+    ct = r.headers.get("content-type", "")
+    b = r.read(limit + 1)
+    if len(b) > limit:
+        raise RuntimeError("too big")
+    return r.geturl(), ct, b
+
+
+def decode(b, ct):
+    m = re.search(r"charset=([\w-]+)", ct) or re.search(rb'charset=["\']?([\w-]+)', b[:3000])
+    enc = (m.group(1).decode() if isinstance(m.group(1), bytes) else m.group(1)) if m else "utf-8"
+    try:
+        return b.decode(enc, "replace")
+    except LookupError:
+        return b.decode("utf-8", "replace")
+
+
+def links(html, base):
+    out = []
+    for m in re.finditer(r'<a\s[^>]*href=["\']([^"\'#]+)["\'][^>]*>(.*?)</a>', html, re.S | re.I):
+        t = re.sub(r"<[^>]+>|\s+", " ", m.group(2)).strip()
+        out.append((urllib.parse.urljoin(base, m.group(1).strip()), t))
+    return out
+
+
+def text_of(html):
+    html = re.sub(r"(?is)<(script|style|noscript|header|footer|nav)[^>]*>.*?</\1>", " ", html)
+    t = re.sub(r"(?s)<br\s*/?>|</(p|div|li|tr|h\d)>", "\n", html)
+    t = re.sub(r"<[^>]+>", " ", t)
+    t = re.sub(r"&nbsp;", " ", t)
+    t = re.sub(r"[ \t　]+", " ", t)
+    return re.sub(r"\n\s*\n+", "\n", t).strip()
+
+
+def score(t, months):
+    s = sum(2 for w in STRONG if w in t) + sum(1 for w in WORDS if w in t)
+    if any(m in t for m in months):
+        s += 4
+    return s
+
+
+def crawl(site, today, max_pages=45):
+    """公式サイトのトップから、子育てのイベントがのっていそうなページとPDFを集める"""
+    if not site:
+        return []
+    m1, m2 = today.month, (today.month % 12) + 1
+    months = [f"{m1}月", f"{m2}月", f"{today.year}年{m1}月"]
+    root = base_domain(host(site))
+    seen, queue, pages = set(), [(site, "トップ", 0, 99)], []
+    while queue and len(seen) < max_pages:
+        queue.sort(key=lambda x: -x[3])
+        u, label, depth, _ = queue.pop(0)
+        if u in seen:
+            continue
+        seen.add(u)
+        try:
+            fu, ct, b = fetch(u)
+        except Exception as e:
+            print("  skip", u[:90], str(e)[:60])
+            continue
+        if "pdf" in ct or fu.lower().endswith(".pdf"):
+            if score(label, months) >= 3:
+                pages.append({"u": fu, "pdf": b, "label": label, "sc": score(label, months) + 3})
+            continue
+        if "html" not in ct:
+            continue
+        html = decode(b, ct)
+        t = text_of(html)
+        sc = score(t[:20000], months)
+        if depth > 0 and sc >= 6:
+            pages.append({"u": fu, "text": t[:12000], "label": label, "sc": sc})
+        if depth >= 3:
+            continue
+        for lu, lt in links(html, fu):
+            h = host(lu)
+            if not h.endswith(root) or lu in seen or re.search(r"\.(jpg|png|gif|zip|xlsx?|docx?)$", lu, re.I):
+                continue
+            ls = score(lt, months)
+            if ls >= 1 or (depth == 0 and "kosodate" in lu):
+                queue.append((lu, lt, depth + 1, ls - depth))
+        time.sleep(0.5)
+    pages.sort(key=lambda p: -p["sc"])
+    return pages[:10]
+
+
 def ask(city, site, today):
     m1 = today.strftime("%Y年%-m月")
-    nx = (today.replace(day=1) + datetime.timedelta(days=32))
-    m2 = nx.strftime("%Y年%-m月")
-    prompt = f"""あなたは子育て中の家族のために、{city}の公式情報を調べるアシスタントです。
-{city}（公式サイト {site or "不明"}）が出している、{m1}と{m2}に開かれる赤ちゃん・乳幼児・妊婦さん向けの催しを、Google検索で探してください。
+    m2 = (today.replace(day=1) + datetime.timedelta(days=32)).strftime("%Y年%-m月")
+    pages = crawl(site, today)
+    print(" ", city, "pages", [(p["sc"], p["label"][:20], p["u"][-60:]) for p in pages])
+    if not pages:
+        return "", [], ""
+    parts, srcs, size = [], [], 0
+    for i, p in enumerate(pages):
+        if "pdf" in p:
+            if size + len(p["pdf"]) > 12_000_000:
+                continue
+            size += len(p["pdf"])
+            parts.append({"text": f"\n--- 資料{i+1}（PDF）URL: {p['u']} 見出し: {p['label']} ---"})
+            parts.append({"inline_data": {"mime_type": "application/pdf", "data": base64.b64encode(p["pdf"]).decode()}})
+        else:
+            parts.append({"text": f"\n--- 資料{i+1} URL: {p['u']} 見出し: {p['label']} ---\n{p['text']}"})
+        srcs.append(p["u"])
+    prompt = f"""下の資料は、{city}の公式サイト（{site}）から集めたページです。今日は{today.strftime("%Y年%-m月%-d日")}です。
+資料にのっている、{m1}と{m2}に開かれる赤ちゃん・乳幼児・妊婦さん向けの催しを、すべて抜き出してください。
 対象: 子育て支援センターや児童館の催し、親子教室・赤ちゃん教室、離乳食教室、育児相談・身体測定、両親学級・母親学級・プレママ教室、図書館のおはなし会など。
-市の公式サイトか、市の施設（支援センター・児童館・保健センター・図書館など）の公式ページにのっているものだけにしてください。のっていないものを作らないでください。
+資料に書いてあることだけを使い、日にちが書いていないもの・書いていない催しは作らないでください。「毎週火曜」などは、{m1}と{m2}のそれぞれの日に分けてください。
 答えはJSONだけで、ほかの文は書かないでください。形:
-{{"events":[{{"date":"YYYY-MM-DD","time":"10:00〜11:30","title":"催しの名前","place":"場所","target":"対象（例：0歳児と保護者）","kind":"{"・".join(KINDS)} のどれか","need":"予約がいるか・持ち物など短く","url":"のっていたページのURL"}}]}}
-毎週・毎月ある催しは、それぞれの日を1件ずつにしてください。最大60件。見つからなければ {{"events":[]}}。"""
+{{"events":[{{"date":"YYYY-MM-DD","time":"10:00〜11:30","title":"催しの名前","place":"場所","target":"対象（例：0歳児と保護者）","kind":"{"・".join(KINDS)} のどれか","need":"予約がいるか・持ち物など短く","url":"のっていた資料のURL"}}]}}
+最大80件。見つからなければ {{"events":[]}}。"""
     last = None
     for model in MODELS:
         try:
-            r = get_json(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={KEY}",
-                {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}], "generationConfig": {"temperature": 0.1}},
-            )
+            r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={KEY}",
+                         {"contents": [{"parts": [{"text": prompt}] + parts}], "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"}})
         except Limit as e:
             last = e
-            print("limit", model, e)
+            print("limit", model, str(e)[-200:])
+            continue
+        except RuntimeError as e:
+            last = e
+            print("error", model, str(e)[:200])
             continue
         cand = (r.get("candidates") or [{}])[0]
         text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
-        srcs = [c.get("web", {}).get("uri", "") for c in cand.get("groundingMetadata", {}).get("groundingChunks", [])]
         return text, srcs, model
+    if isinstance(last, Limit):
+        raise last
     raise last or RuntimeError("no model")
 
 
@@ -83,7 +192,7 @@ def parse(text):
         return []
 
 
-def clean(evs, site, today):
+def clean(evs, site, today, srcs=()):
     lo, hi = today.date(), (today + datetime.timedelta(days=75)).date()
     ok_dom = base_domain(host(site)) if site else ""
     out, seen = [], set()
@@ -101,6 +210,8 @@ def clean(evs, site, today):
         h = host(u)
         # 市の公式サイトか自治体のドメインのページだけ
         if u and not (h.endswith(".lg.jp") or (ok_dom and h.endswith(ok_dom))):
+            u = ""
+        if srcs and u not in srcs:
             u = ""
         k = (d, t)
         if k in seen:
@@ -169,7 +280,7 @@ def main():
         except Exception as e:
             print("error", name, e)
             continue
-        evs = clean(parse(text), c.get("u", ""), today)
+        evs = clean(parse(text), c.get("u", ""), today, srcs)
         print(name, model, len(evs), "件")
         json.dump({"at": today.isoformat(timespec="seconds"), "city": name, "site": c.get("u", ""), "ev": evs},
                   open(p, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
