@@ -1,6 +1,8 @@
 # 子連れおでかけのイベント（動物園・水族館・公園・屋内施設などの、親子で行けるイベント）を、都道府県ごとに public/data/odk/<NN>.json に置く
 #  - Gemini（無料枠）に Google 検索を使わせて、今月と来月のイベントを探してもらう
 #  - サイトにのせているスポットの名前も渡して、そこのイベントを優先して探す（お気に入りのスポットのイベントが出るように）
+#  - 人気のスポットも、口コミ・ランキングのサイトを検索させ、「人気」と書いているサイトの数をプログラムで数えて多い順に
+#    （Gemini の答えのどの行を、どの検索結果が裏づけているか＝groundingSupports から数える）
 #  - 1回の実行で MAX_PREFS 県まで。古い県から順に、14日たったら読み直す
 import datetime, json, os, re, sys, time
 
@@ -53,6 +55,53 @@ url には、そのイベントがのっている公式のページのURLを入�
     if isinstance(last, Limit):
         raise last
     return "", "", False
+
+
+def gsearch(prompt):
+    last = None
+    for model in MODELS:
+        try:
+            r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={KEY}",
+                         {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}], "generationConfig": {"temperature": 0.1}})
+        except Limit as e:
+            last = e
+            print("limit", model, str(e)[-200:])
+            continue
+        except RuntimeError as e:
+            last = e
+            print("error", model, str(e)[:200])
+            continue
+        cand = (r.get("candidates") or [{}])[0]
+        return "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", [])), cand.get("groundingMetadata") or {}, model
+    if isinstance(last, Limit):
+        raise last
+    return "", {}, ""
+
+
+def popular(pref):
+    prompt = f"""Google 検索で、{pref}の「子連れ・赤ちゃん連れのおでかけで人気のスポット」を、いろいろなサイト（いこーよ、じゃらん、ウォーカープラス、
+トリップアドバイザー、ママ向けの情報サイト、ブログ、口コミなど）から調べてください。
+たくさんのサイトで人気と書かれているスポットを、多い順に最大15か所あげてください。0〜6歳くらいの子と親が楽しめる所だけ。
+1か所につき1行で、次の形で書いてください（ほかの文は書かない）:
+名前｜種類（{"/".join(TYPES)} のどれか）｜人気の理由（口コミでよく言われていることを30字以内）｜市町村"""
+    text, gm, model = gsearch(prompt)
+    chunks = [((c.get("web") or {}).get("title") or "").strip() for c in gm.get("groundingChunks") or []]
+    rows = []
+    for line in (text or "").splitlines():
+        parts = [x.strip(" *-・") for x in line.split("｜")]
+        if len(parts) < 3 or not parts[0]:
+            continue
+        sites = set()
+        for sp in gm.get("groundingSupports") or []:
+            seg = ((sp.get("segment") or {}).get("text") or "").strip()
+            if seg and (seg in line or (len(seg) > 8 and line.strip() in seg)):
+                sites |= {chunks[i] for i in sp.get("groundingChunkIndices") or [] if i < len(chunks) and chunks[i]}
+        ty = parts[1] if parts[1] in TYPES else "観光"
+        rows.append({"n": parts[0][:30], "ty": ty, "w": parts[2][:40], "a": (parts[3] if len(parts) > 3 else "")[:15],
+                     "k": len(sites), "f": sorted(sites)[:4]})
+    rows = [r for r in rows if r["k"] > 0]
+    rows.sort(key=lambda r: -r["k"])
+    return rows[:15], model
 
 
 def clean(text, names, today):
@@ -117,11 +166,17 @@ def main():
         except Limit:
             print("無料の上限に来たので、今日はここまで")
             break
-        evs = clean(text, names, today)
-        print(p, model, "検索あり" if grounded else "検索なし", len(evs), "件")
-        if not grounded or not evs:
+        evs = clean(text, names, today) if grounded else []
+        time.sleep(6)
+        try:
+            pop, m2 = popular(p)
+        except Limit:
+            print("無料の上限に来たので、今日はここまで")
+            break
+        print(p, model, "検索あり" if grounded else "検索なし", len(evs), "件", "人気", [(x["n"], x["k"]) for x in pop])
+        if not evs and not pop:
             continue
-        json.dump({"at": today.isoformat(timespec="seconds"), "pref": p, "ev": evs},
+        json.dump({"at": today.isoformat(timespec="seconds"), "pref": p, "ev": evs, "sp": pop},
                   open(f, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         time.sleep(10)
 
