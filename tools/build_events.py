@@ -145,7 +145,7 @@ def crawl(site, today, max_pages=80):
         except Exception as e:
             print("  skip pdf", lu[-60:], str(e)[:60])
             continue
-        if total + len(b) > 16_000_000:
+        if total + len(b) > 12_000_000:
             continue
         total += len(b)
         pages.append({"u": fu, "pdf": b, "label": lt, "sc": sc})
@@ -162,7 +162,7 @@ def ask(city, site, today):
     parts, srcs, size = [], [], 0
     for i, p in enumerate(pages):
         if "pdf" in p:
-            if size + len(p["pdf"]) > 16_000_000:
+            if size + len(p["pdf"]) > 12_000_000:
                 continue
             size += len(p["pdf"])
             parts.append({"text": f"\n--- 資料{i+1}（PDF）URL: {p['u']} 見出し: {p['label']} ---"})
