@@ -11,7 +11,7 @@ TOY = 566382   # おもちゃ
 # 新しいAPIのURLがうまくいかないときは、古いURLも試す
 BASES = {
     "rank": ["https://openapi.rakuten.co.jp/ichibaranking/api/IchibaItem/Ranking/20220601", "https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20220601"],
-    "genre": ["https://openapi.rakuten.co.jp/ichibagt/api/IchibaGenre/Search/20140222", "https://app.rakuten.co.jp/services/api/IchibaGenre/Search/20140222"],
+    "genre": ["https://openapi.rakuten.co.jp/ichibagt/api/IchibaGenre/Search/20260701", "https://app.rakuten.co.jp/services/api/IchibaGenre/Search/20140222"],
     "search": ["https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"],
 }
 good = {}
@@ -38,7 +38,9 @@ def call(kind, **q):
 
 def children(gid):
     d = call("genre", genreId=gid)
-    return [(c.get("genreId"), c.get("genreName")) for c in d.get("children", [])]
+    ch = d.get("children", [])
+    ch = [c.get("child", c) for c in ch]
+    return [(c.get("genreId"), c.get("genreName")) for c in ch]
 
 
 def item(x):
@@ -57,9 +59,17 @@ def main():
     if not APP:
         print("RAKUTEN_APP_ID がまだ入っていないので、何もしません")
         return
-    kids = children(BABY)
+    try:
+        kids = children(BABY)
+    except Exception as e:
+        print("genre error", e)
+        kids = []
     print("baby genres", kids)
-    toys = children(TOY)
+    try:
+        toys = children(TOY)
+    except Exception as e:
+        print("genre error", e)
+        toys = []
     print("toy genres", toys)
 
     def find(lst, *words):
