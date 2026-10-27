@@ -61,6 +61,11 @@ def children(gid):
 def aff(u):
     if not u:
         return ""
+    if "hb.afl.rakuten.co.jp" in u:
+        pc = urllib.parse.parse_qs(urllib.parse.urlparse(u).query).get("pc")
+        if pc:
+            u = pc[0]
+    u = u.split("?")[0] if "item.rakuten.co.jp" in u else u
     q = urllib.parse.quote(u, safe="")
     return f"https://hb.afl.rakuten.co.jp/ichiba/{AFF}/?pc={q}&m={q}"
 
