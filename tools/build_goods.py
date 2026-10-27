@@ -110,7 +110,8 @@ JSON だけで答える: {{"items":[{{"name":"…","why":"…","kw":"…","src":
     ok = []
     valid = {str(i) for i in range(len(heads))} | {f"R{i}" for i in range(len(hot))}
     for x in items:
-        src = [str(s) for s in (x.get("src") or []) if str(s) in valid]
+        raw = x.get("src") or []
+        src = [t for t in (re.sub(r"[^0-9R]", "", str(s).upper()) for s in (raw if isinstance(raw, list) else [raw])) if t in valid]
         if not src or not x.get("name"):
             continue
         ok.append({"name": str(x["name"])[:30], "why": str(x.get("why", ""))[:60], "kw": str(x.get("kw") or x["name"])[:30],
@@ -129,7 +130,12 @@ def main():
     except Exception:
         pass
     out = {}
+    only = [k for k in os.environ.get("GOODS_ONLY", "").split(",") if k]
     for key, label, who, qs in AGES:
+        if only and key not in only:
+            if key in old:
+                out[key] = old[key]
+            continue
         heads, seen = [], set()
         for h in [x for q in qs for x in news(q)] + common:
             if h["t"] not in seen:
@@ -140,6 +146,9 @@ def main():
         print(key, "news", len(heads), "rakuten", len(hot))
         try:
             picks, model = ask(label, who, heads, hot)
+            if not picks:
+                time.sleep(20)
+                picks, model = ask(label, who, heads, hot)
         except Limit:
             print("gemini limit; keep old for", key)
             if key in old:
