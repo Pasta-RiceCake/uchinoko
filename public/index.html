@@ -713,6 +713,12 @@ form.add input{min-width:0}
 .gcode{font-size:24px!important;letter-spacing:.3em;text-align:center}
 .gerr{color:var(--red);font-size:13px;margin:0;font-weight:700}
 .gskip{align-self:center}
+.lnsh{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 4px;padding:11px;border-radius:999px;background:#06c755;color:#fff;font-weight:700;font-size:14px;text-decoration:none}
+.mvcode{font-size:28px;font-weight:800;letter-spacing:.15em;text-align:center;background:var(--soft);border-radius:14px;padding:12px;font-family:ui-monospace,Menlo,monospace}
+.mvbtn{padding:12px;border-radius:999px;border:0}
+.gmv summary{cursor:pointer;font-weight:700;font-size:14px;text-align:center;list-style:none}
+.gmv summary::-webkit-details-marker{display:none}
+.gmv .sub{margin:10px 0 8px}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -804,6 +810,7 @@ async function shStart(){toast("リンクを作っています…");
     S.share={on:true,id:j.id,code:j.code};S._sync={rev:j.rev,h:{}};for(const k in put)S._sync.h[k]=hs(JSON.stringify(put[k]));
     persist();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました");
   }catch(e){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
+const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;
 
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
 const birth=()=>new Date(S.birth+"T00:00:00");
@@ -862,7 +869,7 @@ const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonhe
  ["そろえるもの",[["junbi","出産準備品リスト","onesie","pink"],["names","名前候補","heart","pink"],["rank","人気ランキング","star","lemon"],["wants","欲しい物メモ","ribbonheart","sky"]]],
  ["お金・手続き",[["money","お金の見通し","envelope","lemon"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
  ["産まれたあとに読む",[["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["chiiku","あそび・絵本","book","lemon"]]],
- ["せってい",[["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"]]]];
+ ["せってい",[["sync","共有と引き継ぎ","hearthands","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"]]]];
 const MENU_=()=>S.mode==="pre"?MENU_P:MENU_M;
 const W=()=>S.mode==="pre"?(S.wantsPre=S.wantsPre||[]):S.wants;
 const JUNBI=[
@@ -947,7 +954,7 @@ const MENU_M=[
   ["行事・お祝い",[["events","イベント","cupcake","mint"],["gifts","内祝いメモ","gift","pink"]]],
   ["おでかけ・地域",[["odk","子連れおでかけ","rainbow","sky"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
   ["お金・お買い物",[["money","お金の見通し","envelope","lemon"],["rank","人気ランキング","star","pink"],["goods","話題のグッズ","bear","lemon"],["wants","欲しい物メモ","ribbonheart","sky"]]],
-  ["せってい",[["baby","赤ちゃんの情報","chick","mint"],["homeedit","ホームをカスタマイズ","star","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"]]]
+  ["せってい",[["sync","共有と引き継ぎ","hearthands","mint"],["baby","赤ちゃんの情報","chick","mint"],["homeedit","ホームをカスタマイズ","star","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"]]]
 ];
 
 const PRETODO=[[0,15,"〜15週",[["boshi","母子手帳をもらう（妊娠届）"],["kyufu","妊婦のための支援給付（1回目）を申請"],["kenshin","妊婦健診の受診券を確認"]]],
@@ -1094,7 +1101,7 @@ function vCity(){
    <p class="note">金額や条件は国の基本です。市区町村によって上乗せや違いがあります。</p></section>
   ${S.city?`<section class="h-sec"><div class="hd"><h2>${esc(at)}のイベント</h2></div><div class="rows">${[["今月の子育てイベント","子育て イベント 今月"],["児童館・支援センターの予定","児童館 子育て支援センター イベント"],["0歳の親子教室・離乳食教室","離乳食教室 親子"]].map(([l,q])=>`<a class="rw" href="${gq(at+" "+q)}" target="_blank" rel="noopener"><span class="grow"><div class="t">${l}</div><div class="s">Googleで探します</div></span><span class="chev">${ic("chev",16)}</span></a>`).join("")}</div></section>`:""}`;
 }
-const MSUB={jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
+const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
 const TOYS=[[0,5,"0〜5か月",[["ベッドメリー","寝ている赤ちゃんが目で追って楽しむ。音楽つきは寝かしつけにも","star"],["白黒の布絵本・カード","生まれてすぐは白黒がいちばん見やすい","book"],["ガラガラ・ラトル","握る・振ると音が出るのが楽しい","bubbles"]]],
 [6,11,"6〜11か月",[["オーボール","穴があいていて小さい手でもつかみやすいボール","cloud"],["布絵本・しかけ絵本","めくる・引っぱる遊びができる","book"],["歯固め","歯が生えるころのむずむずに","heart"],["ティッシュ箱おもちゃ","何度でも引き出せる。手作りでも","basket"]]],
 [12,23,"1歳",[["積み木","積む・くずすをくり返して遊ぶ","star"],["型はめ・ポストボックス","形を合わせて入れる","gift"],["手押し車","歩きはじめの練習に","stroller"],["たいこ・木琴","たたくと音が出て、リズム遊びに","bubbles"]]],
@@ -1162,7 +1169,7 @@ function vAppSet(){
   <section class="h-sec"><div class="hd"><h2>通知</h2></div><div class="rows">${NOTI.map(([k,l,d])=>{const on=a.n[k]??d;return `<label class="rw"><span class="grow t">${l}</span><input type="checkbox" class="sw" data-act="noti" data-v="${k}"${on?" checked":""}></label>`}).join("")}</div>
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。スマホへの通知は、これからつけます。それまでは、近い予定がホームのいちばん上に出ます。</p></section>`;
 }
-const MKW={sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
 function vMenu(){
   const sub=MSUB;
   return `<div class="ph"><h1>メニュー</h1></div><input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+MENU_().map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>`<button type="button" class="rw" data-act="open" data-v="${k}" data-q="${esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""))}">${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span><span class="chev">${ic("chev",16)}</span></button>`).join("")}</div></div>`).join("");
@@ -1231,7 +1238,7 @@ function calShare(){if(asPt)return shareCard();
 function shareCard(){const s=S.share;if(asPt)return `<div class="sheet pvbar"><span class="grow"><b>${ptn()}から見た画面</b><span class="sub">「自分だけ」の予定は出ていません</span></span><button type="button" class="pri sm" data-act="aspt">もどる</button></div>`;
   if(!s.on)return `<div class="sheet shc"><span class="bub">${pic("family",34)}</span><div class="grow"><div class="t">パートナーと共有する</div><div class="sub">カレンダー・共有メモ・家事・買い物などが、ふたりのスマホで同じになります。ログインはいりません。</div></div><button type="button" class="pri sm" data-act="shon">共有する</button></div>`;
   return `<details class="sheet shc on"><summary><span class="t">${S.me==="パパ"?"ママ":"パパ"}（パートナー）と共有中</span><span class="sub">リンクを見る</span></summary><div class="grow"><div class="sub">このリンクとあいことばをLINEなどで送ってください。開いてあいことばを入れるだけで使えます。</div>
-  <div class="shl"><code>${location.origin}/j/${s.id}</code><button type="button" data-act="shcopy">コピー</button></div><div class="sub">あいことば <b class="code">${s.code}</b></div>
+  <div class="shl"><code>${location.origin}/j/${s.id}</code><button type="button" data-act="shcopy">コピー</button></div><div class="sub">あいことば <b class="code">${s.code}</b></div><a class="lnsh" href="https://line.me/R/share?text=${encodeURIComponent(shText())}" target="_blank" rel="noopener">LINEで送る</a>
   
   <button type="button" class="lk" data-act="shoff">共有をやめる</button></div></details>`}
 function vCal(){
@@ -1625,7 +1632,7 @@ function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math
   <section class="h-sec sos-sec"><div class="hd"><h2>こんなときは、すぐ電話</h2></div><div class="rows">${["破水したかも（水のようなものが出た）","出血が多い","おなかがずっと痛くて張りっぱなし","赤ちゃんの動きが少ない"].map(t=>`<div class="rw"><span class="dot-r"></span><span class="grow t">${t}</span></div>`).join("")}</div>
    <p class="note">破水したら、お風呂やシャワーには入らず、ナプキンを当てて電話してください。</p></section>`}
 
-const PAGES={jintsu:vJintsu,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCity,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
+const PAGES={sync:vSync,jintsu:vJintsu,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCity,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
 const TABS=[["home","ホーム","t-home"],["cal","カレンダー","t-cal"],["chores","家事","t-chore"],["menu","メニュー","t-menu"]];
 let stack=[];
 function render(keep){
@@ -1680,6 +1687,8 @@ document.addEventListener("click",e=>{
     case"jtbdel":jtBr().splice(i,1);k();break;
     case"jtclr":jtS().log=[];k();break;
     case"jtcopy":{const t=el.dataset.v;try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
+    case"mvput":mvPut();break;
+    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
     case"back":page=stack.pop()||null;render(false);break;
     case"stamp":{const d=iso(T0);S.stamps[d]=S.stamps[d]||{};const c=S.stamps[d][i];if(c===undefined)S.stamps[d][i]=myC();else if(c===myC())delete S.stamps[d][i];else{toast(who[c]+"がやってくれた家事です");break}k();break}
     case"thx":S.thx=S.thx||{};S.thx[thxK(i)]=true;toast("ありがとうを送りました");k();break;
@@ -1731,7 +1740,7 @@ document.addEventListener("click",e=>{
     case"plandel2":S.plans.splice(i,1);plEd=null;toast("消しました");k();break;
     case"shon":shStart();break;
     case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、このスマホの共有をやめます";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;S.share={on:false};S._sync={rev:0,h:{}};toast("共有をやめました");k();break;
-    case"shcopy":{const t="うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
+    case"shcopy":{const t=shText();try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
     case"plandel":S.plans.splice(+el.dataset.id.slice(1),1);k();break;
     case"sym":symSel=i;render(true);break;
     case"th":S.th=v;k();break;
@@ -1819,6 +1828,7 @@ addEventListener("submit",e=>{
   else if(t==="ffn"){if(!v("t"))return;ffS().n.push({h:v("t"),b:""})}
   else if(t==="clmy"){if(!v("t"))return;clS().my.push({n:v("t"),q:Math.max(0,+v("q")||1)})}
   else if(t==="jtb"){if(!v("t"))return;jtBr().push({t:v("t"),c:false})}
+  else if(t==="mvget"){mvGet(v("c"));return}
   else if(t==="brand"){let u=v("u");if(!/^https?:\/\//.test(u))u="https://"+u;S.brands.push({n:v("n"),u})}
   save();render(true);toast("追加しました");
 });
@@ -1844,7 +1854,10 @@ function setupGate(){
    <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
-  <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>`);
+  <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
+  <details class="sheet gmv"><summary>機種変更した人はこちら</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
+   <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
+  o.querySelector("#gmv").addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();mvGet(e.target.c.value)});
   const f=o.querySelector("form"),sync=()=>{const pre=f.mode.value==="pre";o.querySelector("#gdl").textContent=pre?"出産予定日":"誕生日";o.querySelector("#gsex").hidden=pre};
   f.addEventListener("change",sync);sync();
   f.addEventListener("submit",e=>{e.preventDefault();const d=f.d.value;if(!d){const g=o.querySelector(".gerr");g.textContent="日にちを入れてください";g.hidden=false;return}
@@ -1879,6 +1892,31 @@ function startGate(){
   else if(location.pathname!=="/")history.replaceState(null,"","/");
   if(!S.setup)setupGate();
 }
+/* ===== 共有と引き継ぎ（せってい） ===== */
+let mvCode=null,mvArm=false;
+const mvFmt=c=>c.slice(0,4)+"-"+c.slice(4);
+function vSync(){
+  return head("共有と引き継ぎ","hearthands","mint")+`<div class="sec-t">パートナーと共有</div>${shareCard()}
+  <div class="sec-t">機種変更の引き継ぎ</div>
+  <div class="sheet stack"><div><b>前のスマホで</b><div class="sub">ボタンを押すと、8文字の引き継ぎコードが出ます。コードは24時間のあいだ、1回だけ使えます。</div></div>
+   ${mvCode?`<div class="mvcode">${mvFmt(mvCode)}</div><button type="button" class="btn" data-act="mvcopy">コードをコピー</button>`:`<button type="button" class="pri mvbtn" data-act="mvput">引き継ぎコードを出す</button>`}</div>
+  <div class="sheet stack" style="margin-top:12px"><div><b>新しいスマホで</b><div class="sub">前のスマホで出したコードを入れてください。このスマホに入っている内容は、前のスマホの内容に置きかわります。</div></div>
+   <form class="add" data-form="mvget"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></div>
+  <p class="note">パートナーと共有しているなら、新しいスマホで共有リンクを開いてあいことばを入れるだけでも、ふたりの内容は戻ります（「自分だけ」の予定やきせかえは、引き継ぎコードで移してください）。</p>`;
+}
+async function mvPut(){toast("コードを作っています…");
+  try{const r=await api("/api/move",{data:S});if(!r.ok)throw 0;mvCode=(await r.json()).code;render(true)}
+  catch(_){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
+async function mvGet(c,form){c=String(c||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(c.length!==8)return toast("8文字のコードを入れてください");
+  if(S.setup&&!mvArm){mvArm=true;setTimeout(()=>{mvArm=false},6000);return toast("内容が置きかわります。もう一度押すと引き継ぎます")}
+  mvArm=false;
+  try{const r=await api("/api/move/get",{code:c});if(r.status===404)return toast("コードが見つかりません。24時間すぎたか、もう使われています");if(!r.ok)throw 0;
+    const d=(await r.json()).data;for(const k of Object.keys(S))delete S[k];Object.assign(S,d);
+    for(const k in defaults)if(S[k]===undefined)S[k]=JSON.parse(JSON.stringify(defaults[k]));
+    S._sync=S._sync||{rev:0,h:{}};S.setup=1;persist();page=null;stack=[];
+    const g=document.querySelector(".gate");if(g)ungate(g);render(false);toast("引き継ぎました");syncNow()}
+  catch(_){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
 
 render(false);startGate();
 })();

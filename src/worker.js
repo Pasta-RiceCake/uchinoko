@@ -11,6 +11,7 @@ async function init(db) {
   await db.exec(
     "CREATE TABLE IF NOT EXISTS fam (id TEXT PRIMARY KEY, code TEXT NOT NULL, data TEXT NOT NULL, rev INTEGER NOT NULL, fails INTEGER NOT NULL DEFAULT 0, fail_at INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL, updated INTEGER NOT NULL)"
   );
+  await db.exec("CREATE TABLE IF NOT EXISTS move (code TEXT PRIMARY KEY, data TEXT NOT NULL, exp INTEGER NOT NULL)");
   ready = true;
 }
 
@@ -105,6 +106,31 @@ async function sync(req, env, id) {
   return json({ error: "busy" }, 503);
 }
 
+// 機種変更の引き継ぎ: 24時間だけ使える1回きりのコード
+const MOVE_MS = 24 * 60 * 60 * 1000;
+function moveCode() {
+  const a = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const r = crypto.getRandomValues(new Uint8Array(8));
+  return [...r].map((x) => a[x % a.length]).join("");
+}
+async function movePut(req, env) {
+  const b = await readBody(req);
+  if (!b.data || typeof b.data !== "object") return json({ error: "bad" }, 400);
+  const now = Date.now();
+  await env.DB.prepare("DELETE FROM move WHERE exp < ?").bind(now).run();
+  const code = moveCode();
+  await env.DB.prepare("INSERT INTO move (code, data, exp) VALUES (?, ?, ?)").bind(code, JSON.stringify(b.data), now + MOVE_MS).run();
+  return json({ code, exp: now + MOVE_MS });
+}
+async function moveGet(req, env) {
+  const b = await readBody(req);
+  const code = String(b.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const row = await env.DB.prepare("SELECT * FROM move WHERE code = ? AND exp > ?").bind(code, Date.now()).first();
+  if (!row) return json({ error: "not_found" }, 404);
+  await env.DB.prepare("DELETE FROM move WHERE code = ?").bind(code).run();
+  return json({ data: JSON.parse(row.data) });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -113,6 +139,8 @@ export default {
     try {
       await init(env.DB);
       if (url.pathname === "/api/fam") return await create(req, env);
+      if (url.pathname === "/api/move") return await movePut(req, env);
+      if (url.pathname === "/api/move/get") return await moveGet(req, env);
       const m = url.pathname.match(/^\/api\/fam\/([a-z0-9]{10})\/sync$/);
       if (m) return await sync(req, env, m[1]);
       return json({ error: "not_found" }, 404);

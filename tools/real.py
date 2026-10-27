@@ -55,18 +55,28 @@ assert '本番' not in s and '見本' not in s, [m.start() for m in re.finditer(
 
 # ---- 共有リンク ----
 rep('<code>https://uchinoko-techo.example/j/${s.id}</code>', '<code>${location.origin}/j/${s.id}</code>')
+rep('<div class="sub">あいことば <b class="code">${s.code}</b></div>', '<div class="sub">あいことば <b class="code">${s.code}</b></div><a class="lnsh" href="https://line.me/R/share?text=${encodeURIComponent(shText())}" target="_blank" rel="noopener">LINEで送る</a>')
 rep('case"shon":S.share={on:true,id:Math.random().toString(36).slice(2,8),code:String(Math.floor(1000+Math.random()*9000))};toast("共有リンクを作りました");k();document.querySelector(".shc")?.setAttribute("open","");break;',
     'case"shon":shStart();break;')
 rep('case"shoff":asPt=false;S.share={on:false};toast("共有をやめました");k();break;',
     'case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、このスマホの共有をやめます";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;S.share={on:false};S._sync={rev:0,h:{}};toast("共有をやめました");k();break;')
 rep('const t="うちの子手帳のカレンダー https://uchinoko-techo.example/j/"+S.share.id+" あいことば "+S.share.code;',
-    'const t="うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\\n"+location.origin+"/j/"+S.share.id+"\\nあいことば "+S.share.code;')
+    'const t=shText();')
 
 # ---- 保存と同期 ----
 rep('const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};', open(os.path.join(ROOT, 'tools/sync.js'), encoding='utf-8').read())
 
+# ---- せってい「共有と引き継ぎ」 ----
+for g in ['["せってい",[["appset","アイコンと通知","bunny","pink"]', '["せってい",[["baby","赤ちゃんの情報","chick","mint"]']:
+    rep(g, g.replace('[["', '[["sync","共有と引き継ぎ","hearthands","mint"],["', 1))
+rep('const PAGES={', 'const PAGES={sync:vSync,')
+rep('const MSUB={', 'const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",')
+rep('const MKW={', 'const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",')
+rep('    case"back":', '    case"mvput":mvPut();break;\n    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}\n    case"back":')
+rep('  else if(t==="brand"){', '  else if(t==="mvget"){mvGet(v("c"));return}\n  else if(t==="brand"){')
+
 # ---- はじめての画面・あいことば入力 ----
-setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read()
+setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read()
 tail = 'render(false);\n})();\n</script>'
 assert s.rstrip().endswith(tail), s[-200:]
 s = s.rstrip()[:-len(tail)] + setup + '\nrender(false);startGate();\n})();\n</script>\n'

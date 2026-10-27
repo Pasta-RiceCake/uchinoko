@@ -34,3 +34,4 @@ async function shStart(){toast("リンクを作っています…");
     S.share={on:true,id:j.id,code:j.code};S._sync={rev:j.rev,h:{}};for(const k in put)S._sync.h[k]=hs(JSON.stringify(put[k]));
     persist();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました");
   }catch(e){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
+const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;

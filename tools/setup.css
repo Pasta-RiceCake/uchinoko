@@ -13,3 +13,9 @@
 .gcode{font-size:24px!important;letter-spacing:.3em;text-align:center}
 .gerr{color:var(--red);font-size:13px;margin:0;font-weight:700}
 .gskip{align-self:center}
+.lnsh{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 4px;padding:11px;border-radius:999px;background:#06c755;color:#fff;font-weight:700;font-size:14px;text-decoration:none}
+.mvcode{font-size:28px;font-weight:800;letter-spacing:.15em;text-align:center;background:var(--soft);border-radius:14px;padding:12px;font-family:ui-monospace,Menlo,monospace}
+.mvbtn{padding:12px;border-radius:999px;border:0}
+.gmv summary{cursor:pointer;font-weight:700;font-size:14px;text-align:center;list-style:none}
+.gmv summary::-webkit-details-marker{display:none}
+.gmv .sub{margin:10px 0 8px}
