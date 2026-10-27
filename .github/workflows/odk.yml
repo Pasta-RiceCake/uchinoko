@@ -6,7 +6,7 @@ on:
         description: "1つの都道府県だけ読む（例：岡山県）。空なら古い順に"
         default: ""
   schedule:
-    - cron: "0 21 1,15 * *"
+    - cron: "0 9 * * *"
 permissions:
   contents: write
 concurrency: ${{ github.workflow }}
@@ -20,6 +20,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PREF: ${{ github.event.inputs.pref }}
+          MAX_PREFS: "12"
         run: python3 tools/build_odk.py
       - name: commit
         run: |
