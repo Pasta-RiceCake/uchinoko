@@ -92,14 +92,14 @@ def score(t, months):
     return s
 
 
-def crawl(site, today, max_pages=45):
+def crawl(site, today, max_pages=80):
     """公式サイトのトップから、子育てのイベントがのっていそうなページとPDFを集める"""
     if not site:
         return []
     m1, m2 = today.month, (today.month % 12) + 1
     months = [f"{m1}月", f"{m2}月", f"{today.year}年{m1}月"]
     root = base_domain(host(site))
-    seen, queue, pages = set(), [(site, "トップ", 0, 99)], []
+    seen, queue, pages, pdfs = set(), [(site, "トップ", 0, 99)], [], {}
     while queue and len(seen) < max_pages:
         queue.sort(key=lambda x: -x[3])
         u, label, depth, _ = queue.pop(0)
@@ -112,8 +112,6 @@ def crawl(site, today, max_pages=45):
             print("  skip", u[:90], str(e)[:60])
             continue
         if "pdf" in ct or fu.lower().endswith(".pdf"):
-            if score(label, months) >= 3:
-                pages.append({"u": fu, "pdf": b, "label": label, "sc": score(label, months) + 3})
             continue
         if "html" not in ct:
             continue
@@ -122,18 +120,36 @@ def crawl(site, today, max_pages=45):
         sc = score(t[:20000], months)
         if depth > 0 and sc >= 6:
             pages.append({"u": fu, "text": t[:12000], "label": label, "sc": sc})
+            for lu, lt in links(html, fu):
+                if lu.lower().endswith(".pdf") and lu not in pdfs:
+                    pdfs[lu] = (lt, sc + 2 * score(lt + " " + lu, months))
         if depth >= 3:
             continue
         for lu, lt in links(html, fu):
             h = host(lu)
-            if not h.endswith(root) or lu in seen or re.search(r"\.(jpg|png|gif|zip|xlsx?|docx?)$", lu, re.I):
+            if not h.endswith(root) or lu in seen or re.search(r"\.(jpg|png|gif|zip|xlsx?|docx?|pdf)$", lu, re.I):
                 continue
             ls = score(lt, months)
             if ls >= 1 or (depth == 0 and "kosodate" in lu):
                 queue.append((lu, lt, depth + 1, ls - depth))
         time.sleep(0.5)
     pages.sort(key=lambda p: -p["sc"])
-    return pages[:10]
+    pages = pages[:8]
+    # 日程表はPDFのことが多いので、よさそうなPDFを5つまで読む
+    total = 0
+    for lu, (lt, sc) in sorted(pdfs.items(), key=lambda x: -x[1][1])[:8]:
+        if sum(1 for p in pages if "pdf" in p) >= 5:
+            break
+        try:
+            fu, ct, b = fetch(lu, limit=9_000_000)
+        except Exception as e:
+            print("  skip pdf", lu[-60:], str(e)[:60])
+            continue
+        if total + len(b) > 16_000_000:
+            continue
+        total += len(b)
+        pages.append({"u": fu, "pdf": b, "label": lt, "sc": sc})
+    return pages
 
 
 def ask(city, site, today):
@@ -146,7 +162,7 @@ def ask(city, site, today):
     parts, srcs, size = [], [], 0
     for i, p in enumerate(pages):
         if "pdf" in p:
-            if size + len(p["pdf"]) > 12_000_000:
+            if size + len(p["pdf"]) > 16_000_000:
                 continue
             size += len(p["pdf"])
             parts.append({"text": f"\n--- 資料{i+1}（PDF）URL: {p['u']} 見出し: {p['label']} ---"})
