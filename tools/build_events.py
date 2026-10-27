@@ -159,29 +159,44 @@ def ask(city, site, today):
     print(" ", city, "pages", [(p["sc"], p["label"][:20], p["u"][-60:]) for p in pages])
     if not pages:
         return "", [], ""
-    parts, srcs, size = [], [], 0
-    for i, p in enumerate(pages):
+    # PDFは1つずつ、ページはまとめてGeminiに読んでもらう（1回に多く渡すと取りこぼすため）
+    groups, srcs, names = [[]], [], set()
+    for p in pages:
         if "pdf" in p:
-            if size + len(p["pdf"]) > 12_000_000:
+            fn = p["u"].rsplit("/", 1)[-1]
+            if fn in names:
                 continue
-            size += len(p["pdf"])
-            parts.append({"text": f"\n--- 資料{i+1}（PDF）URL: {p['u']} 見出し: {p['label']} ---"})
-            parts.append({"inline_data": {"mime_type": "application/pdf", "data": base64.b64encode(p["pdf"]).decode()}})
+            names.add(fn)
+            groups.append([{"text": f"\n--- 資料（PDF）URL: {p['u']} 見出し: {p['label']} ---"},
+                           {"inline_data": {"mime_type": "application/pdf", "data": base64.b64encode(p["pdf"]).decode()}}])
         else:
-            parts.append({"text": f"\n--- 資料{i+1} URL: {p['u']} 見出し: {p['label']} ---\n{p['text']}"})
+            groups[0].append({"text": f"\n--- 資料 URL: {p['u']} 見出し: {p['label']} ---\n{p['text']}"})
         srcs.append(p["u"])
-    prompt = f"""下の資料は、{city}の公式サイト（{site}）から集めたページです。今日は{today.strftime("%Y年%-m月%-d日")}です。
-資料にのっている、{m1}と{m2}に開かれる赤ちゃん・乳幼児・妊婦さん向けの催しを、すべて抜き出してください。
-対象: 子育て支援センターや児童館の催し、親子教室・赤ちゃん教室、離乳食教室、育児相談・身体測定、両親学級・母親学級・プレママ教室、図書館のおはなし会など。
-資料に書いてあることだけを使い、日にちが書いていないもの・書いていない催しは作らないでください。「毎週火曜」などは、{m1}と{m2}のそれぞれの日に分けてください。
+    prompt = f"""下の資料は、{city}の公式サイト（{site}）から集めたものです。今日は{today.strftime("%Y年%-m月%-d日")}です。
+資料にのっている、{m1}と{m2}に開かれる、赤ちゃん・乳幼児とその親、または妊婦さん向けの催しを、もれなく抜き出してください。
+対象: 子育て支援センターや児童館の催し、親子教室・赤ちゃん教室・乳幼児教室、離乳食教室、育児相談・身体測定、両親学級・母親学級・プレママ教室、図書館の赤ちゃん向けおはなし会など。
+大人だけ向けの相談会や、子育てと関係のない催しは入れないでください。
+資料に書いてあることだけを使い、日にちが書いていないものは入れないでください。表になっている日程は、1行ずつ1件にしてください。「毎週火曜」などは、{m1}と{m2}のそれぞれの日に分けてください。
 答えはJSONだけで、ほかの文は書かないでください。形:
 {{"events":[{{"date":"YYYY-MM-DD","time":"10:00〜11:30","title":"催しの名前","place":"場所","target":"対象（例：0歳児と保護者）","kind":"次のどれか1つ: {" / ".join(KINDS)}","need":"予約がいるか・持ち物など短く","url":"のっていた資料のURL"}}]}}
-最大80件。見つからなければ {{"events":[]}}。"""
+1つの資料で最大60件。見つからなければ {{"events":[]}}。"""
+    allev, used = [], ""
+    for g in groups:
+        if not g:
+            continue
+        text, model = gem([{"text": prompt}] + g)
+        used = model
+        allev += parse(text)
+        time.sleep(4)
+    return json.dumps({"events": allev}, ensure_ascii=False), srcs, used
+
+
+def gem(parts):
     last = None
     for model in MODELS:
         try:
             r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={KEY}",
-                         {"contents": [{"parts": [{"text": prompt}] + parts}], "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"}})
+                         {"contents": [{"parts": parts}], "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"}})
         except Limit as e:
             last = e
             print("limit", model, str(e)[-200:])
@@ -191,11 +206,11 @@ def ask(city, site, today):
             print("error", model, str(e)[:200])
             continue
         cand = (r.get("candidates") or [{}])[0]
-        text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
-        return text, srcs, model
+        return "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", [])), model
     if isinstance(last, Limit):
         raise last
-    raise last or RuntimeError("no model")
+    print("  gemini failed", last)
+    return "", ""
 
 
 def parse(text):
@@ -252,7 +267,7 @@ def clean(evs, site, today, srcs=()):
         out.append({"d": d.isoformat(), "tm": str(e.get("time", ""))[:30], "t": t, "pl": str(e.get("place", ""))[:60],
                     "to": str(e.get("target", ""))[:40], "k": kind, "n": str(e.get("need", ""))[:80], "u": u})
     out.sort(key=lambda x: (x["d"], x["tm"]))
-    return out[:80]
+    return out[:150]
 
 
 def probe():
