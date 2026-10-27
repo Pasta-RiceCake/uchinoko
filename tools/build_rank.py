@@ -57,11 +57,19 @@ def children(gid):
     return [(gid(c), nm(c)) for c in ch]
 
 
+# API の affiliateUrl には自分のIDが入らないことがあるので、自分のIDのリンクを作る
+def aff(u):
+    if not u:
+        return ""
+    q = urllib.parse.quote(u, safe="")
+    return f"https://hb.afl.rakuten.co.jp/ichiba/{AFF}/?pc={q}&m={q}"
+
+
 def item(x):
     img = (x.get("mediumImageUrls") or [""])[0]
     img = img.get("imageUrl", "") if isinstance(img, dict) else img
     return {"n": re.sub(r"\s+", " ", x.get("itemName", ""))[:70], "p": x.get("itemPrice"), "img": img.split("?")[0] + "?_ex=128x128" if img else "",
-            "u": x.get("affiliateUrl") or x.get("itemUrl"), "s": x.get("shopName", ""), "r": x.get("reviewAverage"), "rc": x.get("reviewCount")}
+            "u": aff(x.get("itemUrl") or ""), "s": x.get("shopName", ""), "r": x.get("reviewAverage"), "rc": x.get("reviewCount")}
 
 
 def rank(gid, n=10):
