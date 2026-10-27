@@ -16,13 +16,16 @@ jobs:
         env:
           RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
           RAKUTEN_ACCESS_KEY: ${{ secrets.RAKUTEN_ACCESS_KEY }}
-        run: python3 tools/build_rank.py
+        run: |
+          python3 tools/build_rank.py
+          python3 tools/build_books.py
       - name: commit
         run: |
           git config user.name "uchinoko-data"
           git config user.email "uchinoko-data@users.noreply.github.com"
           [ -f public/data/rank.json ] || exit 0
           git add public/data/rank.json
+          [ -f public/data/books.json ] && git add public/data/books.json
           git diff --cached --quiet && exit 0
           git commit -m "楽天ランキングを更新"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push && break; sleep $((i*7)); done
