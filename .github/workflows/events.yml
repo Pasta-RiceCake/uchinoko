@@ -5,6 +5,9 @@ on:
       city:
         description: "1つの市区町村だけ読む（例：岡山県倉敷市）。空なら家族のいる市を順番に"
         default: ""
+      probe:
+        description: "1にするとGeminiの使えるモデルを調べるだけ"
+        default: ""
   schedule:
     - cron: "30 19 * * *"
 permissions:
@@ -20,6 +23,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           CITY: ${{ github.event.inputs.city }}
+          PROBE: ${{ github.event.inputs.probe }}
         run: python3 tools/build_events.py
       - name: commit
         run: |

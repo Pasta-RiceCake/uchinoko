@@ -28,7 +28,7 @@ def get_json(url, body=None, timeout=240):
         return json.loads(urllib.request.urlopen(req, timeout=timeout).read())
     except urllib.error.HTTPError as e:
         if e.code == 429:
-            raise Limit(e.read()[:300])
+            raise Limit(e.read()[:1500])
         raise RuntimeError(f"{e.code} {e.read()[:300]}")
 
 
@@ -113,7 +113,27 @@ def clean(evs, site, today):
     return out[:80]
 
 
+def probe():
+    ms = get_json(f"https://generativelanguage.googleapis.com/v1beta/models?key={KEY}&pageSize=200").get("models", [])
+    names = [m["name"].split("/")[1] for m in ms if "generateContent" in m.get("supportedGenerationMethods", [])]
+    print("models", names)
+    for m in [x for x in names if "flash" in x][:12]:
+        for tools in ([], [{"google_search": {}}]):
+            try:
+                r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={KEY}",
+                             {"contents": [{"parts": [{"text": "倉敷市の公式サイトのURLを1つだけ答えて"}]}], "tools": tools})
+                t = "".join(p.get("text", "") for p in r["candidates"][0]["content"]["parts"])
+                print("OK", m, bool(tools), t[:80].replace("\n", " "))
+            except Limit as e:
+                print("429", m, bool(tools), str(e)[-400:].replace("\\n", " "))
+            except Exception as e:
+                print("ERR", m, bool(tools), str(e)[:200])
+            time.sleep(4)
+
+
 def main():
+    if os.environ.get("PROBE") and KEY:
+        return probe()
     if not KEY:
         print("GEMINI_API_KEY がまだ入っていないので、何もしません")
         return
