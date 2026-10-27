@@ -1149,7 +1149,8 @@ const RANK=[["ベビー用品",[["紙おむつ テープ Sサイズ","bottle2"],
 ["授乳グッズ",[["授乳クッション","pillow"],["哺乳びん","bottle"],["授乳ブラ","ribbon"],["さく乳器","bottle2"],["母乳パッド","cloud"]]],
 ["内祝い",[["カタログギフト","envelope"],["名入れのお菓子","cupcake"],["今治タオルのセット","gift"],["選べるスイーツ","cupcake"],["洗剤のギフト","bubbles"]]]];
 let rkTab="";
-function vRank(){
+let rkP=0;
+function vRank(){if(!rkP){AFF_PICK.push(...RANK.flatMap(r=>r[1].map(x=>x[0])));rkP=1}
   const tabs=(S.mode==="pre"?["マタニティ","出産準備","授乳グッズ","おでかけ"]:["ベビー用品","おもちゃ・知育","おでかけ","ベビー服","内祝い"]);if(!tabs.includes(rkTab))rkTab=S.mode==="pre"?"マタニティ":"ベビー用品";
   const items=RANK.find(r=>r[0]===rkTab)[1];
   return head("人気ランキング","star","lemon")+`<p class="prnote">楽天ランキングより・このページには広告（PR）のリンクがふくまれます</p>
@@ -1427,12 +1428,13 @@ function vHoiku(){
    <button type="button" class="rw" data-act="open" data-v="ill"><span class="grow"><div class="t">病気で休むときの目安</div><div class="s">インフルエンザ・RS・手足口病など</div></span><span class="chev">${ic("chev",16)}</span></button></div></section>`;
 }
 const GOODS=[["ねんね","スワドル（くるむおくるみ）","びくっと起きるのを防いで、寝かしつけがラクに。","swaddle"],["ねんね","電動バウンサー","ゆらゆら揺れて、家事の間に寝てくれる。","sleepbaby"],["ミルク","調乳ポット（70℃保温）","夜中のミルクがすぐ作れる。","bottle"],["ミルク","レンジで消毒できるケース","洗ってレンジに入れるだけ。","bottle2"],["おでかけ","抱っこひも（新生児から）","首すわり前から使えるか確認して選ぶ。","baby_face"],["おふろ","たためるベビーバス","使う期間が短いので、たためる物が人気。","bubbles"],["おふろ","ベビーベッド","寝返りが始まったら柵の高さも確認。","crib"]];
-function vGoods(){
-  return head("話題のグッズ","bear","lemon")+`<p class="lead">今は見本です。本番では評判のよい物を調べて入れます。気になったら「メモ」を押すと欲しい物メモに入ります。</p>
-  <div class="sheet">${GOODS.map((g,i)=>{const on=W().some(w=>w.t===g[1]);return `<div class="li gd"><span class="bub k2">${pic(g[3],40)}</span><span class="grow"><div class="t">${g[1]}</div><div class="sub">${g[2]}</div><a class="ext" href="https://search.rakuten.co.jp/search/mall/${encodeURIComponent(g[1].replace(/（.*?）/g,""))}/" target="_blank" rel="noopener">楽天で見る ›</a></span><button type="button" class="heart${on?" on":""}" data-act="want" data-i="${i}">${ic("heart",14)}${on?"メモ済み":"メモ"}</button></div>`}).join("")}</div>`;
+let gdP=0;
+function vGoods(){if(!gdP){AFF_PICK.push(...GOODS.map(g=>g[1].replace(/（.*?）/g,"")));gdP=1}
+  return head("話題のグッズ","bear","lemon")+`<p class="prnote">このページには広告（PR）のリンクがふくまれます</p><p class="lead">今は見本です。本番では評判のよい物を調べて入れます。気になったら「メモ」を押すと欲しい物メモに入ります。</p>
+  <div class="sheet">${GOODS.map((g,i)=>{const on=W().some(w=>w.t===g[1]);return `<div class="li gd"><span class="bub k2">${pic(g[3],40)}</span><span class="grow"><div class="t">${g[1]}</div><div class="sub">${g[2]}</div><a class="ext" href="${rkURL(g[1].replace(/（.*?）/g,""))}" target="_blank" rel="noopener">楽天で見る ›</a></span><button type="button" class="heart${on?" on":""}" data-act="want" data-i="${i}">${ic("heart",14)}${on?"メモ済み":"メモ"}</button></div>`}).join("")}</div>`;
 }
 // ▼アフィリエイト設定：登録後にここへIDを入れる（空ならふつうのリンク）
-const AFF={rakuten:"",amazon:""};
+const AFF={rakuten:"58e1dcc5.ffbb96dd.58e1dcc6.c118f976",amazon:""};
 const AFF_PICK=[]; // 報酬つきリンクにする商品名だけここに入れる（例 "ベッドメリー"）。ほかはふつうのリンク // rakuten: 楽天アフィリエイトID（例 1234abcd.5678efgh.1234abcd.5678efgh） / amazon: トラッキングID（例 xxxx-22）
 const affOn=q=>AFF_PICK.includes(q)&&(AFF.rakuten||AFF.amazon);
 const rkURL=q=>{const u="https://search.rakuten.co.jp/search/mall/"+encodeURIComponent(q)+"/";return AFF.rakuten&&AFF_PICK.includes(q)?"https://hb.afl.rakuten.co.jp/hgc/"+AFF.rakuten+"/?pc="+encodeURIComponent(u)+"&m="+encodeURIComponent(u):u};
