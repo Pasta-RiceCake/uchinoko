@@ -202,9 +202,16 @@ async function cities(env) {
 }
 
 // 家族のあいことばが合っているか
+// sync と同じく、まちがいが続いたら1時間しめる（あいことばの総当たりを防ぐ）
 async function famOk(env, id, code) {
-  const row = await env.DB.prepare("SELECT code FROM fam WHERE id = ?").bind(id).first();
-  return !!row && row.code === (await hash(id, code));
+  const row = await env.DB.prepare("SELECT code, fails, fail_at FROM fam WHERE id = ?").bind(id).first();
+  if (!row) return false;
+  const now = Date.now();
+  if (row.fails >= LOCK_FAILS && now - row.fail_at < LOCK_MS) return false;
+  if (row.code === (await hash(id, String(code || "")))) return true;
+  const fails = now - row.fail_at < LOCK_MS ? row.fails + 1 : 1;
+  await env.DB.prepare("UPDATE fam SET fails = ?, fail_at = ? WHERE id = ?").bind(fails, now, id).run();
+  return false;
 }
 
 export default {

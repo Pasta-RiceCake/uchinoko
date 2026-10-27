@@ -86,7 +86,10 @@ export async function send(env, dev, subJson, msg) {
 }
 
 const okDev = (d) => /^[0-9a-f]{24}$/.test(String(d || ""));
-const okSub = (s) => s && typeof s.endpoint === "string" && /^https:\/\//.test(s.endpoint) && s.endpoint.length < 1000 && s.keys && s.keys.p256dh && s.keys.auth;
+// 送り先はブラウザの通知サービスだけ（ほかのサイトへ送らせない）
+const PUSH_HOSTS = /(^|\.)(fcm\.googleapis\.com|push\.services\.mozilla\.com|push\.apple\.com|notify\.windows\.com)$/;
+const okHost = (u) => { try { const x = new URL(u); return x.protocol === "https:" && PUSH_HOSTS.test(x.hostname); } catch { return false; } };
+const okSub = (s) => s && typeof s.endpoint === "string" && okHost(s.endpoint) && s.endpoint.length < 1000 && s.keys && s.keys.p256dh && s.keys.auth;
 const clip = (t, n) => String(t || "").slice(0, n);
 
 export async function pushKey(env) {
