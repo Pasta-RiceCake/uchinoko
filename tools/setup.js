@@ -1,0 +1,49 @@
+/* ===== はじめての画面・パートナーのあいことば ===== */
+const chips=(name,L,cur)=>`<div class="kch">${L.map(([v,l])=>`<label><input type="radio" name="${name}" value="${v}"${cur===v?" checked":""}><span style="--kc:var(--ac)">${l}</span></label>`).join("")}</div>`;
+function gate(html){const o=document.createElement("div");o.className="gate";o.innerHTML=`<div class="gin">${html}</div>`;document.body.appendChild(o);document.documentElement.classList.add("gated");return o}
+const ungate=o=>{o.remove();document.documentElement.classList.remove("gated");window.scrollTo(0,0)};
+function setupGate(){
+  const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">はじめに少しだけ教えてください。あとから「メニュー」でいつでも変えられます。</p></div>
+  <form class="sheet stack" id="gsetup">
+   <div><b>いまは</b>${chips("mode",[["pre","妊娠中"],["mama","子育て中"]],"pre")}</div>
+   <div><b>使う人</b>${chips("me",[["ママ","ママ"],["パパ","パパ"]],"ママ")}</div>
+   <label><span id="gdl">出産予定日</span><input type="date" name="d" required></label>
+   <label><span>赤ちゃんの名前 <span class="sub">（あとでOK）</span></span><input name="n" autocomplete="off"></label>
+   <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
+   <p class="gerr" hidden></p>
+   <button type="submit" class="pri">はじめる</button></form>
+  <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>`);
+  const f=o.querySelector("form"),sync=()=>{const pre=f.mode.value==="pre";o.querySelector("#gdl").textContent=pre?"出産予定日":"誕生日";o.querySelector("#gsex").hidden=pre};
+  f.addEventListener("change",sync);sync();
+  f.addEventListener("submit",e=>{e.preventDefault();const d=f.d.value;if(!d){const g=o.querySelector(".gerr");g.textContent="日にちを入れてください";g.hidden=false;return}
+    S.mode=f.mode.value;S.me=f.me.value;S.name=f.n.value.trim();if(S.mode==="pre"){S.due=d;S.birth=d}else{S.birth=d;S.sex=f.sex.value}
+    S.setup=1;page=null;stack=[];save();ungate(o);render(false)});
+}
+function joinGate(id){
+  const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">パートナーから招待されています。送られてきた「あいことば」を入れると、ふたりで同じ内容が見られます。</p></div>
+  <form class="sheet stack" id="gjoin">
+   <label>あいことば（6けたの数字）<input name="c" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required class="gcode"></label>
+   <div><b>あなたは</b>${chips("me",[["ママ","ママ"],["パパ","パパ"]],S.setup?S.me:"パパ")}</div>
+   ${S.setup?`<p class="note" style="margin:0">このスマホに入れた内容は、パートナーの内容に置きかわります（「自分だけ」の予定は残ります）。</p>`:""}
+   <p class="gerr" hidden></p>
+   <button type="submit" class="pri">つなぐ</button></form>
+  <button type="button" class="lk gskip">いまはやめておく</button>`);
+  const f=o.querySelector("form"),err=t=>{const g=o.querySelector(".gerr");g.textContent=t;g.hidden=false},home=()=>history.replaceState(null,"","/");
+  o.querySelector(".gskip").addEventListener("click",()=>{home();ungate(o);if(!S.setup)setupGate()});
+  f.addEventListener("submit",async e=>{e.preventDefault();const c=f.c.value.replace(/\D/g,""),b=f.querySelector("[type=submit]");if(c.length!==6)return err("6けたの数字を入れてください");
+    b.disabled=true;b.textContent="つないでいます…";
+    try{const r=await api("/api/fam/"+id+"/sync",{code:c,rev:0,put:{}});
+      if(r.status===403)return err("あいことばがちがいます。もう一度たしかめてください");
+      if(r.status===429)return err("何回もまちがえたので、1時間ほどしてからもう一度ためしてください");
+      if(r.status===404)return err("このリンクは見つかりませんでした。もう一度送ってもらってください");
+      if(!r.ok)throw 0;const j=await r.json();
+      S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id,code:c};S.me=f.me.value;S.setup=1;
+      page=null;stack=[];persist();home();ungate(o);render(false);toast("つながりました");
+    }catch(_){err("つながりませんでした。電波のよい所でもう一度押してください")}finally{b.disabled=false;b.textContent="つなぐ"}});
+}
+function startGate(){
+  const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
+  if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
+  else if(location.pathname!=="/")history.replaceState(null,"","/");
+  if(!S.setup)setupGate();
+}

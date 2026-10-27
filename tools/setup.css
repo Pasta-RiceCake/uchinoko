@@ -1,0 +1,15 @@
+/* はじめての画面 */
+.gated body{overflow:hidden}
+.gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.gin{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.glogo{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.glogo h1{font-family:var(--hfont);font-weight:var(--hw);font-size:24px;margin:0}
+.glogo .lead{margin:0}
+.gate form b{display:block;font-size:13.5px;margin-bottom:6px}
+.gate label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:700}
+.gate .kch label{display:inline-flex}
+.gate .pri{padding:14px;font-size:16px;font-weight:700;background:var(--ac);color:var(--onac);border:0;border-radius:999px;cursor:pointer}
+.gate .pri:disabled{opacity:.6}
+.gcode{font-size:24px!important;letter-spacing:.3em;text-align:center}
+.gerr{color:var(--red);font-size:13px;margin:0;font-weight:700}
+.gskip{align-self:center}

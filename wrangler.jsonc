@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "uchinoko",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  // 夫婦で共有するデータの置き場所。公開（デプロイ）したときに Cloudflare が自動で作ってつなぐ
+  "d1_databases": [{ "binding": "DB", "database_name": "uchinoko-db" }],
+  // 画面のファイル。/api 以外はここから返す（どのURLでも index.html を返す）
+  "assets": { "directory": "public", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] }
+}
