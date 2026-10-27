@@ -722,6 +722,8 @@ form.add input{min-width:0}
 .evb{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:4px}
 .evb .lk{border:0;background:none;color:var(--ac);font:inherit;font-size:13px;font-weight:700;padding:0;cursor:pointer}
 .evb .lk:disabled{color:var(--sub);font-weight:400}
+.rkimg{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none;background:var(--line)}
+.rkn{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;line-height:1.45}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -958,7 +960,7 @@ const SANIN=[["産院の種類","<strong>総合病院・大学病院</strong>：
  ["里帰り出産","帰る先の産院にも早めに予約が必要です。妊婦健診の途中で病院を移るタイミングも相談しましょう。"]];
 
 /* ===== 近くの施設（公開データ） ===== */
-const NSAMPLE={"hoiku": [], "sanin": [], "city": {}};
+const NSAMPLE={"hoiku": [], "sanin": [], "city": {"岡山県倉敷市": {"c": "33202", "u": "https://www.city.kurashiki.okayama.jp/", "p": [34.58499, 133.77193]}}};
 const NR={},NRerr={};let nrMore={hoiku:30,sanin:20},nrCities=null;
 const prefNo=()=>{const i=PREF.indexOf(S.pref);return i<0?null:String(i+1).padStart(2,"0")};
 async function nrFetch(p){try{const r=await fetch(p);if(!r.ok)throw 0;return await r.json()}catch(_){return null}}
@@ -1156,7 +1158,7 @@ const gq=q=>"https://www.google.com/search?q="+encodeURIComponent(q);
 let cityEdit=false;
 
 /* ===== 市区町村の子育てイベント ===== */
-const EVSAMPLE=null;
+const EVSAMPLE={"at": "2026-10-27T22:32:37+09:00", "city": "岡山県倉敷市", "site": "https://www.city.kurashiki.okayama.jp/", "ev": [{"d": "2026-10-27", "tm": "午前", "t": "子育てはじめの一歩教室（0〜6か月）", "pl": "倉敷市保健所 3階和室", "to": "0〜6か月児と保護者", "k": "支援センター・児童館", "n": "要予約（086-434-9822）", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-10-30", "tm": "午前", "t": "子育てはじめの一歩教室（0〜6か月）", "pl": "倉敷北児童センター", "to": "0〜6か月児と保護者", "k": "支援センター・児童館", "n": "要予約（086-434-9822）", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-05", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "ちゃやっこ（倉敷）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-07", "tm": "10:30〜11:30", "t": "WelcomeベビーDay", "pl": "小ざくら地域子育て支援センター ひろばにじいろ2階遊戯室", "to": "赤ちゃんを迎えるパパとママ（経産婦さんも大歓迎）", "k": "両親学級・妊婦", "n": "要予約（開催日の1ヶ月前から1週間前まで）、母子手帳", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/021/499/08welcomebaby.pdf"}, {"d": "2026-11-11", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "くららっこ（児島）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-16", "tm": "10:30〜11:30", "t": "WelcomeベビーDay", "pl": "小ざくら地域子育て支援センター ひろばにじいろ2階遊戯室", "to": "赤ちゃんを迎えるパパとママ（経産婦さんも大歓迎）", "k": "両親学級・妊婦", "n": "要予約（開催日の1ヶ月前から1週間前まで）、母子手帳", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/021/499/08welcomebaby.pdf"}, {"d": "2026-11-20", "tm": "10:00〜12:00", "t": "離乳食とお口の教室・初期", "pl": "倉敷市保健所", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要電子申請", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-20", "tm": "13:00〜15:00", "t": "離乳食とお口の教室・後期", "pl": "倉敷市保健所", "to": "9か月ごろ〜の乳児と保護者", "k": "離乳食・健康", "n": "要電子申請", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-21", "tm": "10時～11時30分", "t": "アラフォーママの子育てひろば", "pl": "茶屋町公民館 1階 和室", "to": "40歳前後のママと乳幼児・7組程度（ママだけ、プレママの参加も可）", "k": "親子教室", "n": "要問い合わせ（電子申請も可）、無料", "u": "https://www.city.kurashiki.okayama.jp/cityinfo/publicity/1001929/1001937/1022190/1027815/1027816.html"}, {"d": "2026-11-22", "tm": "10:00〜12:00", "t": "プレパパ・プレママ クラス（赤ちゃんについて）", "pl": "子育てひろば「ほっとハウス」", "to": "赤ちゃんを迎えるパパ・ママ", "k": "両親学級・妊婦", "n": "LINEで要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/021/499/hothousepremamakoza2025.pdf"}, {"d": "2026-11-22", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "倉敷市子育て支援センター（倉敷）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-25", "tm": "13:30〜15:45", "t": "これから出産を迎える人のためのパパママセミナー", "pl": "ライフパーク倉敷 1階 中ホール", "to": "初めての出産を迎えるママとパパ", "k": "両親学級・妊婦", "n": "要予約（抽選）、母子健康手帳・筆記用具・ひざ掛け持参", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/897/papamamar8.pdf"}, {"d": "2026-11-25", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "かなりや（真備）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-26", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "杉の子（倉敷）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-28", "tm": "10:00〜12:00", "t": "プレパパ・プレママ クラス（赤ちゃんについて）", "pl": "子育てひろば「ほっとハウス」", "to": "赤ちゃんを迎えるパパ・ママ", "k": "両親学級・妊婦", "n": "LINEで要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/021/499/hothouseprekoza2026.pdf"}, {"d": "2026-11-28", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "遍照おいまつ（倉敷）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}, {"d": "2026-11-29", "tm": "要問合せ", "t": "地域子育て支援拠点での離乳食とお口の教室", "pl": "玉島児童館（玉島）", "to": "5か月ごろの乳児と保護者", "k": "離乳食・健康", "n": "要予約", "u": "https://www.city.kurashiki.okayama.jp/_res/projects/default_project/_page_/001/004/906/r8kyoushitu.pdf"}], "code": "33202"};
 const EVD={};let evk="すべて",evMore=20;
 async function evLoad(){if(!nrCities){if(!window._ncf){window._ncf=1;nrCities=await nrFetch("/data/cities.json")||NSAMPLE.city;render(true)}return}
   const c=cityInfo()?.c;if(!c||EVD[c])return;EVD[c]="loading";const d=await nrFetch("/data/events/"+c+".json");
@@ -1182,12 +1184,13 @@ function vCity(){
   return head("わが家の市区町村","envelope","lemon")+`
   <section class="h-sec" style="margin-top:12px">${edit?`<div class="hd"><h2>住んでいる市区町村</h2></div><form data-form="city" class="row" style="gap:8px;padding-bottom:10px"><select name="p" aria-label="都道府県" style="max-width:120px">${PREF.map(x=>`<option${x===S.pref?" selected":""}>${x}</option>`).join("")}</select><input name="c" value="${esc(S.city||"")}" placeholder="例：倉敷市" aria-label="市区町村" list="citylist" autocomplete="off"><datalist id="citylist">${(()=>{if(!nrCities){if(!window._ncf){window._ncf=1;nrFetch("/data/cities.json").then(d=>{nrCities=d||NSAMPLE.city;const dl=document.getElementById("citylist");if(dl)dl.innerHTML=cityOpts()})}return ""}return cityOpts()})()}</datalist><button class="btn" type="submit" style="width:auto;padding:0 16px">決める</button></form>${S.city?`<button type="button" class="x" data-act="citycancel" style="margin-bottom:10px">やめる</button>`:""}`
    :`<div class="cityfix"><div><div class="s">わが家の市区町村</div><div class="t">${esc(at)}</div></div><button type="button" class="fav" data-act="cityedit">変える</button><button type="button" class="x" data-act="citydel">外す</button></div>`}</section>
+  ${S.city?`<section class="h-sec"><div class="hd"><h2>${esc(S.city)}の子育てイベント</h2></div>${evRows(e=>e.k!=="両親学級・妊婦"||S.mode==="pre","これからのイベントは見つかりませんでした")}</section>`:""}
   <section class="h-sec"><div class="hd"><h2>使えるサービス</h2></div>
    ${SVC.map(([n,tag,what,how,bring])=>`<details class="svc"><summary><span class="grow"><span class="tag">${tag}</span><b>${n}</b></span></summary>
     <p>${what}</p><p><b>手続き</b>${how}</p>${bring?`<p><b>持ち物</b>${bring}</p>`:""}
     ${cityInfo()?.u?`<a class="lk" href="${esc(cityInfo().u)}" target="_blank" rel="noopener">${esc(S.city)}の公式サイトを見る</a>`:""}</details>`).join("")}
    <p class="note">金額や条件は国の基本です。市区町村によって上乗せや違いがあるので、市の公式サイトの「子育て」のページで確かめてください。</p></section>
-  ${S.city?`<section class="h-sec"><div class="hd"><h2>${esc(S.city)}の子育てイベント</h2></div>${evRows(e=>e.k!=="両親学級・妊婦"||S.mode==="pre","これからのイベントは見つかりませんでした")}</section>`:""}`;
+`;
 }
 const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",fun:"マタニティフォト・ジェンダーリビール・命名書・月齢フォトなど",jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
 const TOYS=[[0,5,"0〜5か月",[["ベッドメリー","寝ている赤ちゃんが目で追って楽しむ。音楽つきは寝かしつけにも","star"],["白黒の布絵本・カード","生まれてすぐは白黒がいちばん見やすい","book"],["ガラガラ・ラトル","握る・振ると音が出るのが楽しい","bubbles"]]],
@@ -1234,16 +1237,18 @@ const RANK=[["ベビー用品",[["紙おむつ テープ Sサイズ","bottle2"],
 ["出産準備",[["新生児用 肌着セット","onesie"],["ベビーバス","bubbles"],["ベビー布団セット","crib"],["新生児用 紙おむつ","bottle2"],["チャイルドシート","stroller"]]],
 ["授乳グッズ",[["授乳クッション","pillow"],["哺乳びん","bottle"],["授乳ブラ","ribbon"],["さく乳器","bottle2"],["母乳パッド","cloud"]]],
 ["内祝い",[["カタログギフト","envelope"],["名入れのお菓子","cupcake"],["今治タオルのセット","gift"],["選べるスイーツ","cupcake"],["洗剤のギフト","bubbles"]]]];
-let rkTab="";
+let rkTab="",RKD=null,rkL=0;
+async function rkLoad(){if(rkL)return;rkL=1;const d=await nrFetch("/data/rank.json");if(d&&d.tabs){RKD=d;render(true)}}
 let rkP=0;
 function vRank(){if(!rkP){AFF_PICK.push(...RANK.flatMap(r=>r[1].map(x=>x[0])));rkP=1}
   const tabs=(S.mode==="pre"?["マタニティ","出産準備","授乳グッズ","おでかけ"]:["ベビー用品","おもちゃ・知育","おでかけ","ベビー服","内祝い"]);if(!tabs.includes(rkTab))rkTab=S.mode==="pre"?"マタニティ":"ベビー用品";
-  const items=RANK.find(r=>r[0]===rkTab)[1];
+  rkLoad();const items=RANK.find(r=>r[0]===rkTab)[1],live=RKD?.tabs?.[rkTab];
   return head("人気ランキング","star","lemon")+`<p class="prnote">楽天ランキングより・このページには広告（PR）のリンクがふくまれます</p>
   <div class="chips">${tabs.map(t=>`<button type="button" class="${t===rkTab?"on":""}" data-act="rktab" data-v="${t}">${t}</button>`).join("")}</div>
   <section class="h-sec"><div class="hd"><h2>${rkTab}の人気</h2><span class="sub" style="font-size:12px">毎週入れ替え</span></div><div class="rows">
-   ${items.map(([n,i],k)=>`<div class="rw"><span class="rk rk${k+1}">${k+1}</span>${pic(i,40)}<span class="grow"><div class="t">${n}<span class="rei">例</span></div><a class="lk" href="${rkURL(n)}" target="_blank" rel="noopener sponsored">楽天で見る</a></span><button type="button" class="heart${W().some(w=>w.t===n)?" on":""}" data-act="toymemo" data-v="${esc(n)}" aria-label="欲しい物メモ">${W().some(w=>w.t===n)?"♥":"♡"}</button></div>`).join("")}</div>
-   <p class="note">♡で「欲しい物メモ」に入ります。</p></section>`;
+   ${live?live.map((x,k)=>{const on=W().some(w=>w.t===x.n);return `<div class="rw rkl"><span class="rk rk${k+1}">${k+1}</span>${x.img?`<img class="rkimg" src="${esc(x.img)}" alt="" loading="lazy" width="56" height="56">`:""}<span class="grow"><div class="t rkn">${esc(x.n)}</div><div class="s">${x.p?Number(x.p).toLocaleString()+"円":""}${x.r?`・★${x.r}（${x.rc}件）`:""}</div><a class="lk" href="${esc(x.u)}" target="_blank" rel="noopener sponsored">楽天で見る</a></span><button type="button" class="heart${on?" on":""}" data-act="toymemo" data-v="${esc(x.n)}" aria-label="欲しい物メモ">${on?"♥":"♡"}</button></div>`}).join("")
+   :items.map(([n,i],k)=>`<div class="rw"><span class="rk rk${k+1}">${k+1}</span>${pic(i,40)}<span class="grow"><div class="t">${n}<span class="rei">例</span></div><a class="lk" href="${rkURL(n)}" target="_blank" rel="noopener sponsored">楽天で見る</a></span><button type="button" class="heart${W().some(w=>w.t===n)?" on":""}" data-act="toymemo" data-v="${esc(n)}" aria-label="欲しい物メモ">${W().some(w=>w.t===n)?"♥":"♡"}</button></div>`).join("")}</div>
+   <p class="note">${live?`楽天市場のランキング（${esc(String(RKD.at).slice(0,10).replace(/-/g,"/"))}時点）です。毎週日曜に入れかわります。`:""}♡で「欲しい物メモ」に入ります。</p></section>`;
 }
 const APPIC=Object.keys(IMG);
 const APPBG=["#fde8ec","#e5f4ee","#e8effc","#fdf3dc","#f3e8fd","#fff"];
