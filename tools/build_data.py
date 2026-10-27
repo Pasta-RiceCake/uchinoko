@@ -108,11 +108,14 @@ MED = "https://www.mhlw.go.jp/content/11121000/"
 
 
 def find_files():
-    html = get("https://www.mhlw.go.jp/stf/newpage_43373.html").decode("utf-8", "replace")
-    names = {}
+    names = {b: b + "_20260601.csv.zip" for b in ["01-1_hospital_facility_info", "01-2_hospital_speciality_hours", "02-1_clinic_facility_info", "02-2_clinic_speciality_hours", "04_maternity_home"]}
+    try:
+        html = get("https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html").decode("utf-8", "replace")
+    except RuntimeError:
+        html = ""
     for f in re.findall(r"(0[1-4]-?\d?_[a-z_]+_\d{8}\.csv\.zip)", html):
         base = re.sub(r"_\d{8}\.csv\.zip$", "", f)
-        if f > names.get(base, ""):
+        if base in names and f > names[base]:
             names[base] = f
     print("med files", names)
     return names

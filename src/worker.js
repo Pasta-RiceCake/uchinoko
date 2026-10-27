@@ -162,6 +162,18 @@ function manifest(id, url) {
   );
 }
 
+// 子育てイベントを集める市区町村（家族のいる市だけ）。人数は出さない
+async function cities(env) {
+  await init(env.DB);
+  const r = await env.DB.prepare(
+    "SELECT DISTINCT json_extract(data, '$.pref.v') AS p, json_extract(data, '$.city.v') AS c FROM fam WHERE json_valid(data)"
+  ).all();
+  const list = r.results.filter((x) => x.p && x.c).map((x) => x.p + x.c);
+  return new Response(JSON.stringify({ cities: [...new Set(list)].sort() }), {
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=3600" },
+  });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -170,6 +182,7 @@ export default {
     m = url.pathname.match(/^\/m\/([0-9a-f]{24}|default)\.webmanifest$/);
     if (m) return manifest(m[1], url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
+    if (url.pathname === "/api/cities" && req.method === "GET") return await cities(env);
     if (req.method !== "POST") return json({ error: "method" }, 405);
     try {
       await init(env.DB);
