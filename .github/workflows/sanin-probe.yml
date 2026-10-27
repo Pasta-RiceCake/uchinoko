@@ -1,0 +1,38 @@
+name: sanin-probe
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download
+        run: |
+          set -e
+          B=https://www.mhlw.go.jp/content/11121000
+          for f in 01-1_hospital_facility_info 01-2_hospital_speciality_hours 02-1_clinic_facility_info 02-2_clinic_speciality_hours 04_maternity_home; do
+            curl -sSL -o $f.zip "$B/${f}_20260601.csv.zip"; unzip -o -q $f.zip -d $f; ls -la $f
+          done
+          curl -sSL -o def.xlsx "$B/001306376.xlsx"; ls -la def.xlsx
+      - name: inspect
+        run: |
+          pip install -q openpyxl
+          python3 - <<'PY'
+          import csv,glob,collections,openpyxl
+          wb=openpyxl.load_workbook('def.xlsx',read_only=True)
+          for ws in wb.worksheets:
+            for row in ws.iter_rows(values_only=True):
+              t=' '.join(str(c) for c in row if c)
+              if any(k in t for k in ['分娩','無痛','産科','周産期','助産']): print('DEF',ws.title,'|',t[:200])
+          for p in sorted(glob.glob('*/*.csv')):
+            with open(p,encoding='utf-8-sig') as f:
+              r=csv.reader(f);h=next(r);rows=list(r)
+            print('FILE',p,len(rows),'rows');print('HEAD',h)
+            for i,c in enumerate(h):
+              if any(k in c for k in ['分娩','無痛','産','診療科','科目']):
+                vals=collections.Counter(x[i] for x in rows if i<len(x) and x[i]).most_common(12);print('COL',c,vals)
+            # 値に「無痛」「分娩」を含む列
+            hit=collections.Counter()
+            for x in rows[:200000]:
+              for i,v in enumerate(x):
+                if '無痛' in v or '分娩' in v: hit[h[i] if i<len(h) else i]+=1
+            print('VALHIT',hit.most_common(10))
+          PY
