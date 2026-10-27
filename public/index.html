@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7e9ec">
 <meta name="description" content="妊娠中から子育て中まで。予定・手続き・家事・買い物をふたりで共有できる、無料の子育て手帳です。">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="/m/default.webmanifest">
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -719,6 +719,7 @@ form.add input{min-width:0}
 .gmv summary{cursor:pointer;font-weight:700;font-size:14px;text-align:center;list-style:none}
 .gmv summary::-webkit-details-marker{display:none}
 .gmv .sub{margin:10px 0 8px}
+.gios{text-align:center;background:var(--soft);border-radius:14px;padding:10px 12px;margin:0;color:var(--ink)}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -804,12 +805,25 @@ document.addEventListener("focusout",()=>{if(pendR)setTimeout(()=>{if(pendR&&!ty
 setInterval(()=>{if(!document.hidden)syncNow()},15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncNow()});
 window.addEventListener("online",()=>syncNow());
-async function shStart(){toast("リンクを作っています…");
+// すべての家族は、はじめから自動でサーバーに保存する（S.share）。パートナーとつないだら S.shared
+const shOn=()=>!!(S.share.on&&S.shared);
+async function shStart(quiet){if(!quiet)toast("リンクを作っています…");
   const put={};for(const k of shK())put[k]=outV(k)??null;
   try{const r=await api("/api/fam",{put});if(!r.ok)throw 0;const j=await r.json();
     S.share={on:true,id:j.id,code:j.code};S._sync={rev:j.rev,h:{}};for(const k in put)S._sync.h[k]=hs(JSON.stringify(put[k]));
-    persist();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました");
-  }catch(e){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
+    persist();keepURL();return true}catch(e){if(!quiet)toast("つながりませんでした。電波のよい所でもう一度押してください");return false}}
+async function shPair(){if(!S.share.on&&!(await shStart()))return;
+  S.shared=true;save();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました")}
+async function shStop(){S.shared=false;save();await syncNow();if(await shStart(true)){S.shared=false;save();render(true);toast("共有をやめました")}else toast("つながりませんでした。電波のよい所でもう一度押してください")}
+// iPhone は Safari とホーム画面のアプリで保存場所が別なので、URL に家族の鍵を入れておき、ホーム画面に追加したときに引き継ぐ
+const isIOS=()=>"standalone" in navigator;
+function keepURL(){if(!isIOS()||!S.share.on)return;const q="?f="+S.share.id+"."+S.share.code;
+  if(!navigator.standalone&&location.search!==q)history.replaceState(null,"","/"+q);
+  const m=document.querySelector('link[rel="manifest"]');if(m){const u=new URL(m.getAttribute("href"),location.origin);u.searchParams.set("f",S.share.id+"."+S.share.code);m.href=u.pathname+u.search}}
+async function restoreFromURL(){const m=location.search.match(/[?&]f=([a-z0-9]{10})\.(\d{6})/);if(!m)return false;
+  if(S.setup)return false;
+  try{const r=await api("/api/fam/"+m[1]+"/sync",{code:m[2],rev:0,put:{}});if(!r.ok)return false;const j=await r.json();
+    S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id:m[1],code:m[2]};S.setup=1;persist();return true}catch(_){return false}}
 const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;
 
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
@@ -1218,7 +1232,7 @@ let plEd=null,asPt=false;
 const ptn=()=>S.me==="パパ"?"ママ":"パパ";
 const hidePl=p=>asPt&&p.vis==="自分だけ";
 function plRow(e){const p=e.p;return `<button type="button" class="li plr" data-act="pledit" data-i="${e.pi}"><span class="bub evic" style="background:${kcol(p.kd)}22">${pic(p.ic||"clock",32)}</span><span class="grow"><span class="kpill" style="background:${kcol(p.kd)}">${esc(p.kd||"予定")}</span> <span class="sub">${p.tm?esc(p.tm)+(p.te?"〜"+esc(p.te):""):"終日"}${p.w?"・"+esc(p.w):""}</span>
-  <div class="t">${esc(p.t)}</div>${p.m?`<div class="sub">${esc(p.m)}</div>`:""}<div class="plmeta">${S.share.on?(p.vis==="自分だけ"?`<span class="vis me">自分だけ</span>`:`<span class="vis">ふたりで共有</span>`):""}${(p.r||"前日")==="なし"?"リマインドなし":"リマインド "+esc(p.r||"前日")}${S.share.on&&p.by?"・"+esc(p.by)+"が追加":""}</div></span>${asPt?"":`<span class="sub">編集</span>`}</button>`}
+  <div class="t">${esc(p.t)}</div>${p.m?`<div class="sub">${esc(p.m)}</div>`:""}<div class="plmeta">${shOn()?(p.vis==="自分だけ"?`<span class="vis me">自分だけ</span>`:`<span class="vis">ふたりで共有</span>`):""}${(p.r||"前日")==="なし"?"リマインドなし":"リマインド "+esc(p.r||"前日")}${shOn()&&p.by?"・"+esc(p.by)+"が追加":""}</div></span>${asPt?"":`<span class="sub">編集</span>`}</button>`}
 function plForm(){const n=plEd===-1,p=n?{d:calSel,kd:"その他",ic:"clock",w:"家族みんな",r:"前日"}:S.plans[plEd];
   return `<div class="sec-t">${n?"予定を追加":"予定を編集"}</div><form class="sheet pled" data-form="plan2">
   <input name="t" value="${esc(p.t||"")}" placeholder="予定の名前（例：1か月健診）" aria-label="予定の名前" required>
@@ -1228,15 +1242,15 @@ function plForm(){const n=plEd===-1,p=n?{d:calSel,kd:"その他",ic:"clock",w:"�
   <div class="lab">種類</div><div class="kch">${PLK.map(([k,c])=>`<label><input type="radio" name="kd" value="${k}"${p.kd===k?" checked":""}><span style="--kc:${c}">${k}</span></label>`).join("")}</div>
   <div class="lab">アイコン</div><div class="icp2">${APPIC.map(k=>`<label><input type="radio" name="ic" value="${k}"${(p.ic||"clock")===k?" checked":""}><span>${il(k,28)}</span></label>`).join("")}</div>
   <div class="lab">だれの予定</div><div class="kch">${PLW.map(w=>`<label><input type="radio" name="w" value="${w}"${p.w===w?" checked":""}><span style="--kc:var(--ac)">${w}</span></label>`).join("")}</div>
-  <div class="lab">見せる相手</div><div class="kch">${[["共有","ふたりで共有"],["自分だけ","自分だけ"]].map(([v,l])=>`<label><input type="radio" name="vis" value="${v}"${(p.vis||"共有")===v?" checked":""}><span style="--kc:var(--ac)">${l}</span></label>`).join("")}</div>${S.share.on?"":`<p class="note" style="margin:-4px 0 0">共有をオンにしたときに使われます。</p>`}
+  <div class="lab">見せる相手</div><div class="kch">${[["共有","ふたりで共有"],["自分だけ","自分だけ"]].map(([v,l])=>`<label><input type="radio" name="vis" value="${v}"${(p.vis||"共有")===v?" checked":""}><span style="--kc:var(--ac)">${l}</span></label>`).join("")}</div>${shOn()?"":`<p class="note" style="margin:-4px 0 0">共有をオンにしたときに使われます。</p>`}
   <label class="fl">リマインド<select name="r">${REM.map(r=>`<option${(p.r||"前日")===r?" selected":""}>${r}</option>`).join("")}</select></label>
   <textarea name="m" rows="2" placeholder="メモ（場所・持ち物など）" aria-label="メモ">${esc(p.m||"")}</textarea>
   <div class="plbtn"><button type="submit" class="pri">${n?"追加する":"保存する"}</button><button type="button" data-act="plcancel">やめる</button>${n?"":`<button type="button" class="del" data-act="plandel2" data-i="${plEd}">この予定を消す</button>`}</div></form>`}
 function calShare(){if(asPt)return shareCard();
-  if(S.share.on)return `<div class="calsh"><span class="dotg"></span><span class="grow">${ptn()}と共有中</span><button type="button" data-act="aspt">${ptn()}の画面で見てみる</button></div>`;
+  if(shOn())return `<div class="calsh"><span class="dotg"></span><span class="grow">${ptn()}と共有中</span><button type="button" data-act="aspt">${ptn()}の画面で見てみる</button></div>`;
   return `<button type="button" class="calsh off" data-act="open" data-v="fufu"><span class="grow">パートナーと共有する</span>${ic("chev",14)}</button>`}
 function shareCard(){const s=S.share;if(asPt)return `<div class="sheet pvbar"><span class="grow"><b>${ptn()}から見た画面</b><span class="sub">「自分だけ」の予定は出ていません</span></span><button type="button" class="pri sm" data-act="aspt">もどる</button></div>`;
-  if(!s.on)return `<div class="sheet shc"><span class="bub">${pic("family",34)}</span><div class="grow"><div class="t">パートナーと共有する</div><div class="sub">カレンダー・共有メモ・家事・買い物などが、ふたりのスマホで同じになります。ログインはいりません。</div></div><button type="button" class="pri sm" data-act="shon">共有する</button></div>`;
+  if(!shOn())return `<div class="sheet shc"><span class="bub">${pic("family",34)}</span><div class="grow"><div class="t">パートナーと共有する</div><div class="sub">カレンダー・共有メモ・家事・買い物などが、ふたりのスマホで同じになります。ログインはいりません。</div></div><button type="button" class="pri sm" data-act="shon">共有する</button></div>`;
   return `<details class="sheet shc on"><summary><span class="t">${S.me==="パパ"?"ママ":"パパ"}（パートナー）と共有中</span><span class="sub">リンクを見る</span></summary><div class="grow"><div class="sub">このリンクとあいことばをLINEなどで送ってください。開いてあいことばを入れるだけで使えます。</div>
   <div class="shl"><code>${location.origin}/j/${s.id}</code><button type="button" data-act="shcopy">コピー</button></div><div class="sub">あいことば <b class="code">${s.code}</b></div><a class="lnsh" href="https://line.me/R/share?text=${encodeURIComponent(shText())}" target="_blank" rel="noopener">LINEで送る</a>
   
@@ -1556,10 +1570,10 @@ function sxSec(){const L=(S.sx||[]).slice().sort((a,b)=>a.at.localeCompare(b.at)
 
 /* ===== 名前候補 ===== */
 const nmS=()=>{S.nm=S.nm||{last:"",me:S.me||"ママ",list:[]};return S.nm};
-const nmMe=()=>S.share.on?(S.me||"ママ"):nmS().me;
+const nmMe=()=>shOn()?(S.me||"ママ"):nmS().me;
 function vNames(){const n=nmS(),me=nmMe(),pt=me==="ママ"?"パパ":"ママ",both=n.list.filter(x=>x.l.ママ&&x.l.パパ);
   return head("名前候補","heart","pink")+`<p class="lead">ふたりで候補を出して、いいなと思ったら♡。ふたりとも♡をつけた名前だけが上に残ります。</p>
-  ${S.share.on?"":`<div class="sheet"><div class="kch" style="justify-content:center">`+["ママ","パパ"].map(w=>`<label><input type="radio" name="nmme" data-act="nmme" value="${w}"${me===w?" checked":""}><span style="--kc:var(--ac)">${w}として選ぶ</span></label>`).join("")+`</div><p class="note" style="text-align:center;margin:6px 0 0">パートナーと共有すると、それぞれのスマホで♡をつけられます。</p></div>`}
+  ${shOn()?"":`<div class="sheet"><div class="kch" style="justify-content:center">`+["ママ","パパ"].map(w=>`<label><input type="radio" name="nmme" data-act="nmme" value="${w}"${me===w?" checked":""}><span style="--kc:var(--ac)">${w}として選ぶ</span></label>`).join("")+`</div><p class="note" style="text-align:center;margin:6px 0 0">パートナーと共有すると、それぞれのスマホで♡をつけられます。</p></div>`}
   <div class="sec-t">ふたりとも♡ <span class="sub">${both.length}こ</span></div><div class="sheet">${both.map(x=>`<div class="li nmb"><span class="grow"><div class="nmn">${esc(n.last)}${n.last?" ":""}${esc(x.k||x.y)}</div>${x.k?`<div class="sub">${esc(x.y)}</div>`:""}</span><span class="nmh">♡♡</span></div>`).join("")||'<p class="sub" style="margin:0">まだありません。おたがいに♡をつけてみてください</p>'}</div>
   <div class="sec-t">候補</div><div class="sheet">${n.list.map((x,i)=>x.l.ママ&&x.l.パパ?"":`<div class="li"><span class="grow"><div class="t">${esc(x.k||x.y)}</div><div class="sub">${x.k?esc(x.y)+"・":""}${esc(x.by)}が追加</div></span><button type="button" class="nmlk${x.l[me]?" on":""}" data-act="nmlk" data-i="${i}" aria-label="いいね">${x.l[me]?"♥":"♡"}</button><button type="button" class="x" data-act="nmdel" data-i="${i}">消す</button></div>`).join("")}
   <form class="add nmf" data-form="nm"><input name="y" placeholder="よみ（例：ひなた）" aria-label="よみ"><input name="k" placeholder="漢字（あれば）" aria-label="漢字"><button type="submit">追加</button></form></div>
@@ -1738,8 +1752,8 @@ document.addEventListener("click",e=>{
     case"pledit":if(asPt)break;plEd=i;render(true);document.querySelector(".pled")?.scrollIntoView({block:"start",behavior:"smooth"});break;
     case"plcancel":plEd=null;render(true);break;
     case"plandel2":S.plans.splice(i,1);plEd=null;toast("消しました");k();break;
-    case"shon":shStart();break;
-    case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、このスマホの共有をやめます";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;S.share={on:false};S._sync={rev:0,h:{}};toast("共有をやめました");k();break;
+    case"shon":shPair();break;
+    case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、共有をやめます（相手のスマホとはつながらなくなります）";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;shStop();break;
     case"shcopy":{const t=shText();try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
     case"plandel":S.plans.splice(+el.dataset.id.slice(1),1);k();break;
     case"sym":symSel=i;render(true);break;
@@ -1854,6 +1868,7 @@ function setupGate(){
    <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
+  ${isIOS()&&!navigator.standalone?`<p class="note gios">iPhoneの人は、先に下の<b>共有ボタン →「ホーム画面に追加」</b>をして、追加したアイコンから始めるのがおすすめです。</p>`:""}
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
   <details class="sheet gmv"><summary>機種変更した人はこちら</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
@@ -1862,7 +1877,7 @@ function setupGate(){
   f.addEventListener("change",sync);sync();
   f.addEventListener("submit",e=>{e.preventDefault();const d=f.d.value;if(!d){const g=o.querySelector(".gerr");g.textContent="日にちを入れてください";g.hidden=false;return}
     S.mode=f.mode.value;S.me=f.me.value;S.name=f.n.value.trim();if(S.mode==="pre"){S.due=d;S.birth=d}else{S.birth=d;S.sex=f.sex.value}
-    S.setup=1;page=null;stack=[];save();ungate(o);render(false)});
+    S.setup=1;page=null;stack=[];save();ungate(o);render(false);shStart(true)});
 }
 function joinGate(id){
   const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">パートナーから招待されています。送られてきた「あいことば」を入れると、ふたりで同じ内容が見られます。</p></div>
@@ -1883,14 +1898,17 @@ function joinGate(id){
       if(r.status===404)return err("このリンクは見つかりませんでした。もう一度送ってもらってください");
       if(!r.ok)throw 0;const j=await r.json();
       S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id,code:c};S.me=f.me.value;S.setup=1;
-      page=null;stack=[];persist();home();ungate(o);render(false);toast("つながりました");
+      page=null;stack=[];persist();home();keepURL();ungate(o);render(false);toast("つながりました");
     }catch(_){err("つながりませんでした。電波のよい所でもう一度押してください")}finally{b.disabled=false;b.textContent="つなぐ"}});
 }
-function startGate(){
+async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
   else if(location.pathname!=="/")history.replaceState(null,"","/");
-  if(!S.setup)setupGate();
+  if(!S.setup&&await restoreFromURL()){page=null;stack=[];render(false);toast("前に入れた内容を引き継ぎました")}
+  if(!S.setup)return setupGate();
+  if(!S.share.on)await shStart(true);
+  keepURL();
 }
 /* ===== 共有と引き継ぎ（せってい） ===== */
 let mvCode=null,mvArm=false;
@@ -1921,7 +1939,7 @@ async function mvGet(c,form){c=String(c||"").toUpperCase().replace(/[^A-Z0-9]/g,
 let icBusy=false;
 function icLinks(id){
   const set=(rel,href)=>{let l=document.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement("link");l.rel=rel;document.head.appendChild(l)}if(l.getAttribute("href")!==href)l.href=href};
-  set("apple-touch-icon","/i/"+id+".png");set("icon","/i/"+id+".png");set("manifest","/m/"+id+".webmanifest");
+  set("apple-touch-icon","/i/"+id+".png");set("icon","/i/"+id+".png");set("manifest","/m/"+id+".webmanifest");keepURL();
 }
 function icDraw(a){return new Promise((ok,ng)=>{const own=a.ic==="own"&&a.own,src=own?a.own:IMG[a.ic];if(!src)return ng();
   const im=new Image();im.onload=()=>{const N=512,c=document.createElement("canvas");c.width=c.height=N;const g=c.getContext("2d");

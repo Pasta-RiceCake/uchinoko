@@ -148,15 +148,17 @@ async function iconGet(env, id) {
   if (!row) return new Response("not found", { status: 404 });
   return new Response(new Uint8Array(row.png), { headers: { "content-type": "image/png", "cache-control": "public, max-age=31536000, immutable" } });
 }
-function manifest(id) {
-  const src = "/i/" + id + ".png";
+function manifest(id, url) {
+  const src = id === "default" ? "/icon-512.png" : "/i/" + id + ".png";
+  const f = url.searchParams.get("f") || "";
+  const start = /^[a-z0-9]{10}\.\d{6}$/.test(f) ? "/?f=" + f : "/";
   return new Response(
     JSON.stringify({
-      name: "うちの子手帳", short_name: "うちの子手帳", lang: "ja", start_url: "/", scope: "/", display: "standalone",
+      name: "うちの子手帳", short_name: "うちの子手帳", lang: "ja", start_url: start, scope: "/", display: "standalone",
       background_color: "#fdf3f5", theme_color: "#f7e9ec",
       icons: [{ src, sizes: "512x512", type: "image/png", purpose: "any" }, { src, sizes: "512x512", type: "image/png", purpose: "maskable" }],
     }),
-    { headers: { "content-type": "application/manifest+json; charset=utf-8", "cache-control": "public, max-age=31536000, immutable" } }
+    { headers: { "content-type": "application/manifest+json; charset=utf-8", "cache-control": "no-store" } }
   );
 }
 
@@ -165,8 +167,8 @@ export default {
     const url = new URL(req.url);
     let m = url.pathname.match(/^\/i\/([0-9a-f]{24})\.png$/);
     if (m) return await iconGet(env, m[1]);
-    m = url.pathname.match(/^\/m\/([0-9a-f]{24})\.webmanifest$/);
-    if (m) return manifest(m[1]);
+    m = url.pathname.match(/^\/m\/([0-9a-f]{24}|default)\.webmanifest$/);
+    if (m) return manifest(m[1], url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
     if (req.method !== "POST") return json({ error: "method" }, 405);
     try {

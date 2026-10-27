@@ -28,10 +28,23 @@ document.addEventListener("focusout",()=>{if(pendR)setTimeout(()=>{if(pendR&&!ty
 setInterval(()=>{if(!document.hidden)syncNow()},15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncNow()});
 window.addEventListener("online",()=>syncNow());
-async function shStart(){toast("リンクを作っています…");
+// すべての家族は、はじめから自動でサーバーに保存する（S.share）。パートナーとつないだら S.shared
+const shOn=()=>!!(S.share.on&&S.shared);
+async function shStart(quiet){if(!quiet)toast("リンクを作っています…");
   const put={};for(const k of shK())put[k]=outV(k)??null;
   try{const r=await api("/api/fam",{put});if(!r.ok)throw 0;const j=await r.json();
     S.share={on:true,id:j.id,code:j.code};S._sync={rev:j.rev,h:{}};for(const k in put)S._sync.h[k]=hs(JSON.stringify(put[k]));
-    persist();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました");
-  }catch(e){toast("つながりませんでした。電波のよい所でもう一度押してください")}}
+    persist();keepURL();return true}catch(e){if(!quiet)toast("つながりませんでした。電波のよい所でもう一度押してください");return false}}
+async function shPair(){if(!S.share.on&&!(await shStart()))return;
+  S.shared=true;save();render(true);document.querySelector(".shc")?.setAttribute("open","");toast("共有リンクを作りました")}
+async function shStop(){S.shared=false;save();await syncNow();if(await shStart(true)){S.shared=false;save();render(true);toast("共有をやめました")}else toast("つながりませんでした。電波のよい所でもう一度押してください")}
+// iPhone は Safari とホーム画面のアプリで保存場所が別なので、URL に家族の鍵を入れておき、ホーム画面に追加したときに引き継ぐ
+const isIOS=()=>"standalone" in navigator;
+function keepURL(){if(!isIOS()||!S.share.on)return;const q="?f="+S.share.id+"."+S.share.code;
+  if(!navigator.standalone&&location.search!==q)history.replaceState(null,"","/"+q);
+  const m=document.querySelector('link[rel="manifest"]');if(m){const u=new URL(m.getAttribute("href"),location.origin);u.searchParams.set("f",S.share.id+"."+S.share.code);m.href=u.pathname+u.search}}
+async function restoreFromURL(){const m=location.search.match(/[?&]f=([a-z0-9]{10})\.(\d{6})/);if(!m)return false;
+  if(S.setup)return false;
+  try{const r=await api("/api/fam/"+m[1]+"/sync",{code:m[2],rev:0,put:{}});if(!r.ok)return false;const j=await r.json();
+    S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id:m[1],code:m[2]};S.setup=1;persist();return true}catch(_){return false}}
 const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;

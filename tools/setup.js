@@ -12,6 +12,7 @@ function setupGate(){
    <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
+  ${isIOS()&&!navigator.standalone?`<p class="note gios">iPhoneの人は、先に下の<b>共有ボタン →「ホーム画面に追加」</b>をして、追加したアイコンから始めるのがおすすめです。</p>`:""}
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
   <details class="sheet gmv"><summary>機種変更した人はこちら</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
@@ -20,7 +21,7 @@ function setupGate(){
   f.addEventListener("change",sync);sync();
   f.addEventListener("submit",e=>{e.preventDefault();const d=f.d.value;if(!d){const g=o.querySelector(".gerr");g.textContent="日にちを入れてください";g.hidden=false;return}
     S.mode=f.mode.value;S.me=f.me.value;S.name=f.n.value.trim();if(S.mode==="pre"){S.due=d;S.birth=d}else{S.birth=d;S.sex=f.sex.value}
-    S.setup=1;page=null;stack=[];save();ungate(o);render(false)});
+    S.setup=1;page=null;stack=[];save();ungate(o);render(false);shStart(true)});
 }
 function joinGate(id){
   const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">パートナーから招待されています。送られてきた「あいことば」を入れると、ふたりで同じ内容が見られます。</p></div>
@@ -41,12 +42,15 @@ function joinGate(id){
       if(r.status===404)return err("このリンクは見つかりませんでした。もう一度送ってもらってください");
       if(!r.ok)throw 0;const j=await r.json();
       S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id,code:c};S.me=f.me.value;S.setup=1;
-      page=null;stack=[];persist();home();ungate(o);render(false);toast("つながりました");
+      page=null;stack=[];persist();home();keepURL();ungate(o);render(false);toast("つながりました");
     }catch(_){err("つながりませんでした。電波のよい所でもう一度押してください")}finally{b.disabled=false;b.textContent="つなぐ"}});
 }
-function startGate(){
+async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
   else if(location.pathname!=="/")history.replaceState(null,"","/");
-  if(!S.setup)setupGate();
+  if(!S.setup&&await restoreFromURL()){page=null;stack=[];render(false);toast("前に入れた内容を引き継ぎました")}
+  if(!S.setup)return setupGate();
+  if(!S.share.on)await shStart(true);
+  keepURL();
 }

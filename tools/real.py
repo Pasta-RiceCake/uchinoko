@@ -57,12 +57,14 @@ assert '本番' not in s and '見本' not in s, [m.start() for m in re.finditer(
 rep('<code>https://uchinoko-techo.example/j/${s.id}</code>', '<code>${location.origin}/j/${s.id}</code>')
 rep('<div class="sub">あいことば <b class="code">${s.code}</b></div>', '<div class="sub">あいことば <b class="code">${s.code}</b></div><a class="lnsh" href="https://line.me/R/share?text=${encodeURIComponent(shText())}" target="_blank" rel="noopener">LINEで送る</a>')
 rep('case"shon":S.share={on:true,id:Math.random().toString(36).slice(2,8),code:String(Math.floor(1000+Math.random()*9000))};toast("共有リンクを作りました");k();document.querySelector(".shc")?.setAttribute("open","");break;',
-    'case"shon":shStart();break;')
+    'case"shon":shPair();break;')
 rep('case"shoff":asPt=false;S.share={on:false};toast("共有をやめました");k();break;',
-    'case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、このスマホの共有をやめます";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;S.share={on:false};S._sync={rev:0,h:{}};toast("共有をやめました");k();break;')
+    'case"shoff":if(!shOffArm){shOffArm=true;el.textContent="もう一度押すと、共有をやめます（相手のスマホとはつながらなくなります）";setTimeout(()=>{shOffArm=false},5000);break}shOffArm=false;asPt=false;shStop();break;')
 rep('const t="うちの子手帳のカレンダー https://uchinoko-techo.example/j/"+S.share.id+" あいことば "+S.share.code;',
     'const t=shText();')
 
+# 「共有中」の表示は、パートナーとつないだときだけ（自動保存だけのときは出さない）
+s = s.replace('S.share.on', 'shOn()').replace('if(!s.on)return', 'if(!shOn())return')
 # ---- 保存と同期 ----
 rep('const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};', open(os.path.join(ROOT, 'tools/sync.js'), encoding='utf-8').read())
 
@@ -90,7 +92,7 @@ head = '''<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7e9ec">
 <meta name="description" content="妊娠中から子育て中まで。予定・手続き・家事・買い物をふたりで共有できる、無料の子育て手帳です。">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="/m/default.webmanifest">
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">

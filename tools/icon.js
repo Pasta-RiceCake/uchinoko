@@ -2,7 +2,7 @@
 let icBusy=false;
 function icLinks(id){
   const set=(rel,href)=>{let l=document.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement("link");l.rel=rel;document.head.appendChild(l)}if(l.getAttribute("href")!==href)l.href=href};
-  set("apple-touch-icon","/i/"+id+".png");set("icon","/i/"+id+".png");set("manifest","/m/"+id+".webmanifest");
+  set("apple-touch-icon","/i/"+id+".png");set("icon","/i/"+id+".png");set("manifest","/m/"+id+".webmanifest");keepURL();
 }
 function icDraw(a){return new Promise((ok,ng)=>{const own=a.ic==="own"&&a.own,src=own?a.own:IMG[a.ic];if(!src)return ng();
   const im=new Image();im.onload=()=>{const N=512,c=document.createElement("canvas");c.width=c.height=N;const g=c.getContext("2d");
