@@ -783,10 +783,18 @@ const ILN={"sleepbaby": "<path fill=\"none\" stroke=\"currentColor\" stroke-line
 const ILSETS=[["base","いつものイラスト"],["mono","モノトーン"],["kusumi","くすみカラー"],["natural","ナチュラル"],["cool","クール・モノクロ"],["pop","ポップ・カラフル"],["otona","大人かわいい"],["mizu","水彩"]];
 const ILAUTO={korea:"kusumi",yume:"pop",mono:"mono",natural:"natural",simple:"cool",pop:"pop",fuwa:"otona"};
 const ILURL="/ill/";const ILS={},ILSq={};
-const ilSet=()=>S.ils&&S.ils!=="auto"?S.ils:(ILAUTO[S.th]||"base");
+const ilSet=()=>S.ils&&S.ils!=="auto"?S.ils:"base";
 function ilLoad(s){if(s==="base"||ILS[s]||ILSq[s])return;ILSq[s]=1;fetch(ILURL+s+".json").then(r=>r.ok?r.json():null).then(d=>{if(d){ILS[s]=d;render(true)}}).catch(()=>{})}
-function imgSrc(k,s){s=s||ilSet();if(s!=="base"){ilLoad(s);if(ILS[s]&&ILS[s][k])return ILS[s][k]}return IMG[k]||(ILS.mizu&&ILS.mizu[k])||""}
-function icKeys(){ilLoad("mizu");const s=ilSet();return [...new Set([...(ILS[s]?Object.keys(ILS[s]):[]),...Object.keys(IMG),...(ILS.mizu?Object.keys(ILS.mizu):[])])]}
+// セットにない絵は、同じセットの近い絵でかわりにする
+const ILALIAS={baby_face:["bear","bunny"],boy:["baby_face","bear"],girl:["baby_face","bunny"],family:["smile","bunny","heart"],hearthands:["smile","bouquet","flower","bunny"],ribbonheart:["bouquet","flower","smile","ribbon"],
+ sleepbaby:["moon","cloud","star"],crib:["moon","cloud","bear"],pillow:["cloud","moon"],swaddle:["onesie","bib","bear"],sheep:["bunny","bear"],chick:["duck","bird","bunny"],
+ thermometer:["pacifier","bib","bottle"],clock:["phone","laptop","music","book","star"],book:["laptop","envelope","photo","camera"],envelope:["phone","book","photo","camera"],basket:["bag","gift","mug","stroller"],bag:["gift","basket"],
+ backpack:["bag","stroller"],bottle2:["bottle"],bubbles:["cloud","rainbow"],mug:["bottle","cupcake"],gift:["ribbon","crown","cupcake"],cupcake:["gift","heart"],
+ ribbon:["crown","heart"],tulip:["flower","leaf"],sunflower:["flower","tulip","sun"],sakura:["flower","tulip"],snowflake:["star","cloud"],phone:["camera","heart"],
+ toast:["cupcake","mug"],star:["crown","heart"],moon:["star","cloud"],rainbow:["cloud","star"],onesie:["sweater","socks"],socks:["onesie","sweater"],stroller:["car"]};
+function ilFind(D,k){const seen=new Set(),q=[k];while(q.length){const x=q.shift();if(seen.has(x))continue;seen.add(x);if(D[x])return D[x];q.push(...(ILALIAS[x]||[]))}return D.heart||""}
+function imgSrc(k,s){s=s||ilSet();if(s==="base")return IMG[k]||(ILALIAS[k]?ilFind(IMG,k):"");ilLoad(s);return ILS[s]?ilFind(ILS[s],k):""}
+function icKeys(){const s=ilSet();return s==="base"?Object.keys(IMG):ILS[s]?Object.keys(ILS[s]):Object.keys(IMG)}
 const il=(k,s)=>S.icm==="line"&&ILN[k]?`<span class="iln" style="width:${s}px;height:${s}px"><svg viewBox="0 0 24 24" width="${Math.round(s*.62)}" height="${Math.round(s*.62)}" aria-hidden="true">${ILN[k]}</svg></span>`:imgSrc(k)?`<img class="il" src="${imgSrc(k)}" width="${s}" height="${s}" alt="">`:"";
 const pic=(k,s)=>imgSrc(k)?il(k,s):ic(k,Math.round(s*.6));
 const K={pink:"k1",red:"k1",lemon:"k2",sky:"k3",mint:"k4"};
@@ -1628,10 +1636,10 @@ function vKise(){
   <div class="sec-t">テーマ</div><div class="themes">${THEMES.map(([k,n,dsc,f])=>{const p=pv[k];return `<button type="button" class="thc sheet${S.th===k?" on":""}" data-act="th" data-v="${k}">
    <span class="pv" style="background:${p[0]}"><i style="width:60%;background:var(--ac);opacity:.85"></i><span class="r"><i style="background:${p[1]};border:${p[2]};border-radius:${p[3]}"></i><i style="background:${p[1]};border:${p[2]};border-radius:${p[3]}"></i><i style="background:${p[1]};border:${p[2]};border-radius:${p[3]}"></i></span></span>
    <b style="font-family:'${f}',sans-serif">${n}</b><span class="sub">${dsc}</span></button>`}).join("")}</div>
-  <div class="sec-t">絵のセット</div>${(()=>{ILSETS.forEach(([s])=>ilLoad(s));const cur=S.icm==="line"?"line":(S.ils||"auto");
+  <div class="sec-t">絵のセット</div>${(()=>{ILSETS.forEach(([s])=>ilLoad(s));const cur=S.icm==="line"?"line":ilSet();
   const pv=s=>["bear","bottle","heart"].map(x=>{const u=imgSrc(x,s);return u?`<img src="${u}" alt="" width="30" height="30">`:`<span class="pvph"></span>`}).join("");
-  const opts=[["auto","テーマにおまかせ",pv(ILAUTO[S.th]||"base")],...ILSETS.map(([s,n])=>[s,n,pv(s)]),["line","シンプルな線",["bear","bottle","moon"].map(x=>`<svg viewBox="0 0 24 24" width="24" height="24">${ILN[x]}</svg>`).join("")]];
-  return `<div class="sheet icms ilsets">${opts.map(([k,n,p])=>`<button type="button" class="${cur===k?"on":""}" data-act="ils" data-v="${k}"><span class="pv2">${p}</span>${n}</button>`).join("")}</div><p class="note">家事やアイコンの絵は、ほかのセットの絵からも選べます。</p>`})()}
+  const opts=[...ILSETS.map(([s,n])=>[s,n,pv(s)]),["line","シンプルな線",["bear","bottle","moon"].map(x=>`<svg viewBox="0 0 24 24" width="24" height="24">${ILN[x]}</svg>`).join("")]];
+  return `<div class="sheet icms ilsets">${opts.map(([k,n,p])=>`<button type="button" class="${cur===k?"on":""}" data-act="ils" data-v="${k}"><span class="pv2">${p}</span>${n}</button>`).join("")}</div><p class="note">どの画面も、えらんだセットの絵だけで出ます。テーマを変えても、絵はそのままです。</p>`})()}
   <div class="sec-t">カラー</div><div class="sheet cols">${COLS.map(([k,n,c])=>`<button type="button" class="colc${S.col===k?" on":""}" data-act="col" data-v="${k}"><i style="background:${c}"></i>${n}</button>`).join("")}</div>`;
 }
 function vShareInfo(){return vFufu()}
