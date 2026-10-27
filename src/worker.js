@@ -12,6 +12,7 @@ async function init(db) {
     "CREATE TABLE IF NOT EXISTS fam (id TEXT PRIMARY KEY, code TEXT NOT NULL, data TEXT NOT NULL, rev INTEGER NOT NULL, fails INTEGER NOT NULL DEFAULT 0, fail_at INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL, updated INTEGER NOT NULL)"
   );
   await db.exec("CREATE TABLE IF NOT EXISTS move (code TEXT PRIMARY KEY, data TEXT NOT NULL, exp INTEGER NOT NULL)");
+  await db.exec("CREATE TABLE IF NOT EXISTS icon (id TEXT PRIMARY KEY, png BLOB NOT NULL, created INTEGER NOT NULL)");
   ready = true;
 }
 
@@ -131,14 +132,47 @@ async function moveGet(req, env) {
   return json({ data: JSON.parse(row.data) });
 }
 
+// ホーム画面のアイコン: 同じ画像は同じ id になる
+async function iconPut(req, env) {
+  const b = await readBody(req);
+  const bin = Uint8Array.from(atob(String(b.png || "")), (c) => c.charCodeAt(0));
+  if (bin.length < 100 || bin.length > 600_000 || bin[1] !== 0x50 || bin[2] !== 0x4e || bin[3] !== 0x47) return json({ error: "bad" }, 400);
+  const h = await crypto.subtle.digest("SHA-256", bin);
+  const id = [...new Uint8Array(h)].slice(0, 12).map((x) => x.toString(16).padStart(2, "0")).join("");
+  await env.DB.prepare("INSERT OR IGNORE INTO icon (id, png, created) VALUES (?, ?, ?)").bind(id, bin, Date.now()).run();
+  return json({ id });
+}
+async function iconGet(env, id) {
+  await init(env.DB);
+  const row = await env.DB.prepare("SELECT png FROM icon WHERE id = ?").bind(id).first();
+  if (!row) return new Response("not found", { status: 404 });
+  return new Response(new Uint8Array(row.png), { headers: { "content-type": "image/png", "cache-control": "public, max-age=31536000, immutable" } });
+}
+function manifest(id) {
+  const src = "/i/" + id + ".png";
+  return new Response(
+    JSON.stringify({
+      name: "うちの子手帳", short_name: "うちの子手帳", lang: "ja", start_url: "/", scope: "/", display: "standalone",
+      background_color: "#fdf3f5", theme_color: "#f7e9ec",
+      icons: [{ src, sizes: "512x512", type: "image/png", purpose: "any" }, { src, sizes: "512x512", type: "image/png", purpose: "maskable" }],
+    }),
+    { headers: { "content-type": "application/manifest+json; charset=utf-8", "cache-control": "public, max-age=31536000, immutable" } }
+  );
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    let m = url.pathname.match(/^\/i\/([0-9a-f]{24})\.png$/);
+    if (m) return await iconGet(env, m[1]);
+    m = url.pathname.match(/^\/m\/([0-9a-f]{24})\.webmanifest$/);
+    if (m) return manifest(m[1]);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
     if (req.method !== "POST") return json({ error: "method" }, 405);
     try {
       await init(env.DB);
       if (url.pathname === "/api/fam") return await create(req, env);
+      if (url.pathname === "/api/icon") return await iconPut(req, env);
       if (url.pathname === "/api/move") return await movePut(req, env);
       if (url.pathname === "/api/move/get") return await moveGet(req, env);
       const m = url.pathname.match(/^\/api\/fam\/([a-z0-9]{10})\/sync$/);

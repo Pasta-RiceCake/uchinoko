@@ -76,7 +76,7 @@ rep('    case"back":', '    case"mvput":mvPut();break;\n    case"mvcopy":{const 
 rep('  else if(t==="brand"){', '  else if(t==="mvget"){mvGet(v("c"));return}\n  else if(t==="brand"){')
 
 # ---- はじめての画面・あいことば入力 ----
-setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read()
+setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/icon.js'), encoding='utf-8').read()
 tail = 'render(false);\n})();\n</script>'
 assert s.rstrip().endswith(tail), s[-200:]
 s = s.rstrip()[:-len(tail)] + setup + '\nrender(false);startGate();\n})();\n</script>\n'
