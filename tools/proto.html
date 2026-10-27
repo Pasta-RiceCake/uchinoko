@@ -1077,6 +1077,9 @@ html:root[data-th="pop"][data-col="lavender"]{--bg:#F2EDD5;--sheet:#E0DAE9;--ac:
 html:root[data-th="pop"][data-col="taupe"]{--bg:#E3E8EC;--sheet:#DAD7D4;--ac:#787069;--ink:#26221F;--tile:#E3E8EC;--soft:#E3E8EC;--soft2:#E3E8EC;--sub:color-mix(in srgb,#26221F 62%,#DAD7D4);--line:color-mix(in srgb,#26221F 13%,#DAD7D4);--icon:color-mix(in srgb,#787069 70%,#26221F)}
 html:root[data-th="pop"] .h-hero .bph{background:var(--bg)!important}
 html:root[data-th="korea"] .icgrid .cir .iln{color:var(--ac)!important}
+
+.hkb{font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);white-space:nowrap}
+.hkb.on{background:var(--ac);border-color:var(--ac);color:#fff}
 </style>
 
 <div class="wrap"><main id="main"></main></div>
@@ -1527,7 +1530,7 @@ function vChiiku(){
    <section class="h-sec"><div class="hd"><h2>毎月届く・借りられるサービス</h2></div><p class="prnote">ここには広告（PR）のリンクがふくまれます</p><div class="rows">${SUBS.map(([t,s,u,a])=>a&&A8[a]?`<a class="rw" href="${a8u(a)}" target="_blank" rel="nofollow sponsored noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">公式サイト</span>${a8px(a)}</a>`:u?`<a class="rw" href="${u}" target="_blank" rel="noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">公式サイト</span></a>`:`<div class="rw"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span></div>`).join("")}</div>
    <p class="note">料金や内容はよく変わるので、申しこむ前に公式サイトで確認してください。「欲しい」を押すと「欲しい物メモ」に入ります。</p></section>`:""}
   ${chTab==="絵本"?`<section class="h-sec"><div class="hd"><h2>絵本のはじめかた</h2></div><div class="rows">${[["0歳から読んでOK","内容が分からなくても、声とリズムを楽しんでいます。"],["1日1冊、短くていい","かじっても破れにくい厚紙の絵本が便利です。"],["同じ本を何度もでOK","「また読んで」は気に入っているしるしです。"],["もらえることも","多くの市区町村で、健診のときに絵本をもらえる「ブックスタート」があります。図書館の赤ちゃん向けおはなし会もおすすめ。"]].map(([t,s])=>`<div class="rw"><span class="grow"><div class="t">${t}</div><div class="s" style="font-size:13px">${s}</div></span></div>`).join("")}</div></section>
-   ${(bkLoad(),"")}${BOOKS.map(([g,bs])=>`<section class="h-sec"><div class="hd"><h2>${g}の定番</h2></div><div class="rows">${bs.map(([t,a])=>{const q=t+" 絵本",bk=BKD&&BKD[t];if(!bk&&!AFF_PICK.includes(q))AFF_PICK.push(q);return `<a class="rw" href="${bk?esc(bk.u):rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">${bk&&bk.img?`<img class="bkimg" src="${esc(bk.img)}" alt="" loading="lazy">`:pic("book",30)}<span class="grow"><div class="t">${t}</div><div class="s">${a}</div></span><span class="chev">楽天で見る</span></a>`}).join("")}</div></section>`).join("")}`:""}
+   ${(bookLoad(),"")}${BOOKS.map(([g,bs])=>`<section class="h-sec"><div class="hd"><h2>${g}の定番</h2></div><div class="rows">${bs.map(([t,a])=>{const q=t+" 絵本",bk=BKD&&BKD[t];if(!bk&&!AFF_PICK.includes(q))AFF_PICK.push(q);return `<a class="rw" href="${bk?esc(bk.u):rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">${bk&&bk.img?`<img class="bkimg" src="${esc(bk.img)}" alt="" loading="lazy">`:pic("book",30)}<span class="grow"><div class="t">${t}</div><div class="s">${a}</div></span><span class="chev">楽天で見る</span></a>`}).join("")}</div></section>`).join("")}`:""}
   ${chTab==="こんなときは"?`<section class="h-sec"><div class="hd"><h2>こんなときは？</h2></div>${QA.map(([q,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b></span></summary><p>${a}</p></details>`).join("")}
    <p class="note">いつもと様子がちがう、熱がある、ぐったりしているときは「急な病気・ケガ」へ。迷ったら #8000（子どもの医療電話相談）に電話できます。</p></section>`:""}`;
 }
@@ -1832,6 +1835,10 @@ function vHoiku(){
   ${plan.length?`<section class="h-sec"><div class="hd"><h2>やることの流れ</h2><button type="button" data-act="hkcal">カレンダーに入れる</button></div><div class="rows">
    ${plan.map(p=>{const past=p.d<T0;return `<div class="rw" style="align-items:flex-start;${past?"opacity:.5":""}"><span class="d"><span class="num">${p.d.getMonth()+1}</span><small>${p.d.getFullYear()}年${p.d.getMonth()+1}月ごろ</small></span><span class="grow"><div class="t">${p.t}</div><div class="s">${p.s}</div></span></div>`}).join("")}</div>
    <p class="note">締め切りは自治体ごとに違います。お住まいの市区町村の「入園のしおり」で必ず確認してください。育休を延長するときは、入れなかった通知などが必要です（2025年4月から手続きが厳しくなりました）。</p></section>`:""}
+  <section class="h-sec" id="hkfavs"><div class="hd"><h2>見学リスト${S.hk.favs.length?`（${S.hk.favs.length}）`:""}</h2></div>
+   ${S.hk.favs.length?`<div class="rows">${S.hk.favs.map(n=>{const sn=(S.hk.seen||[]).includes(n);return `<div class="rw"><span class="grow"><div class="t">${esc(n)}</div><div class="s">${sn?"見学ずみ":"まだ見学していない"}</div></span>
+    <button type="button" class="hkb${sn?" on":""}" data-act="hkseen" data-v="${esc(n)}">${sn?"見学ずみ":"見学した"}</button><button type="button" class="kise" data-act="hkfav" data-v="${esc(n)}" style="font-size:12px;color:var(--sub);margin-left:6px">はずす</button></div>`}).join("")}</div>`
+   :`<p class="sub" style="margin:0 0 6px">下の「近くの保育園」で「見学リストへ」を押すと、ここにたまります。</p>`}</section>
   <section class="h-sec"><div class="hd"><h2>近くの保育園</h2><button type="button" data-act="hkloc">現在地から探す</button></div>
    ${(()=>{nrLoad("hoiku");const L=nrList("hoiku",n=>hf==="すべて"||n[1]===hf);if(!S.pref)return nrHead("hoiku");if(!L)return `<p class="sub">読みこみ中…</p>`;
     const ci=cityInfo();
@@ -1883,7 +1890,7 @@ function vWants(){
   <button type="button" class="btn" data-act="open" data-v="goods" style="margin-top:14px;background:var(--lemon)">話題のグッズを見る</button>`;
 }
 const r100=n=>Math.round(n/100)*100,ret=y=>y>=10000?y/3:y/2;
-let BKD=null;function bkLoad(){if(BKD)return;BKD={};nrFetch("/data/books.json").then(d=>{if(d){BKD=d;render(true)}})}
+let BKD=null;function bookLoad(){if(BKD)return;BKD={};nrFetch("/data/books.json").then(d=>{if(d){BKD=d;render(true)}})}
 const GIFTSHOP=[["ゼクシィ内祝い","先輩ママのおすすめでよく名前が上がる内祝い専門サイト。2,500円以上で送料無料、三越伊勢丹の包装紙も選べる","","https://uchiiwai.zexy.net/"],["たまひよの内祝","赤ちゃんの写真が表紙になる「なりきり表紙」のカタログギフトが人気。住所を知らなくても送れる","","https://shop.benesse.ne.jp/"],["ミルポッシェ","東急百貨店といっしょに作った内祝いの専門サイト。写真入りのメッセージカードが選べる","","https://milpoche.jp/"],["ソムリエ＠ギフト","結婚・出産の内祝い専門。包装紙の種類が多く、名入れの急ぎにも対応","","https://www.bellevie-inc.co.jp/shop/"],["HYACCA（ヒャッカ）","食器やタオルなど、ふだん使いできるおしゃれなギフトが多い","hyacca"],["シャディ","内祝いの老舗。予算から探せて、のし・包装も選べる","","https://shaddy.jp/"],["ベルメゾン","内祝いのQ&Aが多く、はじめてでも安心。Web限定の割引があることも","","https://www.bellemaison.jp/"],["リンベル","カタログギフトの定番。相手が好きな物を選べるので、迷ったときに","","https://www.ringbell.co.jp/"],["高島屋オンラインストア","百貨店の包装紙で送れる。目上の人へのお返しに","","https://www.takashimaya.co.jp/shopping/gift/syussanuchiiwai/"]];
 function vGifts(){
   let rt=0,sent=0;S.gifts.forEach(g=>{rt+=ret(g.yen);if(g.sent)sent++});
@@ -2250,7 +2257,8 @@ document.addEventListener("click",e=>{
     case"gdtab":gdTab=v;render(true);break;
     case"gdwant":{const L=W(),j=L.findIndex(w=>w.t===v);if(j>=0)L.splice(j,1);else L.push({t:v,m:"話題のグッズから"});save();render(true);break}
     case"hkf":hf=v;nrMore.hoiku=30;render(true);break;
-    case"hkfav":{const j=S.hk.favs.indexOf(v);if(j>=0)S.hk.favs.splice(j,1);else S.hk.favs.push(v);k();break}
+    case"hkseen":{S.hk.seen=S.hk.seen||[];const j=S.hk.seen.indexOf(v);if(j>=0)S.hk.seen.splice(j,1);else S.hk.seen.push(v);k();break}
+     case"hkfav":{const j=S.hk.favs.indexOf(v);if(j>=0)S.hk.favs.splice(j,1);else S.hk.favs.push(v);k();break}
     case"hkloc":if(!navigator.geolocation){toast("このスマホでは現在地が使えません");break}toast("現在地を調べています…");
       navigator.geolocation.getCurrentPosition(p=>{S.loc=[+p.coords.latitude.toFixed(4),+p.coords.longitude.toFixed(4)];save();render(true);toast("現在地から近い順にしました")},()=>toast("現在地を使えませんでした。設定で位置情報をオンにしてください"),{timeout:10000,maximumAge:600000});break;
     case"nrclr":delete S.loc;save();render(true);break;
