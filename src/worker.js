@@ -16,6 +16,8 @@ async function init(db) {
   await db.exec("CREATE TABLE IF NOT EXISTS icon (id TEXT PRIMARY KEY, png BLOB NOT NULL, created INTEGER NOT NULL)");
   // スマホごとのホーム画面アイコン（Android はここを見て、アイコンを新しくする）
   await db.exec("CREATE TABLE IF NOT EXISTS appman (mid TEXT PRIMARY KEY, icon TEXT NOT NULL, updated INTEGER NOT NULL)");
+  // 共有していない人の市区町村も、イベント・サービスを読む対象にする（市の名前だけ。誰かはわからない）
+  await db.exec("CREATE TABLE IF NOT EXISTS citywant (city TEXT PRIMARY KEY, seen INTEGER NOT NULL)");
   await pushInit(db);
   ready = true;
 }
@@ -176,12 +178,24 @@ async function manifest(env, id, url) {
 }
 
 // 子育てイベントを集める市区町村（家族のいる市だけ）。人数は出さない
+async function cityWant(req, env) {
+  const b = await req.json().catch(() => ({}));
+  const p = String(b.p || ""), c = String(b.c || "").trim();
+  if (!/^.{2,3}[都道府県]$/.test(p) || !c || c.length > 20) return new Response("bad", { status: 400 });
+  await init(env.DB);
+  await env.DB.prepare("INSERT INTO citywant (city, seen) VALUES (?, ?) ON CONFLICT(city) DO UPDATE SET seen = excluded.seen").bind(p + c, Date.now()).run();
+  return new Response("ok");
+}
+
 async function cities(env) {
   await init(env.DB);
   const r = await env.DB.prepare(
     "SELECT DISTINCT json_extract(data, '$.pref.v') AS p, json_extract(data, '$.city.v') AS c FROM fam WHERE json_valid(data)"
   ).all();
   const list = r.results.filter((x) => x.p && x.c).map((x) => x.p + x.c);
+  await env.DB.prepare("DELETE FROM citywant WHERE seen < ?").bind(Date.now() - 180 * 864e5).run();
+  const w = await env.DB.prepare("SELECT city FROM citywant").all();
+  for (const x of w.results) list.push(x.city);
   return new Response(JSON.stringify({ cities: [...new Set(list)].sort() }), {
     headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=3600" },
   });
@@ -205,6 +219,7 @@ export default {
     if (m) return await manifest(env, m[1], url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
     if (url.pathname === "/api/cities" && req.method === "GET") return await cities(env);
+    if (url.pathname === "/api/city" && req.method === "POST") return await cityWant(req, env);
     if (url.pathname === "/api/push/key" && req.method === "GET") {
       await init(env.DB);
       return json({ k: await pushKey(env) });

@@ -7,7 +7,9 @@ const hs=t=>{let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;retur
 S._sync=S._sync||{rev:0,h:{}};
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let syT=null,syBusy=false,syAgain=false,pendR=false,shOffArm=false;
-const save=()=>{persist();if(S.share.on){clearTimeout(syT);syT=setTimeout(syncNow,1200)}};
+// 市区町村を入れたら、その市のイベント・サービスを読む対象に入れてもらう（共有していなくても）
+const cityPing=()=>{const k=S.city?S.pref+S.city:"";if(!k||S._cityPing===k)return;S._cityPing=k;fetch("/api/city",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({p:S.pref,c:S.city})}).catch(()=>{S._cityPing=""})};
+const save=()=>{persist();cityPing();if(S.share.on){clearTimeout(syT);syT=setTimeout(syncNow,1200)}};
 function dirty(){const o={};for(const k of shK()){const j=JSON.stringify(outV(k)??null);if(S._sync.h[k]!==hs(j))o[k]=JSON.parse(j)}return o}
 function applyUpd(u){for(const k in u){if(PRIV.has(k)||k[0]==="_")continue;
   if(k==="plans")S.plans=(u.plans||[]).concat(S.plans.filter(p=>p.vis==="自分だけ"));else S[k]=u[k];
@@ -48,3 +50,4 @@ async function restoreFromURL(){const m=location.search.match(/[?&]f=([a-z0-9]{1
   try{const r=await api("/api/fam/"+m[1]+"/sync",{code:m[2],rev:0,put:{}});if(!r.ok)return false;const j=await r.json();
     S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id:m[1],code:m[2]};S.setup=1;persist();return true}catch(_){return false}}
 const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;
+setTimeout(cityPing,3000);

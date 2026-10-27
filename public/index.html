@@ -842,7 +842,9 @@ const hs=t=>{let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;retur
 S._sync=S._sync||{rev:0,h:{}};
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let syT=null,syBusy=false,syAgain=false,pendR=false,shOffArm=false;
-const save=()=>{persist();if(S.share.on){clearTimeout(syT);syT=setTimeout(syncNow,1200)}};
+// 市区町村を入れたら、その市のイベント・サービスを読む対象に入れてもらう（共有していなくても）
+const cityPing=()=>{const k=S.city?S.pref+S.city:"";if(!k||S._cityPing===k)return;S._cityPing=k;fetch("/api/city",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({p:S.pref,c:S.city})}).catch(()=>{S._cityPing=""})};
+const save=()=>{persist();cityPing();if(S.share.on){clearTimeout(syT);syT=setTimeout(syncNow,1200)}};
 function dirty(){const o={};for(const k of shK()){const j=JSON.stringify(outV(k)??null);if(S._sync.h[k]!==hs(j))o[k]=JSON.parse(j)}return o}
 function applyUpd(u){for(const k in u){if(PRIV.has(k)||k[0]==="_")continue;
   if(k==="plans")S.plans=(u.plans||[]).concat(S.plans.filter(p=>p.vis==="自分だけ"));else S[k]=u[k];
@@ -883,6 +885,7 @@ async function restoreFromURL(){const m=location.search.match(/[?&]f=([a-z0-9]{1
   try{const r=await api("/api/fam/"+m[1]+"/sync",{code:m[2],rev:0,put:{}});if(!r.ok)return false;const j=await r.json();
     S._sync={rev:0,h:{}};applyUpd(j.upd||{});S._sync.rev=j.rev;S.share={on:true,id:m[1],code:m[2]};S.setup=1;persist();return true}catch(_){return false}}
 const shText=()=>"うちの子手帳をふたりで使おう！リンクを開いて、あいことばを入れてね\n"+location.origin+"/j/"+S.share.id+"\nあいことば "+S.share.code;
+setTimeout(cityPing,3000);
 
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
 const birth=()=>new Date(S.birth+"T00:00:00");
@@ -1152,9 +1155,13 @@ const gmap=q=>"https://www.google.com/maps/search/"+encodeURIComponent(q);
 const NEAR=[["屋内の遊び場","屋内 遊び場 子供","star"],["大きい遊具の公園","大型遊具 公園","tulip"],["支援センター・児童館","子育て支援センター 児童館","bear"],["動物とふれあえる所","動物 ふれあい 無料","sheep"],["水遊びできる公園","じゃぶじゃぶ池 水遊び 公園","bubbles"],["授乳室のあるモール","授乳室 ショッピングモール","basket"],["遊具のある道の駅","道の駅 遊具","cloud"],["ベビーカーで散歩","ベビーカー 散歩 公園","socks"]];
 let odcat="すべて",odev="すべて";
 const EVT={動物:["赤ちゃん動物のお披露目","えさやり体験"],水族館:["夜の水族館","ペンギンのおさんぽ"],公園:["親子でどんぐり拾い","芝生でピクニックの日"],屋内:["親子で工作教室","0歳からのリトミック"],テーマパーク:["キャラクターのショー","ハロウィンのパレード"],観光:["季節のライトアップ","親子でスタンプラリー"]};
-function odEvents(){const L=SPOT[S.pref]||[];return L.map((s,n)=>{const d=addD(T0,3+n*4);return {d,n:s[0],t:EVT[s[1]]?.[n%2]||"親子イベント",ty:s[1]}}).sort((a,b)=>a.d-b.d)}
+const ODD={};
+function odLoad(p){const i=PREF.indexOf(p);if(i<0||ODD[p])return;ODD[p]="loading";nrFetch("/data/odk/"+String(i+1).padStart(2,"0")+".json").then(d=>{ODD[p]=d||(typeof ODSAMPLE!=="undefined"&&ODSAMPLE&&ODSAMPLE.pref===p?ODSAMPLE:"none");render(true)})}
+const odLive=p=>{odLoad(p);const d=ODD[p];return d&&d.at?d:null};
+function odEvents(){const lv=odLive(S.pref);if(lv&&lv.ev&&lv.ev.length)return lv.ev.map(e=>({d:new Date(e.d+"T00:00:00"),e:e.e?new Date(e.e+"T00:00:00"):null,n:e.pl,t:e.t,ty:e.ty,u:e.u,live:1}));
+  const L=SPOT[S.pref]||[];return L.map((s,n)=>{const d=addD(T0,3+n*4);return {d,n:s[0],t:EVT[s[1]]?.[n%2]||"親子イベント",ty:s[1]}}).sort((a,b)=>a.d-b.d)}
 function vOdk(){
-  const p=S.pref,all=SPOT[p]||[],cats=["すべて",...Object.keys(SPT).filter(t=>all.some(x=>x[1]===t))];
+  const p=S.pref,lv=odLive(p),all=lv&&lv.sp&&lv.sp.length?lv.sp.map(x=>[x.n,x.ty,x.w,x.k,x.f,x.a]):(SPOT[p]||[]),cats=["すべて",...Object.keys(SPT).filter(t=>all.some(x=>x[1]===t))];
   if(!cats.includes(odcat))odcat="すべて";
   const list=all.filter(x=>odcat==="すべて"||x[1]===odcat);
   const ev=odEvents().filter(e=>odev==="すべて"||S.odk.fav.includes(e.n));
@@ -1162,12 +1169,12 @@ function vOdk(){
   return head("子連れおでかけ","rainbow","sky")+`
   <section class="h-sec" style="margin-top:12px"><div class="row"><select data-act="pref" aria-label="都道府県" style="max-width:220px">${PREF.map(x=>`<option${x===p?" selected":""}>${x}</option>`).join("")}</select></div></section>
   <section class="h-sec"><div class="hd"><h2>イベント</h2><div class="seg">${["すべて","お気に入り"].map(f=>`<button type="button" class="${f===odev?"on":""}" data-act="odev" data-v="${f}">${f}</button>`).join("")}</div></div>
-   <div class="rows">${ev.slice(0,6).map(e=>`<div class="rw"><span class="d"><span class="num">${e.d.getDate()}</span><small>${e.d.getMonth()+1}月・${WD[e.d.getDay()]}</small></span><span class="grow"><div class="t">${esc(e.t)}<span class="rei">例</span></div><div class="s">${esc(e.n)}</div></span>${pic((SPT[e.ty]||SPT.観光)[0],32)}</div>`).join("")||`<p class="sub" style="margin:6px 0 12px">${odev==="お気に入り"?"下のスポットの「♡」を押すと、そこのイベントがここに出ます。":"イベントはまだありません"}</p>`}</div>
-   <p class="note">イベントは例です。行く前に、各スポットの公式サイトで確かめてください。</p></section>
+   <div class="rows">${ev.slice(0,6).map(e=>`<div class="rw"><span class="d"><span class="num">${e.d.getDate()}</span><small>${e.d.getMonth()+1}月・${WD[e.d.getDay()]}</small></span><span class="grow"><div class="t">${esc(e.t)}${e.live?"":`<span class="rei">例</span>`}</div><div class="s">${esc(e.n)}${e.e?`（${e.e.getMonth()+1}/${e.e.getDate()}まで）`:""}</div>${e.u?`<a class="lk" href="${esc(e.u)}" target="_blank" rel="noopener">くわしく</a>`:""}</span>${pic((SPT[e.ty]||SPT.観光)[0],32)}</div>`).join("")||`<p class="sub" style="margin:6px 0 12px">${odev==="お気に入り"?"下のスポットの「♡」を押すと、そこのイベントがここに出ます。":"イベントはまだありません"}</p>`}</div>
+   <p class="note">${ev.some(e=>e.live)?`${esc(String(lv.at).slice(0,7).replace("-","年"))}月に、Google検索でAIが集めたイベントです。日にちや中身は変わることがあるので、行く前に公式サイトで確かめてください。`:"いま出ているのは例です。この県のイベントは、いま集めているところです。"}</p></section>
   <section class="h-sec"><div class="hd"><h2>${esc(p)}のスポット</h2><span class="sub" style="font-size:12px">${list.length}件</span></div>
    <div class="chips">${cats.map(c=>`<button type="button" class="${c===odcat?"on":""}" data-act="odcat" data-v="${c}">${c==="すべて"?"":il((SPT[c]||SPT.観光)[0],22)}${c==="すべて"?"すべて":(SPT[c]||[,c])[1]}</button>`).join("")}</div>
-   <div class="rows">${list.map(([n,t,s])=>{const on=S.odk.fav.includes(n);return `<div class="rw">${pic((SPT[t]||SPT.観光)[0],40)}<span class="grow"><div class="t">${esc(n)}</div><div class="s">${(SPT[t]||SPT.観光)[1]}・${esc(s)}</div><a class="lk" href="${gmap(n+" "+p)}" target="_blank" rel="noopener">地図で見る</a></span><button type="button" class="heart${on?" on":""}" data-act="odfav" data-v="${esc(n)}" aria-label="お気に入り">${on?"♥":"♡"}</button></div>`}).join("")}</div>
-   <p class="note">営業時間・料金・授乳室の有無は変わることがあります。行く前に公式サイトで確認してください。ここにない近所の場所は「わが家のおでかけメモ」に足せます。</p></section>
+   <div class="rows">${list.map(([n,t,s,k,f,a])=>{const on=S.odk.fav.includes(n);return `<div class="rw">${pic((SPT[t]||SPT.観光)[0],40)}<span class="grow"><div class="t">${esc(n)}${k>1?`<span class="gdn">${k}つのサイトで人気</span>`:""}</div><div class="s">${(SPT[t]||SPT.観光)[1]}${a?"・"+esc(a):""}・${esc(s)}</div>${f&&f.length?`<div class="gdsrc">人気のもと：${f.map(esc).join("・")}</div>`:""}<a class="lk" href="${gmap(n+" "+p)}" target="_blank" rel="noopener">地図で見る</a></span><button type="button" class="heart${on?" on":""}" data-act="odfav" data-v="${esc(n)}" aria-label="お気に入り">${on?"♥":"♡"}</button></div>`}).join("")}</div>
+   <p class="note">${lv&&lv.sp&&lv.sp.length?"口コミやランキングのサイトをGoogle検索でAIが調べ、「人気」と書いているサイトが多い順に並べています。":""}営業時間・料金・授乳室の有無は変わることがあります。行く前に公式サイトで確認してください。ここにない近所の場所は「わが家のおでかけメモ」に足せます。</p></section>
   <section class="h-sec"><div class="hd"><h2>地図でもっと探す</h2></div>
    <div class="rows">${[["子育て支援センター・児童館","子育て支援センター 児童館"],["授乳室のあるショッピングモール","授乳室 ショッピングモール"],["遊具のある道の駅","道の駅 遊具"],["キッズスペースのあるカフェ","キッズスペース カフェ"],["座敷・個室のあるご飯屋さん","子連れ 座敷 ランチ"]].map(([l,q])=>`<a class="rw" href="${gmap(q+" "+p+(S.city||""))}" target="_blank" rel="noopener"><span class="grow"><div class="t">${l}</div><div class="s">${esc(p+(S.city||""))}・Googleマップが開きます</div></span><span class="chev">${ic("chev",16)}</span></a>`).join("")}</div>
    </section>
@@ -1204,7 +1211,7 @@ function evRows(filter,empty){evLoad();const ci=cityInfo(),d=ci&&EVD[ci.c];
   if(!ci)return nrCities?`<p class="sub">「${esc(S.city)}」が見つかりませんでした。「わが家の市区町村」で、候補から選びなおしてください。</p>`:`<p class="sub">読みこみ中…</p>`;
   if(!d||d==="loading")return `<p class="sub">読みこみ中…</p>`;
   const site=ci.u?`<a class="ext" href="${esc(ci.u)}" target="_blank" rel="noopener">${esc(S.city)}の公式サイト ›</a>`:"";
-  if(d==="none")return `<p class="sub">${esc(S.city)}のイベントは、いま集めています。毎日少しずつ市区町村を増やしていて、使っている人がいる市は1か月以内に出るようになります。</p>${site?`<p class="sub">それまでは ${site} で見られます。</p>`:""}`;
+  if(d==="none")return `<p class="sub">${esc(S.city)}のイベントは、いま集めています。市区町村を入れた人の市から先に読むので、ふつうは次の日の朝までに出ます。</p>${site?`<p class="sub">それまでは ${site} で見られます。</p>`:""}`;
   const today=iso(new Date()),L=d.ev.filter(e=>e.d>=today&&filter(e));
   const kinds=[...new Set(d.ev.filter(e=>e.d>=today&&filter(e)).map(e=>e.k))];
   const F=L.filter(e=>evk==="すべて"||e.k===evk);
@@ -1227,7 +1234,7 @@ function vCity(){
    ${SVC.map(([n,tag,what,how,bring],i)=>{const loc=L&&L.s[SVK[i]];return `<details class="svc"><summary><span class="grow"><span class="tag">${tag}</span><b>${n}</b>${loc?`<span class="svloc">${cn}の内容あり</span>`:""}</span></summary>
     ${loc?`<div class="svcity"><b>${cn}では</b>${esc(loc.t)}</div>`:""}<p>${what}</p><p><b>手続き</b>${how}</p>${bring?`<p><b>持ち物</b>${bring}</p>`:""}
     ${loc&&loc.u?`<a class="lk" href="${esc(loc.u)}" target="_blank" rel="noopener">${cn}のページを見る</a>`:ci?.u?`<a class="lk" href="${esc(ci.u)}" target="_blank" rel="noopener">${cn}の公式サイトを見る</a>`:""}</details>`}).join("")}
-   <p class="note">${L?`「${cn}では」の部分は、${esc(String(L.at).slice(0,7).replace("-","年"))}月に${cn}の公式サイトから読んでまとめたものです。そのほかは国の基本です。`:"金額や条件は国の基本です。市区町村によって上乗せや違いがあります。"}申しこむ前に、市の公式サイトで確かめてください。</p></section>`})()}
+   <p class="note">${L?`「${cn}では」の部分は、${esc(String(L.at).slice(0,7).replace("-","年"))}月に${cn}の公式サイトから読んでまとめたものです。そのほかは国の基本です。`:(S.city&&ci&&sv==="none"?`${cn}の内容は、いま公式サイトから読んでいるところです。ふつうは次の日の朝までに出ます。それまでは国の基本を出しています。`:"金額や条件は国の基本です。市区町村によって上乗せや違いがあります。")}申しこむ前に、市の公式サイトで確かめてください。</p></section>`})()}
 `;
 }
 const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",perk:"アカチャンホンポのプレママ特典・マタニティアドバイザー・お試しBoxなど",fun:"マタニティフォト・ジェンダーリビール・命名書・月齢フォトなど",jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
