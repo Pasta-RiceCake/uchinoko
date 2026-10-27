@@ -4,7 +4,7 @@ on:
     inputs:
       only:
         description: "cities,hoiku,sanin のうち作るもの"
-        default: "cities,hoiku,sanin"
+        default: "cities,sanin"
   schedule:
     - cron: "0 18 3 * *"
 permissions:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: build
         env:
-          ONLY: ${{ github.event.inputs.only || 'cities,hoiku,sanin' }}
+          ONLY: ${{ github.event.inputs.only || 'cities,sanin' }}
         run: python3 tools/build_data.py public/data
       - name: commit
         run: |

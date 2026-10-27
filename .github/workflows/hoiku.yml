@@ -2,6 +2,8 @@ name: hoiku
 # 保育園のデータを都道府県ごとに同時に取る（全国1回で取るより早い）
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 18 5 * *"
 permissions:
   contents: write
 concurrency: ${{ github.workflow }}
