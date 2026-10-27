@@ -720,6 +720,9 @@ form.add input{min-width:0}
 .pktag{display:inline-block;margin-left:8px;font-size:11px;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--ac);font-weight:700}
 .gdsrc{font-size:11.5px;color:var(--sub);margin-top:2px}
 .a8px{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gdn{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;background:var(--soft);font-size:11px;font-weight:600;color:var(--sub);vertical-align:2px}
+.gdarts{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px}.gdarts a{font-size:12.5px;color:var(--ac);text-decoration:none}
+.gdbuy{display:grid;gap:6px;margin-top:8px}.gdbuy a{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);font-size:13px}.gdbuy a b{margin-left:auto}.gdbuy a.low{border-color:var(--ac)}.gdbuy small{font-size:10.5px;color:var(--ac);font-weight:700}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -1489,17 +1492,17 @@ const GDA=[["pre","妊娠中"],["m0","0〜3か月"],["m4","4〜6か月"],["m7","
 let GDD=null,gdTab=null;
 function gdLoad(){if(GDD!==null)return;GDD="loading";fetch("/data/goods.json").then(r=>r.ok?r.json():null).then(d=>{GDD=d||"none";render(true)}).catch(()=>{GDD="none";render(true)})}
 const gdAuto=()=>{if(S.mode==="pre")return "pre";const m=months();return m<4?"m0":m<7?"m4":m<12?"m7":m<24?"y1":m<36?"y2":"y3"};
-function vGoods(){if(!gdP){AFF_PICK.push(...GOODS.map(g=>g[1].replace(/（.*?）/g,"")));gdP=1}
+function vGoods(){
   gdLoad();const live=GDD&&GDD.ages,tab=gdTab||gdAuto(),L=live&&live[tab];
   const tabs=`<div class="seg hkseg" style="margin:0 0 10px">${GDA.filter(([k])=>!live||live[k]).map(([k,l])=>`<button type="button" class="${k===tab?"on":""}" data-act="gdtab" data-v="${k}">${l}</button>`).join("")}</div>`;
-  if(L&&L.length)return head("話題のグッズ","bear","lemon")+`<p class="prnote">このページには広告（PR）のリンクがふくまれます</p>${tabs}
-  <div class="sheet">${L.map((g,i)=>{const on=W().some(w=>w.t===g.t);return `<div class="li gd" style="align-items:flex-start">${g.img?`<img class="rkimg" src="${esc(g.img)}" alt="" loading="lazy" width="64" height="64">`:""}<span class="grow"><div class="t">${esc(g.t)}</div><div class="sub">${esc(g.w)}</div>
-    <div class="rkn">${esc(g.n)}</div><div class="sub">${g.p?Number(g.p).toLocaleString()+"円":""}${g.r&&Number(g.r)>0?` ・ ★${esc(g.r)}（${Number(g.rc||0).toLocaleString()}件）`:""}</div>
-    ${g.f&&g.f.length?`<div class="gdsrc">話題のもと：${g.f.map(esc).join("・")}</div>`:""}<a class="ext" href="${esc(g.u)}" target="_blank" rel="noopener sponsored">楽天で見る ›</a></span>
-    <button type="button" class="heart${on?" on":""}" data-act="gdwant" data-v="${esc(g.t)}">${ic("heart",14)}${on?"メモ済み":"メモ"}</button></div>`}).join("")}</div>
-  <p class="note">${esc(String(GDD.at).slice(0,7).replace("-","年"))}月に、ネットの記事の見出しと楽天でよく買われている物から、AIが月齢ごとに選びました。毎月新しくなります。値段は変わることがあります。</p>`;
-  return head("話題のグッズ","bear","lemon")+`<p class="prnote">このページには広告（PR）のリンクがふくまれます</p><p class="lead">${GDD==="loading"?"読みこみ中…":"見本です。本番では、毎月ネットの記事や楽天でよく買われている物から、月齢ごとに話題の物を集めて出します。"}気になったら「メモ」を押すと欲しい物メモに入ります。</p>
-  <div class="sheet">${GOODS.map((g,i)=>{const on=W().some(w=>w.t===g[1]);return `<div class="li gd"><span class="bub k2">${pic(g[3],40)}</span><span class="grow"><div class="t">${g[1]}</div><div class="sub">${g[2]}</div><a class="ext" href="${rkURL(g[1].replace(/（.*?）/g,""))}" target="_blank" rel="noopener">楽天で見る ›</a></span><button type="button" class="heart${on?" on":""}" data-act="want" data-i="${i}">${ic("heart",14)}${on?"メモ済み":"メモ"}</button></div>`}).join("")}</div>`;
+  const row=(t,w,f,a,n,by)=>{const on=W().some(x=>x.t===t),b0=by&&by[0];return `<div class="li gd" style="align-items:flex-start">${b0&&b0.img?`<img class="rkimg" src="${esc(b0.img)}" alt="" loading="lazy" width="64" height="64">`:""}<span class="grow"><div class="t">${esc(t)}${n>1?`<span class="gdn">${n}つのサイトで話題</span>`:""}</div><div class="sub">${esc(w)}</div>
+    ${f&&f.length?`<div class="gdsrc">話題のもと：${f.map(esc).join("・")}</div>`:""}${a&&a.length?`<div class="gdarts">${a.map(x=>`<a href="${esc(x.l)}" target="_blank" rel="noopener">${esc(x.s||"記事")} ›</a>`).join("")}</div>`:""}
+    ${by&&by.length?`<div class="gdbuy">${b0.n?`<div class="rkn">${esc(b0.n)}</div>`:""}${by.map((x,i)=>`<a href="${esc(x.u)}" target="_blank" rel="nofollow sponsored noopener"${i===0?' class="low"':""}><span>${esc(x.s)}</span><b>${Number(x.p).toLocaleString()}円</b>${i===0&&by.length>1?"<small>いちばん安い</small>":""}</a>`).join("")}</div>`:""}</span>
+    <button type="button" class="heart${on?" on":""}" data-act="gdwant" data-v="${esc(t)}">${ic("heart",14)}${on?"メモ済み":"メモ"}</button></div>`};
+  if(L&&L.length)return head("話題のグッズ","bear","lemon")+tabs+`<div class="sheet">${L.map(g=>row(g.t,g.w,g.f,g.a,g.n,g.buy)).join("")}</div>
+  <p class="note">${esc(String(GDD.at).slice(0,7).replace("-","年"))}月に、ニュース・ブログ・はてなブックマーク・noteから見出しを集めて、たくさんのサイトで話題になっている順にAIが月齢ごとにまとめました。SNSで話題になった物は、それを取り上げた記事から拾っています。買えるお店は、レビューの多い人気の新品の中でいちばん安い物を、安い順に出しています（お店のリンクは広告です）。毎月新しくなります。値段は変わることがあります。</p>`;
+  return head("話題のグッズ","bear","lemon")+`<p class="lead">${GDD==="loading"?"読みこみ中…":"見本です。本番では、毎月いろんなサイトで話題になっている物を、月齢ごとに集めて出します。"}気になったら「メモ」を押すと欲しい物メモに入ります。</p>
+  <div class="sheet">${GOODS.map(g=>row(g[1],g[2],[],[])).join("")}</div>`;
 }
 // ▼アフィリエイト設定：登録後にここへIDを入れる（空ならふつうのリンク）
 // A8.net：プログラムごとの a8mat と、計測の画像のサーバー番号
@@ -1882,7 +1885,7 @@ document.addEventListener("click",e=>{
     case"evmore":evMore+=20;render(true);break;
     case"evcal":S.plans.push({d:v,t:el.dataset.t,tm:(el.dataset.tm.match(/\d{1,2}:\d{2}/)||[""])[0],te:"",kd:"その他",ic:"star",w:"家族みんな",r:"前日",m:el.dataset.pl,vis:"共有"});save();render(true);toast("カレンダーに入れました");break;
     case"gdtab":gdTab=v;render(true);break;
-    case"gdwant":{const L=W(),j=L.findIndex(w=>w.t===v);if(j>=0)L.splice(j,1);else{L.push({t:v,m:"話題のグッズから"});AFF_PICK.push(v)}save();render(true);break}
+    case"gdwant":{const L=W(),j=L.findIndex(w=>w.t===v);if(j>=0)L.splice(j,1);else L.push({t:v,m:"話題のグッズから"});save();render(true);break}
     case"hkf":hf=v;nrMore.hoiku=30;render(true);break;
     case"hkfav":{const j=S.hk.favs.indexOf(v);if(j>=0)S.hk.favs.splice(j,1);else S.hk.favs.push(v);k();break}
     case"hkloc":if(!navigator.geolocation){toast("このスマホでは現在地が使えません");break}toast("現在地を調べています…");

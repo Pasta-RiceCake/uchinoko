@@ -1,30 +1,38 @@
 # 話題の育児グッズを、月齢ごとに public/data/goods.json に置く（GitHub Actions で毎月）
-#  1. ネットのニュース・記事の見出し（Google ニュース）と、楽天のランキング・レビューの多い商品を集める
-#  2. Gemini（無料枠）に「いま話題になっている物」を月齢ごとに選んでもらう（集めた中から選ぶだけ。作り話はさせない）
-#  3. 楽天で同じ物をさがして、写真・値段・自分のアフィリエイトIDのリンクをつける
-import datetime, html, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
+#  広告は入れない。いろんなサイトで話題・バズっている物を、話題のもとといっしょに紹介する
+#  1. Google ニュース・Bing ニュース・はてなブックマーク・note から見出しを集める
+#  2. Gemini（無料枠）に、見出しに出てくる育児グッズを種類ごとにまとめてもらう（作り話はさせない）
+#  3. いくつのサイトで話題になっているかを数えて、多い順に並べる
+#  4. 買える場所をつける：楽天市場（アフィリエイト）と Yahoo!ショッピング（YAHOO_APP_ID があれば）。
+#     レビューの多い人気の商品の中で、いちばん安い新品を、安い順に（中古は入れない）
+#  X・Instagram・TikTok は無料では中を読めないので、「SNSで話題」と書いた記事やまとめから拾う
+import datetime, html, json, math, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
 
 sys.path.insert(0, os.path.dirname(__file__))
 from build_events import gem, Limit  # noqa: E402
 from build_rank import call, item, APP  # noqa: E402
 
+YAHOO = os.environ.get("YAHOO_APP_ID", "")
+USED = re.compile(r"中古|リユース|ジャンク|訳あり|アウトレット|レンタル|USED", re.I)
+
 JST = datetime.timezone(datetime.timedelta(hours=9))
-UA = {"User-Agent": "uchinoko-techo/1.0"}
+UA = {"User-Agent": "Mozilla/5.0 (compatible; uchinoko-techo/1.0)"}
 AGES = [
-    ("pre", "妊娠中", "妊婦さん・出産準備", ["妊婦 便利グッズ 話題", "マタニティ グッズ 人気", "出産準備 買ってよかった"]),
-    ("m0", "0〜3か月", "新生児〜生後3か月", ["新生児 便利グッズ 話題", "育児グッズ 買ってよかった 新生児", "寝かしつけ グッズ 話題"]),
-    ("m4", "4〜6か月", "生後4〜6か月", ["生後半年 おもちゃ 人気", "離乳食 グッズ 話題", "ベビー 便利グッズ SNS 話題"]),
-    ("m7", "7〜11か月", "生後7〜11か月", ["ハイハイ 赤ちゃん おもちゃ 人気", "離乳食 便利グッズ 人気", "ベビー グッズ 話題 2026"]),
-    ("y1", "1歳", "1歳", ["1歳 おもちゃ 人気", "1歳 誕生日プレゼント 話題", "1歳 便利グッズ"]),
-    ("y2", "2歳", "2歳", ["2歳 おもちゃ 人気", "2歳 知育 話題", "イヤイヤ期 グッズ"]),
-    ("y3", "3歳〜", "3〜5歳", ["3歳 おもちゃ 人気", "幼稚園 グッズ 話題", "知育玩具 人気 2026"]),
+    ("pre", "妊娠中", "妊婦さん・出産準備", ["妊婦 グッズ 話題", "マタニティ グッズ バズ", "出産準備 買ってよかった"]),
+    ("m0", "0〜3か月", "新生児〜生後3か月", ["新生児 グッズ 話題", "寝かしつけ グッズ バズ", "新生児 買ってよかった"]),
+    ("m4", "4〜6か月", "生後4〜6か月", ["離乳食 グッズ 話題", "赤ちゃん おもちゃ バズ", "生後半年 買ってよかった"]),
+    ("m7", "7〜11か月", "生後7〜11か月", ["離乳食 便利グッズ 話題", "ハイハイ 赤ちゃん グッズ", "赤ちゃん グッズ バズ"]),
+    ("y1", "1歳", "1歳", ["1歳 おもちゃ 話題", "1歳 グッズ バズ", "1歳 買ってよかった"]),
+    ("y2", "2歳", "2歳", ["2歳 おもちゃ 話題", "イヤイヤ期 グッズ", "2歳 買ってよかった"]),
+    ("y3", "3歳〜", "3〜5歳", ["3歳 おもちゃ 話題", "幼稚園 グッズ 話題", "4歳 買ってよかった"]),
 ]
-COMMON = ["育児グッズ 話題", "ベビー用品 新商品", "子育て 便利グッズ SNSで話題"]
+COMMON = ["育児グッズ SNSで話題", "育児グッズ バズった", "子育て グッズ 話題", "育児 神グッズ"]
+STAT = {}
 
 
-def get(url, timeout=60):
-    req = urllib.request.Request(url, headers=UA)
+def get(url, timeout=60, headers=None):
+    req = urllib.request.Request(url, headers={**UA, **(headers or {})})
     for n in range(3):
         try:
             return urllib.request.urlopen(req, timeout=timeout).read()
@@ -34,70 +42,173 @@ def get(url, timeout=60):
     return b""
 
 
-def news(q, n=15):
-    """Google ニュースの見出し（ここ60日）"""
-    u = "https://news.google.com/rss/search?" + urllib.parse.urlencode({"q": q + " when:60d", "hl": "ja", "gl": "JP", "ceid": "JP:ja"})
-    raw = get(u)
-    out = []
+def clean(x, n):
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(x or ""))).strip()[:n]
+
+
+def host(u):
     try:
-        root = ET.fromstring(raw)
+        return urllib.parse.urlparse(u).hostname or ""
+    except ValueError:
+        return ""
+
+
+def rss(raw):
+    try:
+        return ET.fromstring(raw)
     except ET.ParseError:
-        return out
-    for it in root.iter("item"):
-        t = html.unescape(it.findtext("title") or "")
-        src = it.findtext("source") or ""
-        d = re.sub(r"<[^>]+>", " ", html.unescape(it.findtext("description") or ""))
-        out.append({"t": t[:140], "s": src[:40], "d": re.sub(r"\s+", " ", d)[:200]})
+        return None
+
+
+def gnews(q, n=15):
+    """Google ニュース（ここ60日）"""
+    root = rss(get("https://news.google.com/rss/search?" + urllib.parse.urlencode({"q": q + " when:60d", "hl": "ja", "gl": "JP", "ceid": "JP:ja"})))
+    out = []
+    for it in (root.iter("item") if root is not None else []):
+        out.append({"t": clean(it.findtext("title"), 140), "s": clean(it.findtext("source"), 40), "d": clean(it.findtext("description"), 160),
+                    "l": (it.findtext("link") or "").strip(), "k": "news", "b": 0})
         if len(out) >= n:
             break
     time.sleep(1)
     return out
 
 
-def rakuten_hot(keyword, n=10):
-    """レビューが多い順（＝よく買われて話題の物）"""
-    try:
-        d = call("search", keyword=keyword, sort="-reviewCount", hits=n)
-        return [item(x) for x in d.get("Items", [])[:n]]
-    except Exception as e:
-        print("rakuten", keyword, e)
-        return []
+def bing(q, n=15):
+    """Bing ニュース"""
+    root = rss(get("https://www.bing.com/news/search?" + urllib.parse.urlencode({"q": q, "format": "rss", "setlang": "ja", "cc": "JP"})))
+    out = []
+    for it in (root.iter("item") if root is not None else []):
+        link = (it.findtext("link") or "").strip()
+        real = urllib.parse.parse_qs(urllib.parse.urlparse(link).query).get("url", [link])[0]
+        src = ""
+        for ch in it:
+            if ch.tag.endswith("Source"):
+                src = ch.text or ""
+        out.append({"t": clean(it.findtext("title"), 140), "s": clean(src, 40) or host(real), "d": clean(it.findtext("description"), 160),
+                    "l": real, "k": "news", "b": 0})
+        if len(out) >= n:
+            break
+    time.sleep(1)
+    return out
 
 
-def find(keyword):
+def hatena(q, n=15):
+    """はてなブックマーク（人気順。ブックマーク数＝どれだけ話題か）"""
+    root = rss(get("https://b.hatena.ne.jp/search/text?" + urllib.parse.urlencode({"q": q, "mode": "rss", "sort": "popular"})))
+    out = []
+    if root is None:
+        return out
+    for it in root.iter():
+        if not it.tag.endswith("item"):
+            continue
+        f = {c.tag.split("}")[-1]: (c.text or "") for c in it}
+        link = f.get("link", "").strip()
+        try:
+            b = int(f.get("bookmarkcount") or 0)
+        except ValueError:
+            b = 0
+        out.append({"t": clean(f.get("title"), 140), "s": host(link), "d": clean(f.get("description"), 160), "l": link, "k": "hatena", "b": b})
+        if len(out) >= n:
+            break
+    time.sleep(1)
+    return out
+
+
+def note(q, n=15):
+    """note（スキの数＝どれだけ話題か）"""
+    raw = get("https://note.com/api/v3/searches?" + urllib.parse.urlencode({"context": "note", "q": q, "size": n, "sort": "popular"}))
+    out = []
     try:
-        d = call("search", keyword=keyword, sort="-reviewCount", hits=5, imageFlag=1)
+        d = json.loads(raw or b"{}")
+    except json.JSONDecodeError:
+        return out
+    notes = (((d.get("data") or {}).get("notes") or {}).get("contents")) or []
+    for x in notes[:n]:
+        u = (x.get("user") or {}).get("urlname") or ""
+        key = x.get("key") or ""
+        out.append({"t": clean(x.get("name"), 140), "s": "note", "d": clean(x.get("description") or x.get("body"), 160),
+                    "l": f"https://note.com/{u}/n/{key}" if u and key else "", "k": "note", "b": int(x.get("like_count") or 0)})
+    time.sleep(1)
+    return out
+
+
+def rakuten_buy(kw):
+    try:
+        d = call("search", keyword=kw, sort="-reviewCount", hits=15, imageFlag=1)
     except Exception as e:
-        print("find", keyword, e)
+        print("rakuten", kw, e)
         return None
-    for x in d.get("Items", []):
-        it = item(x)
-        if it["img"]:
-            return it
-    return None
+    xs = [item(x) for x in d.get("Items", [])]
+    xs = [x for x in xs if x["p"] and int(x["rc"] or 0) >= 3 and not USED.search(x["n"])][:10]
+    if not xs:
+        return None
+    x = min(xs, key=lambda x: int(x["p"]))
+    return {"s": "楽天市場", "n": x["n"], "p": int(x["p"]), "u": x["u"], "img": x["img"], "r": x["r"], "rc": x["rc"]}
 
 
-def ask(label, who, heads, hot):
+def yahoo_buy(kw):
+    if not YAHOO:
+        return None
+    raw = get("https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?" + urllib.parse.urlencode(
+        {"appid": YAHOO, "query": kw, "condition": "new", "sort": "-review_count", "results": 15, "in_stock": "true"}))
+    try:
+        hits = json.loads(raw or b"{}").get("hits") or []
+    except json.JSONDecodeError:
+        return None
+    xs = []
+    for h in hits:
+        rv = h.get("review") or {}
+        name = re.sub(r"\s+", " ", h.get("name", ""))[:70]
+        if h.get("price") and int(rv.get("count") or 0) >= 3 and not USED.search(name) and h.get("condition", "new") == "new":
+            img = (h.get("image") or {}).get("medium", "")
+            xs.append({"s": "Yahoo!ショッピング", "n": name, "p": int(h["price"]), "u": h.get("url", ""), "img": img, "r": rv.get("rate"), "rc": rv.get("count")})
+    xs = xs[:10]
+    return min(xs, key=lambda x: x["p"]) if xs else None
+
+
+def buy(kw):
+    out = [b for b in (rakuten_buy(kw) if APP else None, yahoo_buy(kw)) if b]
+    time.sleep(1)
+    return sorted(out, key=lambda b: b["p"])
+
+
+SOURCES = [("Googleニュース", gnews), ("Bingニュース", bing), ("はてなブックマーク", hatena), ("note", note)]
+
+
+def collect(qs):
+    heads, seen = [], set()
+    for q in qs:
+        for name, fn in SOURCES:
+            try:
+                got = fn(q)
+            except Exception as e:
+                print("source", name, q, e)
+                got = []
+            STAT[name] = STAT.get(name, 0) + len(got)
+            for h in got:
+                key = re.sub(r"\W", "", h["t"])[:40]
+                if h["t"] and key not in seen:
+                    seen.add(key)
+                    heads.append(h)
+    return heads
+
+
+def ask(who, heads):
     lines = [f"[{i}] {h['t']}（{h['s']}）{h['d']}" for i, h in enumerate(heads)]
-    rk = [f"[R{i}] {x['n']}（レビュー{x['rc']}件）" for i, x in enumerate(hot)]
-    prompt = f"""あなたは子育て情報サイトの編集者です。下の「ネットの記事の見出し」と「楽天でよく買われている商品」だけを見て、
-いま「{who}」の家庭で話題になっている育児グッズを最大8つ選んでください。
+    prompt = f"""あなたは子育て情報サイトの編集者です。下の見出しは、ニュース・ブログ・はてなブックマーク・note から集めたものです。
+この中から、「{who}」の家庭で使う育児グッズのうち、話題になっている物を最大12個あげてください。
 
 きまり:
-- 見出しか商品の中に、はっきり出てくる物だけを選ぶ。出てこない物を作らない。
-- 1つの商品名ではなく「スワドル」「電動バウンサー」のような、物の種類で書いてよい（ブランド名が話題ならブランド名も可）。
-- 同じ種類の物は1つにまとめる。
-- why は、ママが読んで分かるやさしい日本語で40字以内。「話題」「バズ」などの言葉を使いすぎない。
-- src には、根拠にした見出しや商品の番号（例 "3", "R2"）を入れる。
-- kw は、楽天で検索するときの言葉（短く）。
+- 見出しの中に、はっきり出てくる物だけ。出てこない物を作らない。広告・セールのお知らせだけの記事は使わない。
+- 「スワドル」「電動バウンサー」のような物の種類で書いてよい（ブランド名が話題ならブランド名も可）。
+- 同じ種類の物は1つにまとめ、その物が出てくる見出しの番号を、できるだけ全部 src に入れる。
+- why は、どんなところが話題なのかを、ママが読んで分かるやさしい日本語で40字以内。
+- kw は、通販サイトでこの物をさがすときの短い言葉（例「スワドル 新生児」）。
 
 JSON だけで答える: {{"items":[{{"name":"…","why":"…","kw":"…","src":["…"]}}]}}
 
-ネットの記事の見出し:
+見出し:
 {chr(10).join(lines) or "（なし）"}
-
-楽天でよく買われている商品:
-{chr(10).join(rk) or "（なし）"}
 """
     text, model = gem([{"text": prompt}])
     m = re.search(r"\{.*\}", text or "", re.S)
@@ -108,22 +219,29 @@ JSON だけで答える: {{"items":[{{"name":"…","why":"…","kw":"…","src":
     except json.JSONDecodeError:
         return [], model
     ok = []
-    valid = {str(i) for i in range(len(heads))} | {f"R{i}" for i in range(len(hot))}
     for x in items:
         raw = x.get("src") or []
-        src = [t for t in (re.sub(r"[^0-9R]", "", str(s).upper()) for s in (raw if isinstance(raw, list) else [raw])) if t in valid]
-        if not src or not x.get("name"):
+        idx = sorted({int(t) for t in (re.sub(r"[^0-9]", "", str(s)) for s in (raw if isinstance(raw, list) else [raw])) if t and int(t) < len(heads)})
+        if not idx or not x.get("name"):
             continue
-        ok.append({"name": str(x["name"])[:30], "why": str(x.get("why", ""))[:60], "kw": str(x.get("kw") or x["name"])[:30],
-                   "from": sorted({heads[int(s)]["s"] for s in src if not s.startswith("R") and heads[int(s)]["s"]} | ({"楽天のレビュー"} if any(s.startswith("R") for s in src) else set()))[:3]})
+        hs = [heads[i] for i in idx]
+        sites = list(dict.fromkeys(h["s"] for h in hs if h["s"]))
+        buzz = sum(h["b"] for h in hs)
+        ok.append({"t": str(x["name"])[:30], "w": str(x.get("why", ""))[:60], "kw": str(x.get("kw") or x["name"])[:30], "n": len(sites), "f": sites[:4],
+                   "a": [{"t": h["t"], "s": h["s"], "l": h["l"]} for h in sorted(hs, key=lambda h: -h["b"]) if h["l"]][:3],
+                   "_score": len(sites) + math.log10(1 + buzz)})
+    # いくつのサイトで話題か（＋はてブ・noteの数）で多い順
+    ok.sort(key=lambda r: -r["_score"])
+    for r in ok:
+        r.pop("_score")
     return ok[:8], model
 
 
 def main():
-    if not os.environ.get("GEMINI_API_KEY") or not APP:
-        print("GEMINI_API_KEY か RAKUTEN_APP_ID がないので、何もしません")
+    if not os.environ.get("GEMINI_API_KEY"):
+        print("GEMINI_API_KEY がないので、何もしません")
         return
-    common = [h for q in COMMON for h in news(q, 10)]
+    common = collect(COMMON)
     old = {}
     try:
         old = json.load(open("public/data/goods.json", encoding="utf-8")).get("ages", {})
@@ -137,35 +255,31 @@ def main():
                 out[key] = old[key]
             continue
         heads, seen = [], set()
-        for h in [x for q in qs for x in news(q)] + common:
+        for h in collect(qs) + common:
             if h["t"] not in seen:
                 seen.add(h["t"])
                 heads.append(h)
-        heads = heads[:45]
-        hot = rakuten_hot(qs[0].replace(" 話題", "").replace(" SNS", ""), 10)
-        print(key, "news", len(heads), "rakuten", len(hot))
+        heads = heads[:110]
+        print(key, "heads", len(heads), {k: sum(1 for h in heads if h["k"] == k) for k in ("news", "hatena", "note")})
         try:
-            picks, model = ask(label, who, heads, hot)
-            if not picks:
+            rows, model = ask(who, heads)
+            if not rows:
                 time.sleep(20)
-                picks, model = ask(label, who, heads, hot)
+                rows, model = ask(who, heads)
         except Limit:
             print("gemini limit; keep old for", key)
             if key in old:
                 out[key] = old[key]
             continue
-        rows = []
-        for p in picks:
-            it = find(p["kw"])
-            if not it:
-                continue
-            rows.append({"t": p["name"], "w": p["why"], "f": p["from"], "n": it["n"], "img": it["img"], "p": it["p"], "u": it["u"], "r": it["r"], "rc": it["rc"]})
-        print(key, model, [r["t"] for r in rows])
+        for r in rows:
+            r["buy"] = buy(r.pop("kw"))
+        print(key, model, [(r["t"], r["n"], [(b["s"], b["p"]) for b in r["buy"]]) for r in rows])
         if rows:
             out[key] = rows
         elif key in old:
             out[key] = old[key]
         time.sleep(4)
+    print("sources", STAT)
     if not out:
         sys.exit("1つも作れませんでした")
     os.makedirs("public/data", exist_ok=True)
