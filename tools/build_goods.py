@@ -1,6 +1,7 @@
 # 話題の育児グッズを、月齢ごとに public/data/goods.json に置く（GitHub Actions で毎月）
 #  広告は入れない。いろんなサイトで話題・バズっている物を、話題のもとといっしょに紹介する
-#  1. Google ニュース・Bing ニュース・はてなブックマーク・note から見出しを集める
+#  1. Google ニュース・Bing ニュース・はてなブックマークから見出しを集める（note は 403 で読めない）
+#     ＋ Gemini に Google 検索で口コミ・ブログ・SNSのまとめを調べさせ、どのサイトが裏づけているか（groundingSupports）を数える
 #  2. Gemini（無料枠）に、見出しに出てくる育児グッズを種類ごとにまとめてもらう（作り話はさせない）
 #  3. いくつのサイトで話題になっているかを数えて、多い順に並べる
 #  4. 買える場所をつける：楽天市場（アフィリエイト）と Yahoo!ショッピング（YAHOO_APP_ID があれば）。
@@ -142,6 +143,10 @@ def rakuten_buy(kw):
     xs = [x for x in xs if x["p"] and int(x["rc"] or 0) >= 3 and not USED.search(x["n"])][:10]
     if not xs:
         return None
+    # 替えの部品や小物が「いちばん安い」にならないよう、人気の商品の値段のまん中の4割より安い物は外す
+    ps = sorted(int(x["p"]) for x in xs)
+    mid = ps[len(ps) // 2]
+    xs = [x for x in xs if int(x["p"]) >= mid * 0.4] or xs
     x = min(xs, key=lambda x: int(x["p"]))
     return {"s": "楽天市場", "n": x["n"], "p": int(x["p"]), "u": x["u"], "img": x["img"], "r": x["r"], "rc": x["rc"]}
 
@@ -172,7 +177,7 @@ def buy(kw):
     return sorted(out, key=lambda b: b["p"])
 
 
-SOURCES = [("Googleニュース", gnews), ("Bingニュース", bing), ("はてなブックマーク", hatena), ("note", note)]
+SOURCES = [("Googleニュース", gnews), ("Bingニュース", bing), ("はてなブックマーク", hatena)]
 
 
 def collect(qs):
@@ -227,14 +232,67 @@ JSON だけで答える: {{"items":[{{"name":"…","why":"…","kw":"…","src":
         hs = [heads[i] for i in idx]
         sites = list(dict.fromkeys(h["s"] for h in hs if h["s"]))
         buzz = sum(h["b"] for h in hs)
-        ok.append({"t": str(x["name"])[:30], "w": str(x.get("why", ""))[:60], "kw": str(x.get("kw") or x["name"])[:30], "n": len(sites), "f": sites[:4],
+        ok.append({"t": str(x["name"])[:30], "w": str(x.get("why", ""))[:60], "kw": str(x.get("kw") or x["name"])[:30], "n": len(sites), "f": sites,
                    "a": [{"t": h["t"], "s": h["s"], "l": h["l"]} for h in sorted(hs, key=lambda h: -h["b"]) if h["l"]][:3],
                    "_score": len(sites) + math.log10(1 + buzz)})
     # いくつのサイトで話題か（＋はてブ・noteの数）で多い順
     ok.sort(key=lambda r: -r["_score"])
     for r in ok:
         r.pop("_score")
-    return ok[:8], model
+    return ok[:12], model
+
+
+def web(who):
+    """Gemini に Google 検索させ、行ごとに、裏づけた検索結果のサイトを数える"""
+    from build_events import KEY, MODELS, get_json
+    prompt = f"""Google 検索で、いま「{who}」のママ・パパのあいだで話題になっている育児グッズを、いろいろなサイト
+（SNSで話題のまとめ、ママ向けの情報サイト、ブログ、口コミ、ニュース）から調べてください。たくさんのサイトで話題の物を、多い順に最大12個。
+1つにつき1行で、次の形で書いてください（ほかの文は書かない）:
+物の名前｜どんなところが話題か（30字以内）｜通販でさがす言葉"""
+    for model in MODELS:
+        try:
+            r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={KEY}",
+                         {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}], "generationConfig": {"temperature": 0.1}})
+        except Limit:
+            raise
+        except Exception as e:
+            print("web", model, str(e)[:120])
+            continue
+        cand = (r.get("candidates") or [{}])[0]
+        text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
+        gm = cand.get("groundingMetadata") or {}
+        chunks = [((c.get("web") or {}).get("title") or "").strip() for c in gm.get("groundingChunks") or []]
+        rows = []
+        for line in text.splitlines():
+            parts = [x.strip(" *-・") for x in line.split("｜")]
+            if len(parts) < 2 or not parts[0]:
+                continue
+            sites = set()
+            for sp in gm.get("groundingSupports") or []:
+                seg = ((sp.get("segment") or {}).get("text") or "").strip()
+                if seg and (seg in line or (len(seg) > 8 and line.strip() in seg)):
+                    sites |= {chunks[i] for i in sp.get("groundingChunkIndices") or [] if i < len(chunks) and chunks[i]}
+            if sites:
+                rows.append({"t": parts[0][:30], "w": parts[1][:60], "kw": (parts[2] if len(parts) > 2 else parts[0])[:30], "f": sorted(sites), "a": []})
+        return rows
+    return []
+
+
+def merge(rows, more):
+    """見出しから選んだ物と、検索で調べた物を合わせる（同じ物はサイトを足す）"""
+    key = lambda t: re.sub(r"[\s（）()・]", "", t)
+    out = [dict(r) for r in rows]
+    for m in more:
+        hit = next((r for r in out if key(m["t"]) in key(r["t"]) or key(r["t"]) in key(m["t"])), None)
+        if hit:
+            hit["f"] = list(dict.fromkeys(hit["f"] + m["f"]))
+        else:
+            out.append(dict(m))
+    for r in out:
+        r["n"] = len(r["f"])
+        r["f"] = r["f"][:4]
+    out.sort(key=lambda r: -r["n"])
+    return out[:8]
 
 
 def main():
@@ -271,6 +329,12 @@ def main():
             if key in old:
                 out[key] = old[key]
             continue
+        try:
+            more = web(who)
+        except Limit:
+            more = []
+        print(key, "web", len(more))
+        rows = merge(rows, more)
         for r in rows:
             r["buy"] = buy(r.pop("kw"))
         print(key, model, [(r["t"], r["n"], [(b["s"], b["p"]) for b in r["buy"]]) for r in rows])
