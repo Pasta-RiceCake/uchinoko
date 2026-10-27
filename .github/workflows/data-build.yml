@@ -1,0 +1,28 @@
+name: data-build
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "cities,hoiku,sanin のうち作るもの"
+        default: "cities,hoiku,sanin"
+  schedule:
+    - cron: "0 18 3 * *"
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        env:
+          ONLY: ${{ github.event.inputs.only || 'cities,hoiku,sanin' }}
+        run: python3 tools/build_data.py public/data
+      - name: commit
+        run: |
+          du -sh public/data; ls public/data public/data/* | head -20
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          git add public/data
+          git diff --cached --quiet || (git commit -m "公開データを更新" && git push)
