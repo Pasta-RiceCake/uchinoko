@@ -700,6 +700,12 @@ form.add input{min-width:0}
 .fung .grow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fung .t{flex:1 1 140px;min-width:0;font-size:14px}
 .fung .ktb{margin:0!important}
+.hwtag{flex:none;font-size:11px;font-weight:700;color:var(--ac);border:1px solid var(--ac);border-radius:999px;padding:2px 8px;margin-left:6px;letter-spacing:.04em}
+.acc summary .grow{flex:1;min-width:0}
+.hwed{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.hwed textarea,.hwed input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;line-height:1.7;background:var(--sheet);color:var(--ink)}
+.wno{display:grid;place-items:center;width:56px;height:56px;color:var(--ac)}
+.rw .chev{font-size:12px;white-space:nowrap}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -1048,7 +1054,7 @@ const TOYS=[[0,5,"0〜5か月",[["ベッドメリー","寝ている赤ちゃん�
 [12,23,"1歳",[["積み木","積む・くずすをくり返して遊ぶ","star"],["型はめ・ポストボックス","形を合わせて入れる","gift"],["手押し車","歩きはじめの練習に","stroller"],["たいこ・木琴","たたくと音が出て、リズム遊びに","bubbles"]]],
 [24,35,"2歳",[["ままごとセット","ごっこ遊びで言葉が増える","mug"],["大きめのブロック（レゴ デュプロなど）","はめる・はずすが簡単","star"],["シール遊び帳","指先を使う遊び","ribbon"],["太いクレヨン","なぐり描きから丸が描けるように","tulip"]]],
 [36,99,"3歳から",[["パズル（10〜30ピース）","形を見て考える","star"],["磁石ブロック","立体を作れる","gift"],["ひらがなカード・かるた","字に興味が出てきたら","book"],["はさみ・のりの工作セット","大人が見ているときに","ribbon"]]]];
-const SUBS=[["こどもちゃれんじ（ベネッセ）","0歳から。月齢に合わせたおもちゃと絵本が毎月届く。しまじろうの教材"],["おもちゃのサブスク（トイサブ！、Cha Cha Chaなど）","知育おもちゃを数か月ごとに借りて交換できる。買うより場所をとらない"],["ディズニー英語システム","英語の教材。まとめて買う形で高めなので、無料サンプルで試してから"],["くもんの幼児教室・くもん出版のおもちゃ","教室に通う形と、市販のおもちゃ・ドリルがある"],["図書館のおもちゃ・絵本","市区町村によっては、おもちゃの貸し出しや「おもちゃ図書館」がある"]];
+const SUBS=[["こどもちゃれんじ（ベネッセ）","0歳から。月齢に合わせたおもちゃと絵本が毎月届く。しまじろうの教材","https://shimajiro.benesse.ne.jp/"],["トイサブ！","知育おもちゃを2か月ごとに届けて交換。月齢に合わせてプランナーが選んでくれる","https://toysub.net/"],["Cha Cha Cha（ちゃちゃちゃ）","知育おもちゃのレンタル。おもちゃのカタログを無料で見られる","https://chachacha-toy.com/"],["ディズニー英語システム","英語の教材。まとめて買う形で高めなので、無料サンプルで試してから","https://world-family.co.jp/"],["くもん","教室に通う形と、市販のおもちゃ・ドリルがある","https://www.kumon.ne.jp/"],["図書館のおもちゃ・絵本","市区町村によっては、おもちゃの貸し出しや「おもちゃ図書館」がある",""]];
 let chTab="あそび";
 const PLAY=[[0,3,"0〜3か月","目を見て話しかけたり歌ったりする。白黒やはっきりした色の絵を見せる。起きているときに少しだけうつぶせ（大人が見ているときだけ）。"],
 [4,6,"4〜6か月","いないいないばあ。音の出るおもちゃを握らせる。手遊び歌。寝返りはそばで見守る。"],
@@ -1072,7 +1078,7 @@ function vChiiku(){
   ${chTab==="あそび"?`<section class="h-sec"><div class="hd"><h2>月齢ごとのあそび</h2></div><div class="rows">${PLAY.map(([a,b,l,t])=>{const now=m>=a&&m<=b;return `<div class="rw${now?" now":""}" style="align-items:flex-start"><span class="grow"><div class="t">${l}${now?`<span class="nowtag">いまここ</span>`:""}</div><div class="s" style="font-size:13px;line-height:1.7;color:var(--ink)">${t}</div></span></div>`}).join("")}</div>
    <p class="note">できる時期には個人差があります。早い・遅いを気にしすぎなくて大丈夫です。</p></section>`:""}
   ${chTab==="知育グッズ"?`${TOYS.map(([a,b,l,items])=>{const now=m>=a&&m<=b;return `<section class="h-sec"><div class="hd"><h2>${l}${now?`<span class="nowtag">いまここ</span>`:""}</h2></div><div class="rows">${items.map(([t,s,i])=>{const on=W().some(w=>w.t===t);return `<div class="rw">${pic(i,34)}<span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(t)}">${on?"メモ済み":"欲しい"}</button></div>`}).join("")}</div></section>`}).join("")}
-   <section class="h-sec"><div class="hd"><h2>毎月届く・借りられるサービス</h2></div><div class="rows">${SUBS.map(([t,s])=>`<a class="rw" href="https://www.google.com/search?q=${encodeURIComponent(t.replace(/（.*?）/g,""))}" target="_blank" rel="noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">${ic("chev",16)}</span></a>`).join("")}</div>
+   <section class="h-sec"><div class="hd"><h2>毎月届く・借りられるサービス</h2></div><div class="rows">${SUBS.map(([t,s,u])=>u?`<a class="rw" href="${u}" target="_blank" rel="noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">公式サイト</span></a>`:`<div class="rw"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span></div>`).join("")}</div>
    <p class="note">料金や内容はよく変わるので、申しこむ前に公式サイトで確認してください。「欲しい」を押すと「欲しい物メモ」に入ります。</p></section>`:""}
   ${chTab==="絵本"?`<section class="h-sec"><div class="hd"><h2>絵本のはじめかた</h2></div><div class="rows">${[["0歳から読んでOK","内容が分からなくても、声とリズムを楽しんでいます。"],["1日1冊、短くていい","かじっても破れにくい厚紙の絵本が便利です。"],["同じ本を何度もでOK","「また読んで」は気に入っているしるしです。"],["もらえることも","多くの市区町村で、健診のときに絵本をもらえる「ブックスタート」があります。図書館の赤ちゃん向けおはなし会もおすすめ。"]].map(([t,s])=>`<div class="rw"><span class="grow"><div class="t">${t}</div><div class="s" style="font-size:13px">${s}</div></span></div>`).join("")}</div></section>
    ${BOOKS.map(([g,bs])=>`<section class="h-sec"><div class="hd"><h2>${g}の定番</h2></div><div class="rows">${bs.map(([t,a])=>`<div class="rw">${pic("book",30)}<span class="grow"><div class="t">${t}</div><div class="s">${a}</div></span></div>`).join("")}</div></section>`).join("")}`:""}
@@ -1231,9 +1237,22 @@ const HOW=[["沐浴","bathtub",["着替え・おむつ・バスタオルを先�
   ["ミルク","baby-bottle",["粉ミルクは70℃以上のお湯で溶かす","腕の内側にたらして、温かいくらいまで冷ます","作って2時間たったら残りは捨てる"]],
   ["げっぷ","smiling-face-with-hearts",["たて抱きで背中を下から上にさするか、やさしくトントン","5分ほどで出なければOK。顔を横に向けて寝かせる"]],
   ["寝かせ方","sleeping-face",["1歳までは、あおむけで寝かせる","顔のまわりに枕・ぬいぐるみ・タオルを置かない","敷き布団はかためのものを"]]];
+let howEd=null;
+const howS=()=>{S.howc=S.howc||{e:{},my:[]};S.howc.e=S.howc.e||{};S.howc.my=S.howc.my||[];return S.howc};
+const howLines=t=>t.split(/\n/).map(x=>x.trim()).filter(Boolean);
+function howEdit(id,title,steps,canTitle){
+  return `<form class="hwed" data-form="howe" data-id="${id}">${canTitle?`<input name="n" value="${esc(title)}" aria-label="名前" placeholder="名前（例：寝かしつけ）" required>`:""}
+   <label class="sub" for="hw${id}">1行に1つずつ書いてください</label><textarea id="hw${id}" name="s" rows="${Math.max(5,steps.length+1)}">${esc(steps.join("\n"))}</textarea>
+   <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-act="howed" data-v="">やめる</button>
+   ${id[0]==="m"?`<button type="button" class="del" data-act="howdel" data-v="${id}">このやり方を消す</button>`:S.howc?.e?.[id]?`<button type="button" data-act="howreset" data-v="${id}">もとに戻す</button>`:""}</div></form>`}
 function vHow(){
-  return head("育児のやり方","bottle","pink")+`<p class="lead">一般的なやり方です。産院で教わった方法があれば、そちらを優先してください。</p>
-  <div class="stack">${HOW.map((h,i)=>`<details class="acc"${i===0?" open":""}><summary><span class="bub">${ic(h[1],22)}</span>${h[0]}</summary><ol class="steps">${h[2].map(x=>`<li>${x}</li>`).join("")}</ol></details>`).join("")}</div>`;
+  const c=howS();
+  const L=[...HOW.map((h,i)=>({id:""+i,t:h[0],icn:h[1],st:c.e[i]||h[2],mine:!!c.e[i]})),...c.my.map((m,j)=>({id:"m"+j,t:m[0],icn:"heart",st:m[1],mine:true,own:true}))];
+  return head("育児のやり方","bottle","pink")+`<p class="lead">一般的なやり方です。産院で教わったやり方や、おうちのやり方があれば、書きかえて「わが家のやり方」にできます。</p>
+  <div class="stack">${L.map((h,i)=>`<details class="acc"${i===0||howEd===h.id?" open":""}><summary><span class="bub">${ic(h.icn,22)}</span><span class="grow">${esc(h.t)}</span>${h.mine?`<span class="hwtag">わが家</span>`:""}</summary>
+   ${howEd===h.id?howEdit(h.id,h.t,h.st,h.own):`<ol class="steps">${h.st.map(x=>`<li>${esc(x)}</li>`).join("")}</ol><button type="button" class="pladd" data-act="howed" data-v="${h.id}">${h.mine?"書きかえる":"わが家のやり方に書きかえる"}</button>`}</details>`).join("")}</div>
+  <details class="acc" style="margin-top:12px"><summary><span class="bub">${ic("heart",22)}</span>やり方を追加する</summary>
+   <form class="hwed" data-form="howmy"><input name="n" placeholder="名前（例：寝かしつけ）" aria-label="名前" required><label class="sub" for="hwnew">1行に1つずつ書いてください</label><textarea id="hwnew" name="s" rows="5" placeholder="部屋を暗くする&#10;トントンする"></textarea><div class="plbtn"><button type="submit" class="pri">追加する</button></div></form></details>`;
 }
 const SIZES=[[50,"0〜3か月",3],[60,"3〜6か月",6],[70,"6〜12か月",12],[80,"1〜1歳半",18],[90,"〜2歳半",30],[100,"〜4歳",48]];
 const curSize=()=>{const m=Math.max(0,months());return SIZES.find(s=>m<s[2])||SIZES[5]};
@@ -1272,10 +1291,15 @@ const WSV={
 const WKEYS=[["ジャンプスーツ","jump"],["ジャンパー","jacket"],["パーカー","hoodie"],["トレーナー","sweat"],["カーディガン","cardi"],["はおりもの","cardi"],["ベスト","vest"],["スリーパー","sleeper"],["ショートパンツ","shorts"],["パンツ","pants"],["半そでボディ肌着","bodyS"],["長そでボディ肌着","bodyL"],["ボディ肌着","bodyL"],["ロンパース","romper"],["2wayオール","two"],["カバーオール","cover"],["コンビ肌着","combi"],["長肌着","long"],["短肌着","short"],["長そでTシャツ","teeL"],["Tシャツ","teeS"],["肌着","tank"]];
 const wkey=n=>{let best=null,bi=1e9;for(const [w,k] of WKEYS){const i=n.indexOf(w);if(i>=0&&i<bi){bi=i;best=k}}return best};
 const wsvg=(k,s)=>WSV[k]?`<svg class="wsvg" viewBox="0 0 64 64" width="${s}" height="${s}" aria-hidden="true"><g fill="${WSV[k][0]}">${WSV[k][1]}</g></svg>`:"";
+let wEd=false;
+const wRows=w=>{const c=S.wearc?.[w.label]?.[season];if(c)return c;return w[season].map(l=>({l:l.filter(x=>!wkey(x)).join(""),it:l.filter(wkey)}))};
+const wText=rows=>rows.map(r=>(r.l?r.l+"：":"")+r.it.join("＋")).join("\n");
+const wParse=t=>t.split(/\n/).map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.+?)[：:](.*)$/);const l=m?m[1].trim():"",s=m?m[2]:x;return {l,it:s.split(/[＋+、,]/).map(y=>y.trim()).filter(Boolean)}}).filter(r=>r.it.length);
 function vWear(){
-  const w=WEAR.find(x=>Math.max(0,months())<x.to);
+  const w=WEAR.find(x=>Math.max(0,months())<x.to),rows=wRows(w),mine=!!S.wearc?.[w.label]?.[season];
   return head("服の着せ方","onesie","mint")+`<p class="lead">今は ${w.label}・${curSize()[0]}cm くらい。季節を選んでください。</p>${seasonsBar()}
-  <div class="sec-t">${season}の着せ方</div><div class="sheet stack">${w[season].map(l=>{const lab=l.filter(x=>!wkey(x)),it=l.filter(wkey);return `<div class="wrow">${lab.length?`<span class="wlab">${lab.join("")}</span>`:""}<div class="wlay">${it.map((x,i)=>(i?`<em>＋</em>`:"")+`<span class="wc">${wsvg(wkey(x),56)}<b>${x}</b>${it.length>1?`<small>${i===0?"いちばん下":i===it.length-1?"いちばん上":"まん中"}</small>`:""}</span>`).join("")}</div></div>`}).join("")}<div class="sub">${w.tip}</div></div>
+  <div class="sec-t">${season}の着せ方${mine?`<span class="hwtag">わが家</span>`:""}</div><div class="sheet stack">${wEd?`<form class="hwed" data-form="weare"><label class="sub" for="wtx">1行に1つ。「寝るとき：短肌着＋スリーパー」のように、下に着るものから「＋」でつなげます</label><textarea id="wtx" name="s" rows="${Math.max(4,rows.length+2)}">${esc(wText(rows))}</textarea>
+   <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-act="weared">やめる</button>${mine?`<button type="button" data-act="wearreset">もとに戻す</button>`:""}</div></form>`:rows.map(({l,it})=>`<div class="wrow">${l?`<span class="wlab">${esc(l)}</span>`:""}<div class="wlay">${it.map((x,i)=>(i?`<em>＋</em>`:"")+`<span class="wc">${wsvg(wkey(x),56)||`<span class="wno">${ic("heart",30)}</span>`}<b>${esc(x)}</b>${it.length>1?`<small>${i===0?"いちばん下":i===it.length-1?"いちばん上":"まん中"}</small>`:""}</span>`).join("")}</div></div>`).join("")+`<div class="sub">${w.tip}</div><button type="button" class="pladd" data-act="weared">${mine?"書きかえる":"わが家の着せ方に書きかえる"}</button>`}</div>
   <div class="sec-t">服の名前と形</div><div class="wgrid">${WORDS.map(x=>`<div class="wcard">${wsvg(wkey(x[0]),72)}<b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>`;
 }
 const NEED={春:[["長肌着・コンビ肌着",5],["カバーオール",4],["薄手のはおりもの",1],["靴下",2],["帽子",1]],夏:[["短肌着",5],["半そでロンパース",5],["日よけの帽子",1],["ガーゼケット",1],["スタイ",4]],秋:[["長肌着・コンビ肌着",5],["カバーオール",4],["ベスト",1],["靴下",3],["スリーパー",1]],冬:[["長肌着・コンビ肌着",6],["厚手のカバーオール",4],["スリーパー",2],["ジャンプスーツ",1],["靴下",3],["ニット帽",1]]};
@@ -1647,6 +1671,11 @@ document.addEventListener("click",e=>{
     case"ffw":{const x=ffS().t[i];x.w=FFW[(FFW.indexOf(x.w)+1)%FFW.length];k();break}
     case"fftdel":ffS().t.splice(i,1);k();break;
     case"ffndel":ffS().n.splice(i,1);k();break;
+    case"howed":howEd=el.dataset.v||null;render(true);if(howEd)setTimeout(()=>document.querySelector(".hwed textarea")?.focus(),50);break;
+    case"howreset":delete howS().e[el.dataset.v];howEd=null;save();render(true);toast("もとのやり方に戻しました");break;
+    case"howdel":howS().my.splice(+el.dataset.v.slice(1),1);howEd=null;save();render(true);toast("消しました");break;
+    case"weared":wEd=!wEd;render(true);break;
+    case"wearreset":{const w=WEAR.find(x=>Math.max(0,months())<x.to);if(S.wearc?.[w.label])delete S.wearc[w.label][season];wEd=false;save();render(true);toast("もとの着せ方に戻しました");break}
     case"cled":clEd=!clEd;render(true);break;
     case"clq":{const c=clS();if(i>=100){const x=c.my[i-100];x.q=Math.max(0,x.q+(+v))}else c.q[i]=Math.max(0,(c.q[i]??NEED[season][i][1])+(+v));k();break}
     case"cldel":{const c=clS();if(i>=100){c.my.splice(i-100,1);const key=season+curSize()[0],h=S.have[key]||{};for(let j=i;j<100+c.my.length+1;j++)h[j]=h[j+1];}else c.hide[i]=true;k();break}
@@ -1796,6 +1825,11 @@ addEventListener("submit",e=>{
   else if(t==="ffn"){if(!v("t"))return;ffS().n.push({h:v("t"),b:""})}
   else if(t==="clmy"){if(!v("t"))return;clS().my.push({n:v("t"),q:Math.max(0,+v("q")||1)})}
   else if(t==="jtb"){if(!v("t"))return;jtBr().push({t:v("t"),c:false})}
+  else if(t==="howe"){const id=f.dataset.id,st=howLines(f.elements.s.value);if(!st.length){toast("1行以上書いてください");return}
+    if(id[0]==="m"){const m=howS().my[+id.slice(1)];m[1]=st;if(v("n"))m[0]=v("n")}else howS().e[id]=st;howEd=null;save();render(true);toast("わが家のやり方にしました");return}
+  else if(t==="howmy"){const st=howLines(f.elements.s.value);if(!v("n")||!st.length){toast("名前とやり方を書いてください");return}howS().my.push([v("n"),st])}
+  else if(t==="weare"){const rows=wParse(f.elements.s.value);if(!rows.length){toast("1行以上書いてください");return}const w=WEAR.find(x=>Math.max(0,months())<x.to);
+    S.wearc=S.wearc||{};(S.wearc[w.label]=S.wearc[w.label]||{})[season]=rows;wEd=false;save();render(true);toast("わが家の着せ方にしました");return}
   else if(t==="brand"){let u=v("u");if(!/^https?:\/\//.test(u))u="https://"+u;S.brands.push({n:v("n"),u})}
   save();render(true);toast("追加しました");
 });
