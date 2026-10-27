@@ -55,7 +55,7 @@ s = re.sub(r'const NOTI=\[\["vac".*?\]\];', 'const NOTI=[["plan","カレンダ�
 assert '["plan","カレンダーの予定' in s
 rep('<div class="sub" style="margin-top:6px">※ 見本なので、実際に相手の画面に出るのは本番からです。</div>', '')
 rep0('今は見本の園です。本番では、位置情報をオンにすると国土交通省の全国の保育所データから近くの園を出し、空き状況（○あり △少し ×なし）は、各自治体が毎月出している情報にリンクします。', '園の一覧は例です。近くの園と空き状況は、地図や自治体の「入園のしおり」で確かめてください。')
-rep('今は見本です。本番では評判のよい物を調べて入れます。', '')
+rep('見本です。本番では、毎月ネットの記事や楽天でよく買われている物から、月齢ごとに話題の物を集めて出します。', 'いま集めているところです。少し待ってからもう一度開いてください。')
 rep('<p class="note">本番では、このページをリンクで送れます（相手はログインなしで見られます）。</p>', '')
 rep('case"share":toast("本番では、合言葉つきのリンクが出ます");break;', 'case"share":open("fufu");break;')
 rep0('case"hkloc":toast("本番では、位置情報をオンにすると近くの園が出ます");break;', 'case"hkloc":window.open("https://www.google.com/maps/search/"+encodeURIComponent("保育園 "+S.pref+(S.city||"")),"_blank","noopener");break;')

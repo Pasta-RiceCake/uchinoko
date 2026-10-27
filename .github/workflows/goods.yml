@@ -1,0 +1,29 @@
+name: goods
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 21 3 * *"
+permissions:
+  contents: write
+concurrency: ${{ github.workflow }}
+jobs:
+  goods:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
+          RAKUTEN_ACCESS_KEY: ${{ secrets.RAKUTEN_ACCESS_KEY }}
+        run: python3 tools/build_goods.py
+      - name: commit
+        run: |
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          [ -f public/data/goods.json ] || exit 0
+          git add public/data/goods.json
+          git diff --cached --quiet && exit 0
+          git commit -m "話題のグッズを更新"
+          git pull --rebase -q origin main && git push
