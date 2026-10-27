@@ -117,6 +117,11 @@ def main():
     if not KEY:
         print("GEMINI_API_KEY がまだ入っていないので、何もしません")
         return
+    if not os.path.exists("public/data/cities.json"):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import build_data
+        build_data.OUT = "public/data"
+        build_data.cities()
     cities = json.load(open("public/data/cities.json", encoding="utf-8"))
     want = [ONLY] if ONLY else get_json(SITE + "/api/cities").get("cities", [])
     today = datetime.datetime.now(JST)
