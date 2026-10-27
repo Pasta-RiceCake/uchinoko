@@ -40,7 +40,21 @@ def children(gid):
     d = call("genre", genreId=gid)
     ch = d.get("children", [])
     ch = [c.get("child", c) for c in ch]
-    return [(c.get("genreId"), c.get("genreName")) for c in ch]
+    if ch:
+        print("  raw child", json.dumps(ch[0], ensure_ascii=False)[:300])
+    def nm(c):
+        for k in ("genreName", "name", "genreNameJa", "nameJa"):
+            if c.get(k):
+                return c[k]
+        for v in c.values():
+            if isinstance(v, dict):
+                n = nm(v)
+                if n:
+                    return n
+        return ""
+    def gid(c):
+        return c.get("genreId") or next((v.get("genreId") for v in c.values() if isinstance(v, dict) and v.get("genreId")), None)
+    return [(gid(c), nm(c)) for c in ch]
 
 
 def item(x):
@@ -74,7 +88,7 @@ def main():
 
     def find(lst, *words):
         for gid, name in lst:
-            if any(w in name for w in words):
+            if name and any(w in name for w in words):
                 return gid
         return None
 
