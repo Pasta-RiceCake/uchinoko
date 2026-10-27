@@ -1,5 +1,5 @@
 // オフラインでも開けるように、画面だけ手元に置いておく。データの送受信（/api/）はさわらない。
-const C = "uchinoko-v1";
+const C = "uchinoko-v2";
 const FILES = ["/", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(C).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
@@ -19,5 +19,22 @@ self.addEventListener("fetch", (e) => {
         return r;
       })
       .catch(() => caches.match(key))
+  );
+});
+
+// 通知
+self.addEventListener("push", (e) => {
+  let m = {};
+  try { m = e.data ? e.data.json() : {}; } catch (_) {}
+  e.waitUntil(self.registration.showNotification(m.t || "うちの子手帳", { body: m.b || "", icon: "/icon-192.png", badge: "/icon-192.png", data: { u: m.u || "/" }, lang: "ja" }));
+});
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const u = (e.notification.data && e.notification.data.u) || "/";
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
+      for (const c of cs) if ("focus" in c) return c.focus();
+      return self.clients.openWindow(u);
+    })
   );
 });

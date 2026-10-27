@@ -15,7 +15,7 @@ function applyUpd(u){for(const k in u){if(PRIV.has(k)||k[0]==="_")continue;
 const api=(p,b)=>fetch(p,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(b)});
 async function syncNow(){
   if(!S.share.on||!S.share.id)return;if(syBusy){syAgain=true;return}syBusy=true;
-  try{const put=dirty(),r=await api("/api/fam/"+S.share.id+"/sync",{code:S.share.code,rev:S._sync.rev,put});
+  try{const put=dirty(),r=await api("/api/fam/"+S.share.id+"/sync",{code:S.share.code,rev:S._sync.rev,put,dev:S.app&&S.app.mid});
     if(!r.ok)return;const j=await r.json();
     for(const k in put)S._sync.h[k]=hs(JSON.stringify(put[k]));
     const n=Object.keys(j.upd||{}).length;applyUpd(j.upd||{});S._sync.rev=j.rev;persist();if(n)softRender();

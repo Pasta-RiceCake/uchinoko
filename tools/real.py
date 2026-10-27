@@ -47,7 +47,12 @@ rep('<p class="note">このページの中に地図の結果を出すのは、�
 rep0('本番では、市区町村ごとの公式ページに直接つながるようにしたいです。', '')
 rep('いまは見本の例です。本番では、楽天の売れ筋ランキングを週に1回自動で取ってきて入れ替えます。', '')
 rep('（本番のサイトで使えます）', '')
-rep('通知は、ホーム画面に追加したあとに届きます（iPhoneはiOS 16.4以降）。見本では届きません。', 'スマホへの通知は、これからつけます。それまでは、近い予定がホームのいちばん上に出ます。')
+rep('const ILURL="ill/";', 'const ILURL="/ill/";')
+rep('このアイコンで置けます。</p>', 'このアイコンで置けます。${isIOS()?`</p><p class="note"><b>iPhoneの人へ</b>：ホーム画面に置いたアイコンは、あとからここで変えても新しくなりません（iPhoneの決まりです）。変えたいときは、①「共有と引き継ぎ」で引き継ぎコードを出す ②ホームの古いアイコンを長押しして削除 ③Safariでこのサイトを開いて、もう一度「ホーム画面に追加」 ④新しいアイコンから開いて、コードを入れる、の順にすると記録もそのまま移せます。`:`Androidは、置いたあとにアイコンを変えても、数日のうちにホームのアイコンも新しくなります。`}</p>')
+rep('通知は、ホーム画面に追加したあとに届きます（iPhoneはiOS 16.4以降）。見本では届きません。', '')
+rep('<div class="hd"><h2>通知</h2></div><div class="rows">${NOTI.map', '<div class="hd"><h2>通知</h2></div>${pushUI()}<div class="rows">${NOTI.map')
+s = re.sub(r'const NOTI=\[\["vac".*?\]\];', 'const NOTI=[["plan","カレンダーの予定（予定ごとに選んだ日）",true],["vac","予防接種・健診の目安の前日",true],["ev","行事や手続きの1週間前（お宮参り・出生届など）",true],["gift","内祝いのお返しがまだのとき",true],["chore","その日の家事のリマインド（夜8時）",false],["shop","パートナーが予定や買い物リストに追加したとき",true]];', s, count=1)
+assert '["plan","カレンダーの予定' in s
 rep('<div class="sub" style="margin-top:6px">※ 見本なので、実際に相手の画面に出るのは本番からです。</div>', '')
 rep0('今は見本の園です。本番では、位置情報をオンにすると国土交通省の全国の保育所データから近くの園を出し、空き状況（○あり △少し ×なし）は、各自治体が毎月出している情報にリンクします。', '園の一覧は例です。近くの園と空き状況は、地図や自治体の「入園のしおり」で確かめてください。')
 rep('今は見本です。本番では評判のよい物を調べて入れます。', '')
@@ -80,16 +85,16 @@ for g in ['["せってい",[["appset","アイコンと通知","bunny","pink"]', 
 rep('const PAGES={', 'const PAGES={sync:vSync,')
 rep('const MSUB={', 'const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",')
 rep('const MKW={', 'const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",')
-rep('    case"back":', '    case"bksave":bkSave();break;\n    case"mvput":mvPut();break;\n    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}\n    case"back":')
+rep('    case"back":', '    case"pushon":pushOn();break;\n    case"pushoff":pushOff();break;\n    case"pushtest":pushTest();break;\n    case"bksave":bkSave();break;\n    case"mvput":mvPut();break;\n    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}\n    case"back":')
 rep('  else if(t==="brand"){', '  else if(t==="mvget"){mvGet(v("c"));return}\n  else if(t==="brand"){')
 rep('  else if(a==="jtf"){', '  else if(a==="bkload"){bkLoad(el);return}\n  else if(a==="jtf"){')
 
 # ---- はじめての画面・あいことば入力 ----
-setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/icon.js'), encoding='utf-8').read()
+setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/icon.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/push.js'), encoding='utf-8').read()
 tail = 'render(false);\n})();\n</script>'
 assert s.rstrip().endswith(tail), s[-200:]
 s = s.rstrip()[:-len(tail)] + setup + '\nrender(false);startGate();\n})();\n</script>\n'
-rep('/* 下のタブ */', open(os.path.join(ROOT, 'tools/setup.css'), encoding='utf-8').read() + '/* 下のタブ */')
+rep('/* 下のタブ */', open(os.path.join(ROOT, 'tools/setup.css'), encoding='utf-8').read() + '.pushon{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--sheet);margin:0 0 8px}.pushon .lk{border:0;background:none;color:var(--ac);font:inherit;font-size:13px;font-weight:700;padding:0;cursor:pointer}\n/* 下のタブ */')
 
 # ---- head（PWA） ----
 head = '''<!doctype html>

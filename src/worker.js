@@ -1,3 +1,4 @@
+import { pushInit, pushKey, pushSub, pushOff, pushSched, pushTest, pushPartner, pushCron } from "./push.js";
 // うちの子手帳: ふたりの共有データを D1 に置くだけの小さな API。
 // それ以外（画面）は public/ の静的ファイルをそのまま返す。
 
@@ -13,6 +14,9 @@ async function init(db) {
   );
   await db.exec("CREATE TABLE IF NOT EXISTS move (code TEXT PRIMARY KEY, data TEXT NOT NULL, exp INTEGER NOT NULL)");
   await db.exec("CREATE TABLE IF NOT EXISTS icon (id TEXT PRIMARY KEY, png BLOB NOT NULL, created INTEGER NOT NULL)");
+  // スマホごとのホーム画面アイコン（Android はここを見て、アイコンを新しくする）
+  await db.exec("CREATE TABLE IF NOT EXISTS appman (mid TEXT PRIMARY KEY, icon TEXT NOT NULL, updated INTEGER NOT NULL)");
+  await pushInit(db);
   ready = true;
 }
 
@@ -69,7 +73,7 @@ async function create(req, env) {
   return json({ error: "retry" }, 500);
 }
 
-async function sync(req, env, id) {
+async function sync(req, env, id, ctx) {
   const b = await readBody(req);
   const row = await env.DB.prepare("SELECT * FROM fam WHERE id = ?").bind(id).first();
   if (!row) return json({ error: "not_found" }, 404);
@@ -100,6 +104,7 @@ async function sync(req, env, id) {
         continue;
       }
     }
+    if (ctx && (put.plans || put.shop)) ctx.waitUntil(pushPartner(env, id, b.dev, JSON.parse(cur.data), put).catch(() => {}));
     const upd = {};
     for (const k of Object.keys(data)) if (data[k].r > since && !(k in put)) upd[k] = data[k].v;
     return json({ rev, upd });
@@ -140,6 +145,9 @@ async function iconPut(req, env) {
   const h = await crypto.subtle.digest("SHA-256", bin);
   const id = [...new Uint8Array(h)].slice(0, 12).map((x) => x.toString(16).padStart(2, "0")).join("");
   await env.DB.prepare("INSERT OR IGNORE INTO icon (id, png, created) VALUES (?, ?, ?)").bind(id, bin, Date.now()).run();
+  if (/^[0-9a-f]{24}$/.test(String(b.mid || "")))
+    await env.DB.prepare("INSERT INTO appman (mid, icon, updated) VALUES (?, ?, ?) ON CONFLICT(mid) DO UPDATE SET icon = excluded.icon, updated = excluded.updated")
+      .bind(b.mid, id, Date.now()).run();
   return json({ id });
 }
 async function iconGet(env, id) {
@@ -148,7 +156,12 @@ async function iconGet(env, id) {
   if (!row) return new Response("not found", { status: 404 });
   return new Response(new Uint8Array(row.png), { headers: { "content-type": "image/png", "cache-control": "public, max-age=31536000, immutable" } });
 }
-function manifest(id, url) {
+async function manifest(env, id, url) {
+  if (id !== "default") {
+    await init(env.DB);
+    const row = await env.DB.prepare("SELECT icon FROM appman WHERE mid = ?").bind(id).first();
+    if (row) id = row.icon;
+  }
   const src = id === "default" ? "/icon-512.png" : "/i/" + id + ".png";
   const f = url.searchParams.get("f") || "";
   const start = /^[a-z0-9]{10}\.\d{6}$/.test(f) ? "/?f=" + f : "/";
@@ -174,15 +187,28 @@ async function cities(env) {
   });
 }
 
+// 家族のあいことばが合っているか
+async function famOk(env, id, code) {
+  const row = await env.DB.prepare("SELECT code FROM fam WHERE id = ?").bind(id).first();
+  return !!row && row.code === (await hash(id, code));
+}
+
 export default {
-  async fetch(req, env) {
+  async scheduled(ev, env, ctx) {
+    ctx.waitUntil(pushCron(env));
+  },
+  async fetch(req, env, ctx) {
     const url = new URL(req.url);
     let m = url.pathname.match(/^\/i\/([0-9a-f]{24})\.png$/);
     if (m) return await iconGet(env, m[1]);
     m = url.pathname.match(/^\/m\/([0-9a-f]{24}|default)\.webmanifest$/);
-    if (m) return manifest(m[1], url);
+    if (m) return await manifest(env, m[1], url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
     if (url.pathname === "/api/cities" && req.method === "GET") return await cities(env);
+    if (url.pathname === "/api/push/key" && req.method === "GET") {
+      await init(env.DB);
+      return json({ k: await pushKey(env) });
+    }
     if (req.method !== "POST") return json({ error: "method" }, 405);
     try {
       await init(env.DB);
@@ -190,8 +216,12 @@ export default {
       if (url.pathname === "/api/icon") return await iconPut(req, env);
       if (url.pathname === "/api/move") return await movePut(req, env);
       if (url.pathname === "/api/move/get") return await moveGet(req, env);
+      if (url.pathname === "/api/push/sub") return json(await pushSub(env, await readBody(req), (i, c) => famOk(env, i, c)));
+      if (url.pathname === "/api/push/off") return json(await pushOff(env, await readBody(req)));
+      if (url.pathname === "/api/push/sched") return json(await pushSched(env, await readBody(req), (i, c) => famOk(env, i, c)));
+      if (url.pathname === "/api/push/test") return json(await pushTest(env, await readBody(req)));
       const m = url.pathname.match(/^\/api\/fam\/([a-z0-9]{10})\/sync$/);
-      if (m) return await sync(req, env, m[1]);
+      if (m) return await sync(req, env, m[1], ctx);
       return json({ error: "not_found" }, 404);
     } catch (e) {
       if (String(e.message) === "too_big") return json({ error: "too_big" }, 413);

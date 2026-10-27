@@ -4,6 +4,8 @@
   "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
   // 夫婦で共有するデータの置き場所。公開（デプロイ）したときに Cloudflare が自動で作ってつなぐ
+  // 15分ごとに、時間になった通知を送る
+  "triggers": { "crons": ["*/15 * * * *"] },
   "d1_databases": [{ "binding": "DB", "database_name": "uchinoko-db" }],
   // 画面のファイル。/api 以外はここから返す（どのURLでも index.html を返す）
   "assets": { "directory": "public", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*", "/i/*", "/m/*"] }
