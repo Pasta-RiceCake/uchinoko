@@ -1,0 +1,32 @@
+name: svc
+on:
+  workflow_dispatch:
+    inputs:
+      city:
+        description: "1つの市区町村だけ読む（例：岡山県倉敷市）。空なら家族のいる市を順番に"
+        default: ""
+  schedule:
+    - cron: "30 20 * * *"
+permissions:
+  contents: write
+concurrency: ${{ github.workflow }}
+jobs:
+  svc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CITY: ${{ github.event.inputs.city }}
+        run: python3 tools/build_svc.py
+      - name: commit
+        run: |
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          [ -d public/data/svc ] || exit 0
+          git add public/data/svc
+          git diff --cached --quiet && exit 0
+          git commit -m "市区町村の使えるサービスを更新"
+          git pull --rebase -q origin main && git push
