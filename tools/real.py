@@ -4,6 +4,10 @@ import os, re, base64, io
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 s = open(os.path.join(ROOT, 'tools/proto.html'), encoding='utf-8').read()
 
+def rep0(old, new):
+    global s
+    s = s.replace(old, new)
+
 def rep(old, new, n=1):
     global s
     assert old in s, old[:80]
@@ -37,19 +41,21 @@ rep('${w}として選ぶ</span></label>`).join("")}</div><p class="note" style="
     '${w}として選ぶ</span></label>`).join("")+`</div><p class="note" style="text-align:center;margin:6px 0 0">パートナーと共有すると、それぞれのスマホで♡をつけられます。</p></div>`}')
 
 # ---- 見本の注意書きを本番向けに ----
-rep('<p class="note">${esc(at)}で探します。本番では、近くのイベントをこのページの中に出したいです。</p>', '<p class="note">${esc(at)}で探します。</p>')
+rep0('<p class="note">${esc(at)}で探します。本番では、近くのイベントをこのページの中に出したいです。</p>', '<p class="note">${esc(at)}で探します。</p>')
 rep('<p class="note">いま出ているのは見本の例です。本番では、各スポットの公式サイトのイベント情報を集めて出す予定です。</p>', '<p class="note">イベントは例です。行く前に、各スポットの公式サイトで確かめてください。</p>')
 rep('<p class="note">このページの中に地図の結果を出すのは、本番のサイトでできるようにします（見本では外の地図を開く形です）。</p>', '')
-rep('本番では、市区町村ごとの公式ページに直接つながるようにしたいです。', '')
+rep0('本番では、市区町村ごとの公式ページに直接つながるようにしたいです。', '')
 rep('いまは見本の例です。本番では、楽天の売れ筋ランキングを週に1回自動で取ってきて入れ替えます。', '')
 rep('（本番のサイトで使えます）', '')
 rep('通知は、ホーム画面に追加したあとに届きます（iPhoneはiOS 16.4以降）。見本では届きません。', 'スマホへの通知は、これからつけます。それまでは、近い予定がホームのいちばん上に出ます。')
 rep('<div class="sub" style="margin-top:6px">※ 見本なので、実際に相手の画面に出るのは本番からです。</div>', '')
-rep('今は見本の園です。本番では、位置情報をオンにすると国土交通省の全国の保育所データから近くの園を出し、空き状況（○あり △少し ×なし）は、各自治体が毎月出している情報にリンクします。', '園の一覧は例です。近くの園と空き状況は、地図や自治体の「入園のしおり」で確かめてください。')
+rep0('今は見本の園です。本番では、位置情報をオンにすると国土交通省の全国の保育所データから近くの園を出し、空き状況（○あり △少し ×なし）は、各自治体が毎月出している情報にリンクします。', '園の一覧は例です。近くの園と空き状況は、地図や自治体の「入園のしおり」で確かめてください。')
 rep('今は見本です。本番では評判のよい物を調べて入れます。', '')
 rep('<p class="note">本番では、このページをリンクで送れます（相手はログインなしで見られます）。</p>', '')
 rep('case"share":toast("本番では、合言葉つきのリンクが出ます");break;', 'case"share":open("fufu");break;')
-rep('case"hkloc":toast("本番では、位置情報をオンにすると近くの園が出ます");break;', 'case"hkloc":window.open("https://www.google.com/maps/search/"+encodeURIComponent("保育園 "+S.pref+(S.city||"")),"_blank","noopener");break;')
+rep0('case"hkloc":toast("本番では、位置情報をオンにすると近くの園が出ます");break;', 'case"hkloc":window.open("https://www.google.com/maps/search/"+encodeURIComponent("保育園 "+S.pref+(S.city||"")),"_blank","noopener");break;')
+rep('`<p class="note">見本では倉敷市あたりの一部だけを出しています。本番のサイトでは全国の施設が出ます。</p>`', '""')
+rep('${d.sample?"見本の内容です。本番では、毎月その市の公式サイトから集めた予定が出ます。":', '${d.sample?"":')
 s = re.sub(r'function vShareInfo\(\)\{return vFufu\(\);.*?\n\}\n', 'function vShareInfo(){return vFufu()}\n', s, count=1, flags=re.S)
 assert '本番' not in s and '見本' not in s, [m.start() for m in re.finditer('本番|見本', s)]
 
@@ -74,8 +80,9 @@ for g in ['["せってい",[["appset","アイコンと通知","bunny","pink"]', 
 rep('const PAGES={', 'const PAGES={sync:vSync,')
 rep('const MSUB={', 'const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",')
 rep('const MKW={', 'const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",')
-rep('    case"back":', '    case"mvput":mvPut();break;\n    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}\n    case"back":')
+rep('    case"back":', '    case"bksave":bkSave();break;\n    case"mvput":mvPut();break;\n    case"mvcopy":{const t=mvFmt(mvCode);try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}\n    case"back":')
 rep('  else if(t==="brand"){', '  else if(t==="mvget"){mvGet(v("c"));return}\n  else if(t==="brand"){')
+rep('  else if(a==="jtf"){', '  else if(a==="bkload"){bkLoad(el);return}\n  else if(a==="jtf"){')
 
 # ---- はじめての画面・あいことば入力 ----
 setup = open(os.path.join(ROOT, 'tools/setup.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/move.js'), encoding='utf-8').read() + open(os.path.join(ROOT, 'tools/icon.js'), encoding='utf-8').read()

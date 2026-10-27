@@ -20,3 +20,4 @@
 .gmv summary::-webkit-details-marker{display:none}
 .gmv .sub{margin:10px 0 8px}
 .gios{text-align:center;background:var(--soft);border-radius:14px;padding:10px 12px;margin:0;color:var(--ink)}
+.bkin{display:flex;align-items:center;justify-content:center;cursor:pointer}

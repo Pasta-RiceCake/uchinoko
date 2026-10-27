@@ -9,6 +9,7 @@ on:
     - cron: "0 18 3 * *"
 permissions:
   contents: write
+concurrency: data
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,4 +26,4 @@ jobs:
           git config user.name "uchinoko-data"
           git config user.email "uchinoko-data@users.noreply.github.com"
           git add public/data
-          git diff --cached --quiet || (git commit -m "公開データを更新" && git push)
+          git diff --cached --quiet || (git commit -m "公開データを更新" && git pull --rebase -q origin main && git push)

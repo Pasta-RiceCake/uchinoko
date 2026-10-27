@@ -1,6 +1,6 @@
 /* ===== 保存とふたりの共有（本番） ===== */
 // このスマホだけの設定。共有しない
-const PRIV=new Set(["th","col","icm","me","home","share","app","seedCh","setup"]);
+const PRIV=new Set(["th","col","icm","me","home","share","app","seedCh","setup","loc","bkAt"]);
 const shK=()=>Object.keys(S).filter(k=>!PRIV.has(k)&&k[0]!=="_");
 const outV=k=>k==="plans"?S.plans.filter(p=>p.vis!=="自分だけ"):S[k];
 const hs=t=>{let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return h};
