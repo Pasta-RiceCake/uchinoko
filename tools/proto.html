@@ -1,7 +1,7 @@
 <title>うちの子手帳</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&family=Zen+Old+Mincho:wght@500;700&family=Shippori+Mincho:wght@500;600&family=Mochiy+Pop+One&family=Montserrat:wght@300;500;700&family=Inter:wght@200;300;500;700&family=Quicksand:wght@500;600;700&family=Fredoka:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Kiwi+Maru:wght@400;500&family=Murecho:wght@300;400;500;700&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Klee+One:wght@400;600&family=Kosugi+Maru&family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&family=Zen+Old+Mincho:wght@500;700&family=Shippori+Mincho:wght@500;600&family=Mochiy+Pop+One&family=Montserrat:wght@300;500;700&family=Inter:wght@200;300;500;700&family=Quicksand:wght@500;600;700&family=Fredoka:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
 <style>
 /* きせかえ式：テーマ（形・字・背景）とカラー（色）を別々に選べる。アイコンは単色。テーマごとに見た目をはっきり変える */
 :root{--ac:#d98093}
@@ -737,27 +737,27 @@ nav.tabs button.on .tb{background:var(--soft)}
 .bkimg{width:30px;height:42px;object-fit:contain;border-radius:3px;flex:none}
 
 /* テーマごとのフォント（patch70） */
-:root{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
+:root{--font:"Kiwi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Kiwi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root .sec-t,:root h1,:root h2{letter-spacing:0.02em}
-:root[data-th="fuwa"]{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
+:root[data-th="fuwa"]{--font:"Kiwi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Kiwi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root[data-th="fuwa"] .sec-t,:root[data-th="fuwa"] h1,:root[data-th="fuwa"] h2{letter-spacing:0.02em}
-:root[data-th="app"]{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Montserrat","Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
+:root[data-th="app"]{--font:"Zen Maru Gothic","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Montserrat","Zen Maru Gothic","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root[data-th="app"] .sec-t,:root[data-th="app"] h1,:root[data-th="app"] h2{letter-spacing:0.02em}
-:root[data-th="korea"]{--font:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hfont:"Montserrat","Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hw:300}
+:root[data-th="korea"]{--font:"Murecho","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Montserrat","Murecho","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:300}
 :root[data-th="korea"] .sec-t,:root[data-th="korea"] h1,:root[data-th="korea"] h2{letter-spacing:0.1em}
-:root[data-th="natural"]{--font:"Zen Kaku Gothic Antique","Hiragino Sans",sans-serif;--hfont:"Cormorant Garamond","Zen Old Mincho","Hiragino Mincho ProN",serif;--hw:500}
+:root[data-th="natural"]{--font:"Zen Kaku Gothic Antique","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Cormorant Garamond","Zen Old Mincho","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:500}
 :root[data-th="natural"] .sec-t,:root[data-th="natural"] h1,:root[data-th="natural"] h2{letter-spacing:0.06em}
-:root[data-th="simple"]{--font:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hfont:"Inter","Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hw:700}
+:root[data-th="simple"]{--font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Inter","IBM Plex Sans JP","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root[data-th="simple"] .sec-t,:root[data-th="simple"] h1,:root[data-th="simple"] h2{letter-spacing:0.01em}
-:root[data-th="yume"]{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
+:root[data-th="yume"]{--font:"Klee One","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Quicksand","Klee One","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root[data-th="yume"] .sec-t,:root[data-th="yume"] h1,:root[data-th="yume"] h2{letter-spacing:0.04em}
-:root[data-th="mono"]{--font:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hfont:"Inter","Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hw:300}
+:root[data-th="mono"]{--font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Inter","Zen Kaku Gothic New","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:300}
 :root[data-th="mono"] .sec-t,:root[data-th="mono"] h1,:root[data-th="mono"] h2{letter-spacing:0.14em}
-:root[data-th="pop"]{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Fredoka","Mochiy Pop One","Zen Maru Gothic",sans-serif;--hw:600}
+:root[data-th="pop"]{--font:"Kosugi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Fredoka","Mochiy Pop One","Kosugi Maru","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:600}
 :root[data-th="pop"] .sec-t,:root[data-th="pop"] h1,:root[data-th="pop"] h2{letter-spacing:0.02em}
-:root[data-th="night"]{--font:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hfont:"Inter","Zen Kaku Gothic New","Hiragino Sans",sans-serif;--hw:700}
+:root[data-th="night"]{--font:"BIZ UDPGothic","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Inter","BIZ UDPGothic","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:700}
 :root[data-th="night"] .sec-t,:root[data-th="night"] h1,:root[data-th="night"] h2{letter-spacing:0.02em}
-:root[data-th="pastel"]{--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Shippori Mincho","Hiragino Mincho ProN",serif;--hw:600}
+:root[data-th="pastel"]{--font:"Zen Maru Gothic","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hfont:"Shippori Mincho","Hiragino Mincho ProN","Hiragino Sans","Hiragino Maru Gothic ProN",sans-serif;--hw:600}
 :root[data-th="pastel"] .sec-t,:root[data-th="pastel"] h1,:root[data-th="pastel"] h2{letter-spacing:0.04em}
 :root[data-th="simple"] body{letter-spacing:.04em}
 :root[data-th="mono"] h1,:root[data-th="mono"] h2,:root[data-th="mono"] .who,:root[data-th="mono"] .logo,:root[data-th="mono"] .sec-t{font-weight:300!important}
@@ -1658,7 +1658,7 @@ function vBaby(){
   <div class="sheet stack" style="margin-top:12px"><b>ホームの写真</b><div class="row" style="gap:14px;align-items:center"><label class="bph${S.photo?" has":""}" style="width:80px;height:80px">${S.photo?`<img src="${S.photo}" alt="">`:`<span>＋<br>写真</span>`}<input type="file" accept="image/*" id="bphoto" hidden></label>${S.photo?`<button type="button" class="x" data-act="bphdel">写真を外す</button>`:`<span class="sub">押すと写真を選べます</span>`}</div></div>`;
 }
 
-const THEMES=[["app","まるカード","色のついた背景に白いカード。アプリのような見た目（おすすめ）","Zen Maru Gothic"],["korea","韓国風","白とうすいグレー。細い字ですっきり","Gowun Dodum"],["yume","ゆめかわ","むらさきとピンクのグラデーションに、すりガラスのカード","Stick"],["mono","モノトーン","白と黒のコントラスト。細い字でモードに","Noto Serif JP"],["natural","ナチュラル","余白と字で見せる、雑誌のような落ち着いた見た目","Zen Old Mincho"],["pastel","パステル","淡い色とイラストでやさしい雰囲気","Shippori Mincho"],["fuwa","ふんわり","まるい形とやさしい色。やわらかい印象","Zen Maru Gothic"],["simple","シンプル","線で区切った大人っぽい見た目。文字が読みやすい","Zen Kaku Gothic New"],["pop","おもちゃばこ","ふちどりと水玉で子どもっぽく。字もころんとまるく","Kiwi Maru"],["night","よぞら","夜中の授乳でもまぶしくない暗い画面","Kiwi Maru"]];
+const THEMES=[["app","まるカード","色のついた背景に白いカード。アプリのような見た目（おすすめ）","Zen Maru Gothic"],["korea","韓国風","白とうすいグレー。細い字ですっきり","Murecho"],["yume","ゆめかわ","むらさきとピンクのグラデーションに、すりガラスのカード","Klee One"],["mono","モノトーン","白と黒のコントラスト。細い字でモードに","Zen Kaku Gothic New"],["natural","ナチュラル","余白と字で見せる、雑誌のような落ち着いた見た目","Zen Old Mincho"],["pastel","パステル","淡い色とイラストでやさしい雰囲気","Shippori Mincho"],["fuwa","ふんわり","まるい形とやさしい色。やわらかい印象","Kiwi Maru"],["simple","シンプル","線で区切った大人っぽい見た目。文字が読みやすい","IBM Plex Sans JP"],["pop","おもちゃばこ","ふちどりと水玉で子どもっぽく。字もころんとまるく","Mochiy Pop One"],["night","よぞら","夜中の授乳でもまぶしくない暗い画面","BIZ UDPGothic"]];
 const COLS=[["milk","ミルクピンク","#D48B97"],["sakura","さくら","#E8A7B2"],["mint","ミント","#76A092"],["sora","そら","#7B9BB4"],["lemon","レモン","#E5B85C"],["beige","ミルクティー","#A88B74"],["lavender","ラベンダー","#9E8CB9"],["taupe","トープ","#8C827A"]];
 function vKise(){
   const pv={korea:["#FFFFFF","#FAFAFA","1px solid #EFEFEF","8px"],yume:["linear-gradient(160deg,#FAF5FF,#FFF5F7)","rgba(255,255,255,.75)","1px solid rgba(255,255,255,.6)","9px"],mono:["#F0F0F2","#fff","1px solid #D1D1D6","4px"],app:["color-mix(in srgb,var(--ac) 5%,#F9F9FB)","#fff","1px solid rgba(0,0,0,.04)","12px"],natural:["#FAF8F5","#fff","none","10px"],pastel:["#fdf3f1","#fffdfc","1.5px solid #f3e2df","10px"],fuwa:["#FFFBFB","rgba(255,255,255,.8)","1px solid rgba(0,0,0,.04)","10px"],simple:["#F4F4F6","#fff","1px solid #E5E5EA","5px"],pop:["#FFFDF0","#fff","2px solid #2D2D2D","8px"],night:["#121318","#1C1E24","1px solid #2C2E3A","8px"]};
