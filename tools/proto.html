@@ -1,7 +1,7 @@
 <title>うちの子手帳</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Kiwi+Maru:wght@400;500&family=Murecho:wght@300;400;500;700&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Klee+One:wght@400;600&family=Kosugi+Maru&family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&family=Zen+Old+Mincho:wght@500;700&family=Shippori+Mincho:wght@500;600&family=Mochiy+Pop+One&family=Montserrat:wght@300;500;700&family=Inter:wght@200;300;500;700&family=Quicksand:wght@500;600;700&family=Fredoka:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&family=Fredoka:wght@500;600&family=Kiwi+Maru:wght@400;500&family=M+PLUS+Rounded+1c:wght@400;500&family=Cormorant+Garamond:wght@500;600&family=Murecho:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&family=BIZ+UDPMincho&family=Inter:wght@400;700&family=M+PLUS+1p:wght@400;800&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Space+Mono&family=Baloo+2:wght@500;700;800&family=Yusei+Magic&family=Kosugi+Maru&family=Dela+Gothic+One&family=Quicksand:wght@500;600;700&family=Klee+One:wght@400;600&family=Yomogi&family=Zen+Maru+Gothic:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 /* きせかえ式：テーマ（形・字・背景）とカラー（色）を別々に選べる。アイコンは単色。テーマごとに見た目をはっきり変える */
 :root{--ac:#d98093}
@@ -824,6 +824,87 @@ nav.tabs button.on .tb{background:var(--soft)}
 /* 水彩・3Dの絵：カードの中で窮屈に見えないよう少し余白をとる */
 :root[data-icm="ill"] .rw img.il{width:38px;height:38px;object-fit:contain;padding:2px}
 :root[data-icm="ill"] .cir img.il{width:44px;height:44px;object-fit:contain}
+
+/* ===== 6テーマ・4フォントの混植（patch72） ===== */
+:root[data-th="app"]{--nfont:"Fredoka","Hiragino Sans",sans-serif;--nw:600;--hfont:"Zen Maru Gothic","Hiragino Sans",sans-serif;--hw:700;--font:"Kiwi Maru","Hiragino Sans",sans-serif;--afont:"M PLUS Rounded 1c","Hiragino Sans",sans-serif;--aw:400}
+:root[data-th="app"] h1,:root[data-th="app"] h2,:root[data-th="app"] .sec-t,:root[data-th="app"] .who,:root[data-th="app"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="korea"]{--nfont:"Montserrat","Hiragino Sans",sans-serif;--nw:300;--hfont:"Cormorant Garamond","Murecho","Hiragino Sans",sans-serif;--hw:500;--font:"Murecho","Hiragino Sans",sans-serif;--afont:"Noto Sans JP","Hiragino Sans",sans-serif;--aw:300}
+:root[data-th="korea"] h1,:root[data-th="korea"] h2,:root[data-th="korea"] .sec-t,:root[data-th="korea"] .who,:root[data-th="korea"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="natural"]{--nfont:"Playfair Display",Georgia,serif;--nw:500;--hfont:"Shippori Mincho","Hiragino Mincho ProN",serif;--hw:600;--font:"Zen Kaku Gothic Antique","Hiragino Sans",sans-serif;--afont:"BIZ UDPMincho","Hiragino Mincho ProN",serif;--aw:400}
+:root[data-th="natural"] h1,:root[data-th="natural"] h2,:root[data-th="natural"] .sec-t,:root[data-th="natural"] .who,:root[data-th="natural"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="mono"]{--nfont:"Inter","Hiragino Sans",sans-serif;--nw:700;--hfont:"M PLUS 1p","Hiragino Sans",sans-serif;--hw:800;--font:"IBM Plex Sans JP","Hiragino Sans",sans-serif;--afont:"Space Mono","IBM Plex Sans JP",monospace;--aw:400}
+:root[data-th="mono"] h1,:root[data-th="mono"] h2,:root[data-th="mono"] .sec-t,:root[data-th="mono"] .who,:root[data-th="mono"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="pop"]{--nfont:"Baloo 2","Hiragino Sans",sans-serif;--nw:800;--hfont:"Yusei Magic","Kosugi Maru","Hiragino Sans",sans-serif;--hw:400;--font:"Kosugi Maru","Hiragino Sans",sans-serif;--afont:"Dela Gothic One","Kosugi Maru","Hiragino Sans",sans-serif;--aw:400}
+:root[data-th="pop"] h1,:root[data-th="pop"] h2,:root[data-th="pop"] .sec-t,:root[data-th="pop"] .who,:root[data-th="pop"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="yume"]{--nfont:"Quicksand","Hiragino Sans",sans-serif;--nw:600;--hfont:"Klee One","Hiragino Sans",sans-serif;--hw:600;--font:"Yomogi","Zen Maru Gothic","Hiragino Sans",sans-serif;--afont:"Zen Maru Gothic","Hiragino Sans",sans-serif;--aw:500}
+:root[data-th="yume"] h1,:root[data-th="yume"] h2,:root[data-th="yume"] .sec-t,:root[data-th="yume"] .who,:root[data-th="yume"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+:root[data-th="night"]{--nfont:"Roboto Mono",monospace;--nw:500;--hfont:"BIZ UDPGothic","Hiragino Sans",sans-serif;--hw:700;--font:"Noto Sans JP","Hiragino Sans",sans-serif;--afont:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;--aw:400}
+:root[data-th="night"] h1,:root[data-th="night"] h2,:root[data-th="night"] .sec-t,:root[data-th="night"] .who,:root[data-th="night"] .logo{font-family:var(--hfont);font-weight:var(--hw)!important}
+/* 数字は英数字のフォント、補足・ラベルはアクセントのフォント */
+:root[data-th] .num{font-family:var(--nfont)!important;font-weight:var(--nw)!important;font-style:normal}
+:root[data-th] .sub,:root[data-th] .age2,:root[data-th] .rw .s,:root[data-th] small,:root[data-th] .note,:root[data-th] .prnote,:root[data-th] .h-sec>.hd button,:root[data-th] .h-sec>.hd a,:root[data-th] .chev,:root[data-th] .msw button{font-family:var(--afont);font-weight:var(--aw)}
+:root[data-th] .h-hero .big span:last-child{font-family:var(--afont)}
+
+/* ---- まるカード：角丸24px、やわらかい薄影、アイコンは丸いバブルの背景 ---- */
+:root[data-th="app"]{--bg:color-mix(in srgb,var(--ac) 6%,#F9F9FB);--sheet:#FFFFFF;--bd:1px solid rgba(0,0,0,.04);--shadow:0 2px 8px rgba(0,0,0,.04);--r:24px;--r2:18px;--ink:#2C2C2E;--sub:#8E8E93}
+:root[data-th="app"] .h-sec{border-radius:24px!important;box-shadow:0 2px 8px rgba(0,0,0,.04)!important;border:1px solid rgba(0,0,0,.04)}
+:root[data-th="app"] .h-hero{border-radius:24px!important}
+:root[data-th="app"] .h-hero .num{font-size:92px}
+:root[data-th="app"][data-icm] .cir{background:color-mix(in srgb,var(--ac) 12%,#fff)!important;border-radius:50%!important;box-shadow:none!important}
+
+/* ---- ミニマル：カードをなくし、白い背景と極細線だけ。余白を広く ---- */
+:root[data-th="korea"]{--bg:#FFFFFF;--sheet:transparent;--bd:0px solid transparent;--shadow:none;--r:0px;--r2:0px;--ink:#2B2B2B;--sub:#8E8E93;--line:#EFEFEF;--soft:#F6F6F6;--soft2:#FAFAFA}
+:root[data-th="korea"] .sheet,:root[data-th="korea"] .h-sec,:root[data-th="korea"] .h-hero{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+:root[data-th="korea"] .h-sec{border-top:1px solid #EFEFEF!important;padding:28px 2px 8px!important;margin-top:8px}
+:root[data-th="korea"] .h-hero{padding:34px 2px 30px!important;margin-top:4px}
+:root[data-th="korea"] .h-hero .num{font-size:96px;color:var(--ink)!important;letter-spacing:-.05em}
+:root[data-th="korea"] .h-sec>.hd h2{font-size:19px;letter-spacing:.04em}
+:root[data-th="korea"] .h-sec>.hd button{background:none!important;border:0!important;padding:0;color:var(--sub);text-decoration:underline;text-underline-offset:4px}
+:root[data-th="korea"] .rw{border-bottom:1px solid #EFEFEF;border-radius:0!important;background:transparent!important}
+:root[data-th="korea"] nav.tabs{background:#fff!important;border-radius:0!important;box-shadow:none!important;border-top:1px solid #EFEFEF!important}
+:root[data-th="korea"] nav.tabs button.on .tb{background:none!important}
+:root[data-th="korea"] .msw{background:#fff;border:1px solid #EFEFEF}
+:root[data-th="korea"] .msw button.on{background:#2B2B2B;color:#fff;box-shadow:none}
+
+/* ---- ナチュラル：オフホワイトに、やわらかい角丸のカード。雑誌のような字組み ---- */
+:root[data-th="natural"]{--bg:#FAF8F5;--sheet:#FFFFFF;--bd:0px solid transparent;--shadow:0 4px 16px rgba(60,45,35,.05);--r:12px;--r2:10px;--ink:#3A3535;--sub:#8C8583;--line:#EEE9E4}
+:root[data-th="natural"] .h-sec{background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(60,45,35,.05);padding:18px 16px 10px;margin-top:16px}
+:root[data-th="natural"] .h-hero{border-bottom:0;padding-block:30px 22px}
+:root[data-th="natural"] .h-hero .who{font-size:15px;letter-spacing:.3em;color:var(--sub)}
+:root[data-th="natural"] .h-hero .num{font-size:100px;font-style:italic!important;color:var(--ink)!important;letter-spacing:-.02em}
+:root[data-th="natural"] .h-top .logo{font-size:17px;letter-spacing:.2em}
+:root[data-th="natural"] .h-sec>.hd h2{font-size:18px;letter-spacing:.12em}
+
+/* ---- パステル：淡いむらさき〜ピンク、すりガラスのカード ---- */
+:root[data-th="yume"]{--bg:linear-gradient(160deg,#F3EBFF 0%,#FCEFF6 55%,#FFF5F7 100%);--sheet:rgba(255,255,255,.72);--bd:1px solid rgba(255,255,255,.7);--shadow:0 6px 20px rgba(142,123,153,.12);--r:20px;--ink:#4A3B52;--sub:#8E7B99;--line:rgba(74,59,82,.08)}
+:root[data-th="yume"] .h-sec{background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:16px 16px 8px;margin-top:14px;box-shadow:0 6px 20px rgba(142,123,153,.12)}
+:root[data-th="yume"] .h-hero{background:rgba(255,255,255,.5)!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 8px 28px rgba(158,140,185,.18)!important;border-radius:28px!important}
+:root[data-th="yume"] .h-hero::after{display:none!important}
+:root[data-th="yume"] .h-hero .who{color:#8E7B99}
+:root[data-th="yume"] .h-hero .num{font-size:92px;background:linear-gradient(120deg,#B79CE0,#F2A7C3);-webkit-background-clip:text;background-clip:text;color:transparent!important;text-shadow:none!important}
+:root[data-th="yume"] .h-sec>.hd h2{font-size:19px;color:#6B5878}
+:root[data-th="yume"] nav.tabs{background:rgba(255,255,255,.7)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+
+/* ---- ポップ：太いふちどり＋べた塗りの影で、ステッカーのように ---- */
+:root[data-th="pop"]{--bg:#FFFDF0;--sheet:#FFFFFF;--bd:2px solid #2D2D2D;--shadow:3px 3px 0 #2D2D2D;--r:16px;--ink:#2D2D2D;--sub:#666666;--line:#2D2D2D}
+:root[data-th="pop"] .h-sec{background:#fff;border:2px solid #2D2D2D;border-radius:16px;box-shadow:3px 3px 0 #2D2D2D;padding:16px 16px 8px;margin-top:18px}
+:root[data-th="pop"] .h-hero{background:color-mix(in srgb,var(--ac) 22%,#FFFDF0);border:2px solid #2D2D2D;border-radius:18px;box-shadow:4px 4px 0 #2D2D2D;padding:20px 18px;margin-top:12px}
+:root[data-th="pop"] .h-hero .num{font-size:96px;color:#2D2D2D!important;-webkit-text-stroke:0}
+:root[data-th="pop"] .h-sec>.hd h2{font-size:20px}
+:root[data-th="pop"] .h-sec>.hd button{border:2px solid #2D2D2D;border-radius:999px;background:var(--ac);color:#fff;padding:2px 12px;font-size:12px}
+:root[data-th="pop"] nav.tabs{border-top:2px solid #2D2D2D}
+
+/* ---- モノトーン：白・黒・グレーのはっきりしたコントラスト ---- */
+:root[data-th="mono"]{--bg:#F0F0F2;--sheet:#FFFFFF;--bd:1px solid #D1D1D6;--shadow:none;--r:8px;--r2:6px;--ink:#000000;--sub:#666666;--line:#D1D1D6}
+:root[data-th="mono"] .h-sec{background:#fff;border:1px solid #D1D1D6;border-radius:8px;padding:16px 16px 8px;margin-top:12px;box-shadow:none}
+:root[data-th="mono"] .h-hero{background:#000!important;color:#fff;border-radius:8px!important}
+:root[data-th="mono"] .h-hero .num{font-size:92px;color:#fff!important;letter-spacing:-.05em}
+:root[data-th="mono"] .h-sec>.hd h2{font-size:18px;letter-spacing:.02em}
+:root[data-th="mono"] .sub,:root[data-th="mono"] .age2{letter-spacing:.02em;text-transform:uppercase}
+
+/* ---- よぞら：暗いネイビー、くっきり見えるカード ---- */
+:root[data-th="night"] .h-sec{background:#1C1E24;border:1px solid #2C2E3A;border-radius:16px;padding:16px 16px 8px;margin-top:12px}
+:root[data-th="night"] .h-hero .num{font-size:84px;letter-spacing:-.04em}
 </style>
 
 <div class="wrap"><main id="main"></main></div>
@@ -887,6 +968,7 @@ let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
 if(!S)S=JSON.parse(JSON.stringify(defaults));
 for(const k in defaults)if(S[k]===undefined)S[k]=JSON.parse(JSON.stringify(defaults[k]));
 if(!S._d71){S._d71=1;S.icm="line"}
+{const TM={simple:"korea",fuwa:"yume",pastel:"yume"};if(TM[S.th])S.th=TM[S.th];if(!["app","natural","korea","yume","pop","mono","night"].includes(S.th))S.th="app"}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
 const birth=()=>new Date(S.birth+"T00:00:00");
@@ -1658,7 +1740,7 @@ function vBaby(){
   <div class="sheet stack" style="margin-top:12px"><b>ホームの写真</b><div class="row" style="gap:14px;align-items:center"><label class="bph${S.photo?" has":""}" style="width:80px;height:80px">${S.photo?`<img src="${S.photo}" alt="">`:`<span>＋<br>写真</span>`}<input type="file" accept="image/*" id="bphoto" hidden></label>${S.photo?`<button type="button" class="x" data-act="bphdel">写真を外す</button>`:`<span class="sub">押すと写真を選べます</span>`}</div></div>`;
 }
 
-const THEMES=[["app","まるカード","色のついた背景に白いカード。アプリのような見た目（おすすめ）","Zen Maru Gothic"],["korea","韓国風","白とうすいグレー。細い字ですっきり","Murecho"],["yume","ゆめかわ","むらさきとピンクのグラデーションに、すりガラスのカード","Klee One"],["mono","モノトーン","白と黒のコントラスト。細い字でモードに","Zen Kaku Gothic New"],["natural","ナチュラル","余白と字で見せる、雑誌のような落ち着いた見た目","Zen Old Mincho"],["pastel","パステル","淡い色とイラストでやさしい雰囲気","Shippori Mincho"],["fuwa","ふんわり","まるい形とやさしい色。やわらかい印象","Kiwi Maru"],["simple","シンプル","線で区切った大人っぽい見た目。文字が読みやすい","IBM Plex Sans JP"],["pop","おもちゃばこ","ふちどりと水玉で子どもっぽく。字もころんとまるく","Mochiy Pop One"],["night","よぞら","夜中の授乳でもまぶしくない暗い画面","BIZ UDPGothic"]];
+const THEMES=[["app", "まるカード", "淡い色の背景に、まるい白いカード。アプリのような見た目（おすすめ）", "Zen Maru Gothic"], ["natural", "ナチュラル", "オフホワイトにやわらかいカード。雑誌のような落ち着いた字", "Shippori Mincho"], ["korea", "ミニマル", "カードをなくし、白い背景と細い線だけ。いちばん大人っぽい", "Murecho"], ["yume", "パステル", "むらさきとピンクの淡いグラデーションに、すりガラスのカード", "Klee One"], ["pop", "ポップ", "太いふちどりとべた塗りの影。絵本やステッカーのような楽しさ", "Yusei Magic"], ["mono", "モノトーン", "白・黒・グレーのはっきりしたコントラスト", "M PLUS 1p"], ["night", "よぞら", "夜中の授乳でもまぶしくない暗い画面", "BIZ UDPGothic"]];
 const COLS=[["milk","ミルクピンク","#D48B97"],["sakura","さくら","#E8A7B2"],["mint","ミント","#76A092"],["sora","そら","#7B9BB4"],["lemon","レモン","#E5B85C"],["beige","ミルクティー","#A88B74"],["lavender","ラベンダー","#9E8CB9"],["taupe","トープ","#8C827A"]];
 function vKise(){
   const pv={korea:["#FFFFFF","#FAFAFA","1px solid #EFEFEF","8px"],yume:["linear-gradient(160deg,#FAF5FF,#FFF5F7)","rgba(255,255,255,.75)","1px solid rgba(255,255,255,.6)","9px"],mono:["#F0F0F2","#fff","1px solid #D1D1D6","4px"],app:["color-mix(in srgb,var(--ac) 5%,#F9F9FB)","#fff","1px solid rgba(0,0,0,.04)","12px"],natural:["#FAF8F5","#fff","none","10px"],pastel:["#fdf3f1","#fffdfc","1.5px solid #f3e2df","10px"],fuwa:["#FFFBFB","rgba(255,255,255,.8)","1px solid rgba(0,0,0,.04)","10px"],simple:["#F4F4F6","#fff","1px solid #E5E5EA","5px"],pop:["#FFFDF0","#fff","2px solid #2D2D2D","8px"],night:["#121318","#1C1E24","1px solid #2C2E3A","8px"]};
