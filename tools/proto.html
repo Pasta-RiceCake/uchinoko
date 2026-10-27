@@ -687,6 +687,11 @@ form.add input{min-width:0}
 .jtavg{text-align:center;font-size:14px;margin:10px 0 0}.jtavg b{font-size:20px;color:#c0506a}
 .msearch{width:100%;box-sizing:border-box;margin:0 0 14px;border-radius:999px;padding:11px 16px;font:inherit;font-size:14px}
 .hkseg{display:flex;max-width:100%;overflow-x:auto;scrollbar-width:none}.hkseg button{flex:0 0 auto;white-space:nowrap}
+.h-hero{grid-template-columns:minmax(0,1fr) auto}
+.h-hero>div:first-child{min-width:0}
+.h-hero .who{white-space:normal}
+.h-hero .nw{white-space:nowrap}
+@media (max-width:400px){.h-hero .bph{width:96px;height:96px}}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -847,10 +852,9 @@ const SANIN=[["産院の種類","<strong>総合病院・大学病院</strong>：
  ["無痛分娩","追加で10〜20万円ほどかかることが多いです。できる産院は限られるので、早めに確認を。24時間いつでもできるのか、日にちを決めて行うのかも聞いておきましょう。"],
  ["里帰り出産","帰る先の産院にも早めに予約が必要です。妊婦健診の途中で病院を移るタイミングも相談しましょう。"]];
 function vSanin(){
-  const at=S.pref+(S.city||"");
   return head("産院の選び方","crib","mint")+`<section class="h-sec" style="margin-top:12px">${SANIN.map(([q,a],i)=>`<details class="svc"${i===0?" open":""}><summary><span class="grow"><b>${q}</b></span></summary><p>${a}</p></details>`).join("")}</section>
-  <section class="h-sec"><div class="hd"><h2>${esc(at)}で探す</h2></div><div class="rows">${[["分娩できる産婦人科","産婦人科 分娩"],["無痛分娩ができる産院","無痛分娩 産院"],["助産院","助産院"]].map(([l,q])=>`<a class="rw" href="${gmap(q+" "+at)}" target="_blank" rel="noopener"><span class="grow"><div class="t">${l}</div><div class="s">Googleマップが開きます</div></span><span class="chev">${ic("chev",16)}</span></a>`).join("")}</div>
-  <p class="note">住んでいる所は「わが家の市区町村」で変えられます。</p></section>`;
+  <section class="h-sec"><div class="hd"><h2>産院を探す</h2></div><div class="rows"><a class="rw" href="https://birth-navi.mhlw.go.jp/" target="_blank" rel="noopener"><span class="grow"><div class="t">出産なび（厚生労働省）</div><div class="s">全国の産院・助産所を、場所から探せます。出産費用の目安、無痛分娩、立ち会い、個室などを並べて比べられます</div></span><span class="chev">${ic("chev",16)}</span></a></div>
+  <p class="note">国の公式サイトです。最新の内容は、それぞれの産院にも確かめてください。</p></section>`;
 }
 const BODY_NOW=["出血がある","破水かも（水っぽいものが流れてくる）","おなかの張りや痛みが続く、だんだん強くなる","胎動がいつもより少ない、感じない","強い頭痛、目がチカチカする、急にむくみがひどくなった","38℃以上の熱がある"];
 const BODY_T=[["つわり（〜16週ごろ）","食べられる物を少しずつ。水分もとれない、体重がどんどん減るときは受診してください。"],["腰痛・足がつる（中期から）","おなかが大きくなると腰に負担がかかります。骨盤ベルトやストレッチ、寝る前の水分補給が助けになります。"],["むくみ・トイレが近い・息切れ（後期）","よくある変化ですが、急にむくみがひどくなったときは健診を待たずに相談を。"],["陣痛かな？と思ったら","張りの間隔を計ってみましょう。初めてのお産では、10分おきになったら産院に電話するのが目安です。産院の指示がいちばん優先です。"]];
@@ -906,7 +910,7 @@ function vHomePre(){
   const {left,w,d}=preW(),all=PRETODO.flatMap(x=>x[3]),cur=PRETODO.find(([a,b])=>w>=a&&w<=b)||PRETODO[3];
   const todo=todoItems(PRETODO.indexOf(cur)).filter(([k])=>!S.pre.ck[k]);
   return `<div class="h-top"><span class="logo">うちの子手帳</span>${modeSw()}</div>
-  <div class="h-hero"><div><div class="who">出産予定日 ${md(due())}</div>
+  <div class="h-hero"><div><div class="who">出産予定日 <span class="nw">${md(due())}</span></div>
     <div class="big"><span class="sub">あと</span><span class="num">${Math.max(0,left)}</span><span>日</span></div>
     <div class="age2">妊娠${w}週${d}日</div></div>${photoBox()}</div>
   <button type="button" class="jthome${w>=36?" big":""}" data-act="open" data-v="jintsu"><span class="grow"><b>陣痛かも？と思ったら</b><span>産院の電話・間隔のはかり方・家族への連絡</span></span>${ic("chev",16)}</button>
@@ -1508,7 +1512,7 @@ const bpS=()=>{S.bp=S.bp||{c:{},my:[],t:{}};return S.bp};
 function bpText(){const b=bpS(),L=BP.map(([g,xs])=>[g,xs.filter(x=>b.c[x])]).filter(x=>x[1].length);return "【バースプラン】"+(S.name?"（"+S.name+"）":"")+"\n"+L.map(([g,xs])=>"■"+g+"\n"+xs.map(x=>"・"+x).join("\n")).join("\n")+(b.my.length?"\n■そのほか\n"+b.my.map(x=>"・"+x).join("\n"):"")+(b.t.f?"\n■不安なこと\n"+b.t.f:"")+(b.t.w?"\n■伝えたいこと\n"+b.t.w:"")}
 function vBplan(){const b=bpS();
   if(bpPv){const L=BP.map(([g,xs])=>[g,xs.filter(x=>b.c[x])]).filter(x=>x[1].length);
-   return head("バースプラン","sleepbaby","pink")+`<div class="sheet azpv"><div class="azt">バースプラン<span class="sub">出産予定日 ${md(due())}</span></div>${L.map(([g,xs])=>`<div class="azr"><div class="sub">${g}</div>${xs.map(x=>`<div>・${esc(x)}</div>`).join("")}</div>`).join("")}${b.my.length?`<div class="azr"><div class="sub">そのほか</div>${b.my.map(x=>`<div>・${esc(x)}</div>`).join("")}</div>`:""}${b.t.f?`<div class="azr"><div class="sub">不安なこと・苦手なこと</div><div>${esc(b.t.f).replace(/\n/g,"<br>")}</div></div>`:""}${b.t.w?`<div class="azr"><div class="sub">スタッフさんに伝えたいこと</div><div>${esc(b.t.w).replace(/\n/g,"<br>")}</div></div>`:""}${!L.length&&!b.my.length&&!b.t.f&&!b.t.w?'<p class="sub">まだ何も選んでいません</p>':""}</div>
+   return head("バースプラン","sleepbaby","pink")+`<div class="sheet azpv"><div class="azt">バースプラン<span class="sub">出産予定日 <span class="nw">${md(due())}</span></span></div>${L.map(([g,xs])=>`<div class="azr"><div class="sub">${g}</div>${xs.map(x=>`<div>・${esc(x)}</div>`).join("")}</div>`).join("")}${b.my.length?`<div class="azr"><div class="sub">そのほか</div>${b.my.map(x=>`<div>・${esc(x)}</div>`).join("")}</div>`:""}${b.t.f?`<div class="azr"><div class="sub">不安なこと・苦手なこと</div><div>${esc(b.t.f).replace(/\n/g,"<br>")}</div></div>`:""}${b.t.w?`<div class="azr"><div class="sub">スタッフさんに伝えたいこと</div><div>${esc(b.t.w).replace(/\n/g,"<br>")}</div></div>`:""}${!L.length&&!b.my.length&&!b.t.f&&!b.t.w?'<p class="sub">まだ何も選んでいません</p>':""}</div>
    <div class="plbtn" style="margin-top:12px"><button type="button" class="pri" data-act="bpcopy">文章をコピーする</button><button type="button" data-act="bppv">書きかえる</button></div><p class="note">産院に決まった用紙があるときは、これを見ながら書き写すと早いです。</p>`}
   const n=Object.values(b.c).filter(Boolean).length+b.my.length;
   return head("バースプラン","sleepbaby","pink")+`<p class="lead">どんなお産にしたいかを、産院に伝えるためのメモです。当てはまるものを選ぶだけ。あとから何度でも変えられます。</p>
