@@ -171,7 +171,13 @@ def yahoo_buy(kw):
     return min(xs, key=lambda x: x["p"]) if xs else None
 
 
-def buy(kw):
+# 100円ショップ・3COINS の物は店で買う物なので、通販の値段をつけない（通販だとまとめ売りで高く見えるため）
+SHOP_ONLY = re.compile(r"セリア|ダイソー|DAISO|キャンドゥ|3COINS|スリーコインズ|100均|百均")
+
+
+def buy(kw, name=""):
+    if SHOP_ONLY.search(name + " " + kw):
+        return []
     out = [b for b in (rakuten_buy(kw) if APP else None, yahoo_buy(kw)) if b]
     time.sleep(1)
     return sorted(out, key=lambda b: b["p"])
@@ -206,6 +212,7 @@ def ask(who, heads):
 きまり:
 - 見出しの中に、はっきり出てくる物だけ。出てこない物を作らない。広告・セールのお知らせだけの記事は使わない。
 - 「スワドル」「電動バウンサー」のような物の種類で書いてよい（ブランド名が話題ならブランド名も可）。
+- 「おもちゃ」「手作りおもちゃ」「ブロック」のような広すぎる言い方や、季節の家電・お菓子など育児グッズでない物は入れない。
 - 同じ種類の物は1つにまとめ、その物が出てくる見出しの番号を、できるだけ全部 src に入れる。
 - why は、どんなところが話題なのかを、ママが読んで分かるやさしい日本語で40字以内。
 - kw は、通販サイトでこの物をさがすときの短い言葉（例「スワドル 新生児」）。
@@ -336,7 +343,7 @@ def main():
         print(key, "web", len(more))
         rows = merge(rows, more)
         for r in rows:
-            r["buy"] = buy(r.pop("kw"))
+            r["buy"] = buy(r.pop("kw"), r["t"])
         print(key, model, [(r["t"], r["n"], [(b["s"], b["p"]) for b in r["buy"]]) for r in rows])
         if rows:
             out[key] = rows
