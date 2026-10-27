@@ -692,6 +692,14 @@ form.add input{min-width:0}
 .h-hero .who{white-space:normal}
 .h-hero .nw{white-space:nowrap}
 @media (max-width:400px){.h-hero .bph{width:96px;height:96px}}
+.fun summary{display:flex;align-items:center;gap:10px}
+.fun summary .grow{display:flex;flex-direction:column;min-width:0}
+.fun summary .s{font-size:12px;color:var(--sub);font-weight:400}
+.funtip{background:var(--soft2);border-radius:12px;padding:10px 12px}
+.funtip b{display:block!important;font-size:12px;color:var(--ac);margin-bottom:2px}
+.fung .grow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fung .t{flex:1 1 140px;min-width:0;font-size:14px}
+.fung .ktb{margin:0!important}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -799,7 +807,7 @@ const head=(title,icon,col)=>`<div class="ph"><button type="button" class="bk" d
 /* メニュー */
 const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonheart","pink"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"],["shop","買い物","basket","lemon"]]],
  ["お産にそなえる",[["jintsu","陣痛かも？と思ったら","clock","pink"],["bplan","バースプラン","sleepbaby","pink"],["sanin","産院の選び方","crib","mint"],["contacts","連絡先","envelope","lemon"]]],
- ["体とすごし方",[["body","妊娠中の体のこと","thermometer","pink"],["life","妊娠中のすごし方","heart","sky"]]],
+ ["体とすごし方",[["body","妊娠中の体のこと","thermometer","pink"],["life","妊娠中のすごし方","heart","sky"],["fun","お楽しみイベント","ribbon","pink"]]],
  ["そろえるもの",[["junbi","出産準備品リスト","onesie","pink"],["names","名前候補","heart","pink"],["rank","人気ランキング","star","lemon"],["wants","欲しい物メモ","ribbonheart","sky"]]],
  ["お金・手続き",[["money","お金の見通し","envelope","lemon"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
  ["産まれたあとに読む",[["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["chiiku","あそび・絵本","book","lemon"]]],
@@ -884,7 +892,7 @@ const MENU_M=[
   ["毎日のこと",[["chores","きょうの家事","hearthands","pink"],["shop","買い物","basket","lemon"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"]]],
   ["赤ちゃんのお世話",[["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["clothes","服の枚数","socks","lemon"],["rinyu","離乳食の食材チェック","mug","lemon"],["chiiku","あそび・絵本","book","lemon"],["azuke","預けるときの引き継ぎ","bear","sky"]]],
   ["病気・もしものとき",[["sick","急な病気・ケガ","thermometer","pink"],["ill","よくある病気","pillow","sky"],["visits","受診メモ","book","mint"],["contacts","連絡先","envelope","lemon"]]],
-  ["行事・お祝い",[["events","イベント","cupcake","mint"],["gifts","内祝いメモ","gift","pink"]]],
+  ["行事・お祝い",[["events","イベント","cupcake","mint"],["fun","お楽しみイベント","ribbon","pink"],["gifts","内祝いメモ","gift","pink"]]],
   ["おでかけ・地域",[["odk","子連れおでかけ","rainbow","sky"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
   ["お金・お買い物",[["money","お金の見通し","envelope","lemon"],["rank","人気ランキング","star","pink"],["goods","話題のグッズ","bear","lemon"],["wants","欲しい物メモ","ribbonheart","sky"]]],
   ["せってい",[["baby","赤ちゃんの情報","chick","mint"],["homeedit","ホームをカスタマイズ","star","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"]]]
@@ -1034,7 +1042,7 @@ function vCity(){
    <p class="note">金額や条件は国の基本です。市区町村によって上乗せや違いがあります。本番では、市区町村ごとの公式ページに直接つながるようにしたいです。</p></section>
   ${S.city?`<section class="h-sec"><div class="hd"><h2>${esc(at)}のイベント</h2></div><div class="rows">${[["今月の子育てイベント","子育て イベント 今月"],["児童館・支援センターの予定","児童館 子育て支援センター イベント"],["0歳の親子教室・離乳食教室","離乳食教室 親子"]].map(([l,q])=>`<a class="rw" href="${gq(at+" "+q)}" target="_blank" rel="noopener"><span class="grow"><div class="t">${l}</div><div class="s">Googleで探します</div></span><span class="chev">${ic("chev",16)}</span></a>`).join("")}</div></section>`:""}`;
 }
-const MSUB={jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
+const MSUB={fun:"マタニティフォト・ジェンダーリビール・命名書・月齢フォトなど",jintsu:"産院への電話・間隔のはかり方・家族への連絡",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
 const TOYS=[[0,5,"0〜5か月",[["ベッドメリー","寝ている赤ちゃんが目で追って楽しむ。音楽つきは寝かしつけにも","star"],["白黒の布絵本・カード","生まれてすぐは白黒がいちばん見やすい","book"],["ガラガラ・ラトル","握る・振ると音が出るのが楽しい","bubbles"]]],
 [6,11,"6〜11か月",[["オーボール","穴があいていて小さい手でもつかみやすいボール","cloud"],["布絵本・しかけ絵本","めくる・引っぱる遊びができる","book"],["歯固め","歯が生えるころのむずむずに","heart"],["ティッシュ箱おもちゃ","何度でも引き出せる。手作りでも","basket"]]],
 [12,23,"1歳",[["積み木","積む・くずすをくり返して遊ぶ","star"],["型はめ・ポストボックス","形を合わせて入れる","gift"],["手押し車","歩きはじめの練習に","stroller"],["たいこ・木琴","たたくと音が出て、リズム遊びに","bubbles"]]],
@@ -1102,7 +1110,7 @@ function vAppSet(){
   <section class="h-sec"><div class="hd"><h2>通知</h2></div><div class="rows">${NOTI.map(([k,l,d])=>{const on=a.n[k]??d;return `<label class="rw"><span class="grow t">${l}</span><input type="checkbox" class="sw" data-act="noti" data-v="${k}"${on?" checked":""}></label>`}).join("")}</div>
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。通知は、ホーム画面に追加したあとに届きます（iPhoneはiOS 16.4以降）。見本では届きません。</p></section>`;
 }
-const MKW={sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+const MKW={fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
 function vMenu(){
   const sub=MSUB;
   return `<div class="ph"><h1>メニュー</h1></div><input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+MENU_().map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>`<button type="button" class="rw" data-act="open" data-v="${k}" data-q="${esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""))}">${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span><span class="chev">${ic("chev",16)}</span></button>`).join("")}</div></div>`).join("");
@@ -1566,7 +1574,33 @@ function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math
   <section class="h-sec sos-sec"><div class="hd"><h2>こんなときは、すぐ電話</h2></div><div class="rows">${["破水したかも（水のようなものが出た）","出血が多い","おなかがずっと痛くて張りっぱなし","赤ちゃんの動きが少ない"].map(t=>`<div class="rw"><span class="dot-r"></span><span class="grow t">${t}</span></div>`).join("")}</div>
    <p class="note">破水したら、お風呂やシャワーには入らず、ナプキンを当てて電話してください。</p></section>`}
 
-const PAGES={jintsu:vJintsu,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCity,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
+
+/* ===== お楽しみイベント ===== */
+const FUN={"妊娠中":[
+ ["マタニティフォト","ribbon","妊娠8〜9か月（28〜35週）ごろ","おなかがいちばん大きくてきれいに写る時期。スタジオ・出張カメラマン・家でのセルフ撮影から選べます。","人気のスタジオは1〜2か月前に予約を。体調がいい日に、短めの時間で。",[["マタニティフォト用のドレス","マタニティフォト ドレス"],["レターバナー","レターバナー ベビー"]]],
+ ["ジェンダーリビール","heart","性別がわかる妊娠20週前後から","赤ちゃんの性別を、家族や友だちといっしょに知るイベント。健診で先生に性別を紙に書いてもらい、封筒に入れて信頼できる人に渡しておくと、自分たちも知らないまま当日を迎えられます。","割ると中から色の紙ふぶきが出るバルーンや、切ると中の色で分かるケーキが定番。花火やスモーク（煙）は火事やご近所トラブルのもとになるので、さけるのが安心です。エコーの性別は100%ではないことも覚えておいて。",[["ジェンダーリビールのバルーン","ジェンダーリビール バルーン"],["ケーキトッパー","ジェンダーリビール ケーキトッパー"]]],
+ ["ベビーシャワー","gift","妊娠7〜8か月ごろ","お友だちが妊婦さんを囲んで、出産をお祝いするパーティー。主役は座っているだけでOK。","体調のいい日に、2時間くらいまでに。プレゼントはおむつケーキが人気です。",[["おむつケーキ","おむつケーキ"]]],
+ ["エコー写真をのこす","book","妊婦健診のたびに","健診でもらうエコー写真は、熱で文字や絵が出る紙（感熱紙）なので、何年かすると色があせてしまいます。","もらったらスマホで撮るか、スキャンしておくと安心。専用のアルバムに日付と週数を書いておくと、あとで見返すのが楽しいです。",[["エコー写真のアルバム","エコー写真 アルバム"]]],
+ ["命名書を用意する","star","名前が決まったら（飾るのは生後7日目のお七夜）","赤ちゃんの名前をお披露目する紙。まん中に名前、右に「命名」、左に生年月日を書くのがいちばんシンプルな形です。","台紙と筆ペンがあれば家で書けます。字に自信がなければ、名前を入れて印刷してくれる台紙や、書いてもらうサービスも。退院前に準備しておくとあわてません。",[["命名書の台紙","命名書 台紙"],["命名書のタペストリー","命名書 タペストリー"]]],
+ ["ニューボーンフォト","sleepbaby","生後3週間ごろまで","生まれてすぐの、よく眠っている時期だけ撮れる写真。まるまった小さな姿が残せます。","人気のカメラマンはすぐ埋まるので、妊娠中に予約しておくのがおすすめ。安全のため、慣れたカメラマンにお願いしましょう。",[["ニューボーンフォトの衣装","ニューボーンフォト 衣装"]]]],
+ "生まれてから":[
+ ["月齢フォト（マンスリーフォト）","cupcake","毎月の「月誕生日」","毎月同じ日に、同じ場所・同じぬいぐるみといっしょに撮ると、大きくなったのがひと目で分かります。","月齢カードや、数字の入ったブランケットがあると毎月の準備がかんたん。寝ているあいだに飾りつけする「寝相アート」も人気です。",[["月齢カード","月齢カード"],["マンスリーフォトのブランケット","マンスリーフォト ブランケット"]]],
+ ["手形・足形","hearthands","新生児のころから","すぐ大きくなる手と足の形をのこせます。月齢フォトといっしょに、毎月とっても。","インクがつかない（手が汚れない）タイプが、赤ちゃんが動いてもやりやすいです。",[["手形足形のキット","手形 足形 キット"]]],
+ ["100日のお祝い・百日写真","swaddle","生後100日ごろ","お食い初め（「イベント」に日にちが出ます）といっしょに、写真を撮る家が多いです。","首がすわり始めるころなので、寝かせたままの写真が撮りやすいです。",[["百日祝いの飾り","100日祝い 飾り"]]],
+ ["ハーフバースデー","ribbon","生後6か月","半年のお祝い。「1/2」のケーキや飾りで写真を撮るのが定番です。","離乳食が始まっていれば、おかゆや野菜で「離乳食ケーキ」も。",[["ハーフバースデーの飾り","ハーフバースデー 飾り"]]],
+ ["1歳の誕生日","rainbow","1歳","一升餅を背負う、将来を占う「選び取り」、手づかみで食べるスマッシュケーキなど。","一升餅はリュックに入れて背負わせるのが楽です。選び取りカードがあると準備がかんたん。",[["一升餅（リュックつき）","一升餅 リュック"],["選び取りカード","選び取りカード"],["バースデーのガーランド","バースデー ガーランド 1歳"]]]]};
+let funTab=null,funP=0;
+function vFun(){if(!funP){AFF_PICK.push(...Object.values(FUN).flat().flatMap(x=>x[5].map(g=>g[1])));funP=1}
+  const t=funTab||(S.mode==="pre"?"妊娠中":"生まれてから"),L=FUN[t];
+  return head("お楽しみイベント","cupcake","pink")+`<p class="lead">やらなくても大丈夫。でも、やっておくとあとで見返して楽しいことを集めました。</p>
+  <div class="seg segw" style="margin:4px 0 8px">${Object.keys(FUN).map(k=>`<button type="button" class="${k===t?"on":""}" data-act="funtab" data-v="${k}">${k}</button>`).join("")}</div>
+  <section class="h-sec">${L.map(([n,i,when,what,tip,gs],j)=>`<details class="svc fun"${j===0?" open":""}><summary>${pic(i,34)}<span class="grow"><b>${n}</b><span class="s">${when}</span></span></summary>
+   <p>${what}</p><p class="funtip"><b>ポイント</b>${tip}</p>
+   <div class="rows">${gs.map(([g,q])=>{const on=W().some(x=>x.t===g);return `<div class="rw kt fung"><span class="grow"><div class="t">${g}</div><div class="ktb"><a href="${rkURL(q)}" target="_blank" rel="noopener sponsored">楽天で見る</a><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(g)}">${on?"メモ済み":"欲しい"}</button></div></span></div>`}).join("")}</div></details>`).join("")}
+  ${L.some(x=>x[5].some(g=>affOn(g[1])))?`<p class="prnote">このページのリンクには広告（PR）がふくまれます</p>`:""}</section>`;
+}
+
+const PAGES={fun:vFun,jintsu:vJintsu,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCity,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
 const TABS=[["home","ホーム","t-home"],["cal","カレンダー","t-cal"],["chores","家事","t-chore"],["menu","メニュー","t-menu"]];
 let stack=[];
 function render(keep){
@@ -1641,6 +1675,7 @@ document.addEventListener("click",e=>{
     case"citydel":S.city="";cityEdit=false;k();break;
     case"toymemo":{const j=W().findIndex(w=>w.t===v);if(j>=0)W().splice(j,1);else{W().push({t:v,m:""});toast("欲しい物メモに入れました")}k();break}
     case"rktab":rkTab=v;render(true);break;
+    case"funtab":funTab=v;render(true);break;
     case"lftab":lfTab=v;render(true);break;
     case"owndel":S.app.own="";if(S.app.ic==="own")S.app.ic="baby_face";k();break;
     case"appic":S.app.ic=v;k();break;
