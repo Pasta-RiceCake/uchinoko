@@ -1560,7 +1560,8 @@ const ILMAP={girly:"pop",classic:"pop",mama:"base",natural:"kusumi",otona:"mizu"
 const ILAUTO={korea:"kusumi",yume:"pop",mono:"mono",natural:"kusumi",simple:"cool",pop:"pop",fuwa:"mizu"};
 const ILURL="/ill/";const ILS={},ILSq={};
 const THIL={gal:"gal",elegant:"elegant",goth:"goth",doll:"doll",retro:"retro",tech:"tech",wa:"wa",lux:"lux"};
-const ilSet=()=>S.ils&&S.ils!=="auto"?(ILMAP[S.ils]||S.ils):"base";
+const ILTH={app:"base",korea:"kusumi",yume:"mizu",pop:"pop",natural:"kusumi",mono:"mono",night:"cool"};
+const ilSet=()=>THIL[S.th]||ILTH[S.th]||"base";
 function ilLoad(s){if(s==="base"||ILS[s]||ILSq[s])return;ILSq[s]=1;fetch(ILURL+s+".json").then(r=>r.ok?r.json():null).then(d=>{if(d){ILS[s]=d;render(true)}}).catch(()=>{})}
 // セットにない絵は、同じセットの近い絵でかわりにする
 const ILALIAS={baby_face:["bear","bunny"],boy:["baby_face","bear"],girl:["baby_face","bunny"],family:["smile","bunny","heart"],hearthands:["smile","bouquet","flower","bunny"],ribbonheart:["bouquet","flower","smile","ribbon"],
@@ -2444,10 +2445,10 @@ function vKise(){
   <div class="sec-t">テーマ</div><div class="themes">${THEMES.map(([k,n,dsc,f])=>{const p=pv[k];return `<button type="button" class="thc sheet${S.th===k?" on":""}" data-act="th" data-v="${k}">
    <span class="pv3">${((PVC[k]||{})[S.col]||PV3[k]).map((x,j)=>`<i style="background:${x};flex:${[6,3,1][j]}"></i>`).join("")}</span>
    <b style="font-family:'${f}',sans-serif">${n}</b><span class="sub">${dsc}</span></button>`}).join("")}</div>
-  <div class="sec-t">絵のセット</div>${(()=>{ILSETS.forEach(([s])=>ilLoad(s));const cur=S.icm==="line"?"line":ilSet();
+  <div class="sec-t">絵</div>${(()=>{ilLoad(ilSet());const cur=S.icm==="line"?"line":"theme";
   const pv=s=>["bear","bottle","heart"].map(x=>{const u=imgSrc(x,s);return u?`<img src="${u}" alt="" width="30" height="30">`:`<span class="pvph"></span>`}).join("");
-  const opts=[["line","シンプルな線",["bear","bottle","moon"].map(x=>`<svg viewBox="0 0 24 24" width="24" height="24">${ILN[x]}</svg>`).join("")],...ILSETS.map(([s,n])=>[s,n,pv(s)])];
-  return `<div class="sheet icms ilsets">${opts.map(([k,n,p])=>`<button type="button" class="${cur===k?"on":""}" data-act="ils" data-v="${k}"><span class="pv2">${p}</span>${n}</button>`).join("")}</div><p class="note">どの画面も、えらんだセットの絵だけで出ます。テーマをえらぶと、そのテーマに合う絵に変わります（あとから別のセットにもできます）。</p>`})()}
+  const opts=[["line","シンプルな線",["bear","bottle","moon"].map(x=>`<svg viewBox="0 0 24 24" width="24" height="24">${ILN[x]}</svg>`).join("")],["theme","テーマの絵",pv(ilSet())]];
+  return `<div class="sheet icms ilsets">${opts.map(([k,n,p])=>`<button type="button" class="${cur===k?"on":""}" data-act="ils" data-v="${k}"><span class="pv2">${p}</span>${n}</button>`).join("")}</div><p class="note">「テーマの絵」は、えらんだテーマに合わせた絵になります。テーマを変えると絵も変わります。</p>`})()}
   <div class="sec-t">カラー</div>${["mono", "night", "gal", "elegant", "goth", "doll", "retro", "tech", "wa", "lux"].includes(S.th)?`<p class="note">${({"mono": "モノトーン", "night": "よぞら", "gal": "ギャル", "elegant": "大人かわいい", "goth": "ダーク", "doll": "ガーリー", "retro": "レトロ", "tech": "近未来", "wa": "和風", "lux": "高級感"})[S.th]}は色が決まっているテーマなので、カラーは選べません。</p>`:`<p class="note">えらんだ色に合わせて、地とカードの色も組み合わせが変わります。</p><div class="sheet cols">${COLS.map(([k,n,c])=>`<button type="button" class="colc${S.col===k?" on":""}" data-act="col" data-v="${k}"><i style="background:${c}"></i>${n}</button>`).join("")}</div>`}`;
 }
 function vShareInfo(){return vFufu()}
@@ -2744,7 +2745,7 @@ document.addEventListener("click",e=>{
     case"mode":S.mode=v;page=null;stack=[];k();break;
     case"prck":S.pre.ck[v]=!S.pre.ck[v];k();break;
     case"icm":S.icm=v;k();break;
-    case"ils":if(v==="line")S.icm="line";else{S.icm="ill";S.ils=v}k();break;
+    case"ils":S.icm=v==="line"?"line":"ill";k();break;
     case"chtab":chTab=v;render(true);break;
     case"chdel":S.chores.splice(i,1);chPick=-1;k();break;
     case"chic":chPick=chPick===i?-1:i;render(true);break;
@@ -2768,7 +2769,7 @@ document.addEventListener("click",e=>{
     case"shcopy":{const t=shText();try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
     case"plandel":S.plans.splice(+el.dataset.id.slice(1),1);k();break;
     case"sym":symSel=i;render(true);break;
-    case"th":S.th=v;if(THIL[v]){S.icm="ill";S.ils=THIL[v]}k();break;
+    case"th":S.th=v;k();break;
     case"evk":evk=v;evMore=20;render(true);break;
     case"evmore":evMore+=20;render(true);break;
     case"evcal":S.plans.push({d:v,t:el.dataset.t,tm:(el.dataset.tm.match(/\d{1,2}:\d{2}/)||[""])[0],te:"",kd:"その他",ic:"star",w:"家族みんな",r:"前日",m:el.dataset.pl,vis:"共有"});save();render(true);toast("カレンダーに入れました");break;
