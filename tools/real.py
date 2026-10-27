@@ -92,7 +92,7 @@ head = '''<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7e9ec">
 <meta name="description" content="妊娠中から子育て中まで。予定・手続き・家事・買い物をふたりで共有できる、無料の子育て手帳です。">
-<link rel="manifest" href="/m/default.webmanifest">
+<script>if(!("standalone" in navigator)){const l=document.createElement("link");l.rel="manifest";l.href="/m/default.webmanifest";document.head.appendChild(l)}</script>
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
