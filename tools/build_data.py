@@ -69,38 +69,58 @@ def kind(name):
 
 
 def hoiku():
+    """全国をまとめて1回で取り、いちばん近い市区町村の中心で都道府県に分ける"""
     servers = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]
-    total = 0
-    for i, pref in enumerate(PREF):
-        q = f'[out:json][timeout:300];area["ISO3166-2"="JP-{i+1:02d}"]->.a;(nwr["amenity"~"^(kindergarten|childcare)$"](area.a););out center tags;'
-        d = None
-        for s in servers:
-            try:
-                d = json.loads(get(s, urllib.parse.urlencode({"data": q}).encode(), timeout=400))
-                break
-            except Exception as e:
-                print("overpass", s, e)
-        if d is None:
-            raise RuntimeError("overpass " + pref)
-        rows, seen = [], set()
-        for e in d.get("elements", []):
-            t = e.get("tags", {})
-            name = t.get("name") or t.get("name:ja")
-            lat = e.get("lat") or e.get("center", {}).get("lat")
-            lon = e.get("lon") or e.get("center", {}).get("lon")
-            if not name or lat is None:
-                continue
-            k = (name, round(lat, 3), round(lon, 3))
-            if k in seen:
-                continue
-            seen.add(k)
-            addr = t.get("addr:full") or "".join(t.get(x, "") for x in ["addr:province", "addr:city", "addr:suburb", "addr:quarter", "addr:neighbourhood", "addr:block_number", "addr:housenumber"])
-            rows.append([name, kind(name), r5(lat), r5(lon), addr, t.get("website") or t.get("contact:website") or "", t.get("phone") or t.get("contact:phone") or ""])
-        total += len(rows)
-        print(pref, len(rows))
-        dump(f"hoiku/{i+1:02d}.json", rows)
-        time.sleep(5)
-    print("hoiku total", total)
+    q = '[out:json][timeout:900];area["ISO3166-1"="JP"][admin_level=2]->.a;(nwr["amenity"~"^(kindergarten|childcare)$"](area.a););out center tags;'
+    d = None
+    for s in servers:
+        try:
+            d = json.loads(get(s, urllib.parse.urlencode({"data": q}).encode(), timeout=1000))
+            break
+        except Exception as e:
+            print("overpass", s, e)
+    if d is None:
+        raise RuntimeError("overpass")
+    cs = json.load(open(os.path.join(OUT, "cities.json"), encoding="utf-8"))
+    centers = [(v["p"][0], v["p"][1], v["c"][:2]) for v in cs.values() if "p" in v]
+    grid = {}
+    for la, lo, pc in centers:
+        grid.setdefault((int(la * 4), int(lo * 4)), []).append((la, lo, pc))
+
+    def pref_of(la, lo):
+        best, bd = None, 1e9
+        for r in (0, 1, 2, 3):
+            for dy in range(-r, r + 1):
+                for dx in range(-r, r + 1):
+                    for cla, clo, pc in grid.get((int(la * 4) + dy, int(lo * 4) + dx), []):
+                        dd = (cla - la) ** 2 + ((clo - lo) * 0.82) ** 2
+                        if dd < bd:
+                            best, bd = pc, dd
+            if best:
+                return best
+        return None
+
+    out, seen = {}, set()
+    for e in d.get("elements", []):
+        t = e.get("tags", {})
+        name = t.get("name") or t.get("name:ja")
+        lat = e.get("lat") or e.get("center", {}).get("lat")
+        lon = e.get("lon") or e.get("center", {}).get("lon")
+        if not name or lat is None:
+            continue
+        k = (name, round(lat, 3), round(lon, 3))
+        if k in seen:
+            continue
+        seen.add(k)
+        pc = pref_of(lat, lon)
+        if not pc:
+            continue
+        addr = t.get("addr:full") or "".join(t.get(x, "") for x in ["addr:province", "addr:city", "addr:suburb", "addr:quarter", "addr:neighbourhood", "addr:block_number", "addr:housenumber"])
+        out.setdefault(pc, []).append([name, kind(name), r5(lat), r5(lon), addr, t.get("website") or t.get("contact:website") or "", t.get("phone") or t.get("contact:phone") or ""])
+    for pc, rows in sorted(out.items()):
+        print(pc, len(rows))
+        dump(f"hoiku/{pc}.json", rows)
+    print("hoiku total", sum(len(r) for r in out.values()))
 
 
 # ---------- 産院 ----------
@@ -177,4 +197,6 @@ if __name__ == "__main__":
     if "sanin" in what:
         sanin()
     if "hoiku" in what:
+        if not os.path.exists(os.path.join(OUT, "cities.json")):
+            cities()
         hoiku()
