@@ -69,13 +69,18 @@ def kind(name):
 
 
 def hoiku():
-    """全国をまとめて1回で取り、いちばん近い市区町村の中心で都道府県に分ける"""
+    """全国をまとめて1回で取り、いちばん近い市区町村の中心で都道府県に分ける（PREF=33 なら岡山県だけ）"""
     servers = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]
-    q = '[out:json][timeout:900];area["ISO3166-1"="JP"][admin_level=2]->.a;(nwr["amenity"~"^(kindergarten|childcare)$"](area.a););out center tags;'
+    one = os.environ.get("PREF", "")
+    if one:
+        q = f'[out:json][timeout:300];area["ISO3166-2"="JP-{int(one):02d}"]->.a;(nwr["amenity"~"^(kindergarten|childcare)$"](area.a););out center tags;'
+        servers = servers[int(one) % 3:] + servers[:int(one) % 3]
+    else:
+        q = '[out:json][timeout:900];area["ISO3166-1"="JP"][admin_level=2]->.a;(nwr["amenity"~"^(kindergarten|childcare)$"](area.a););out center tags;'
     d = None
     for s in servers:
         try:
-            d = json.loads(get(s, urllib.parse.urlencode({"data": q}).encode(), timeout=1000))
+            d = json.loads(get(s, urllib.parse.urlencode({"data": q}).encode(), timeout=400 if one else 1000))
             break
         except Exception as e:
             print("overpass", s, e)
@@ -112,7 +117,7 @@ def hoiku():
         if k in seen:
             continue
         seen.add(k)
-        pc = pref_of(lat, lon)
+        pc = f"{int(one):02d}" if one else pref_of(lat, lon)
         if not pc:
             continue
         addr = t.get("addr:full") or "".join(t.get(x, "") for x in ["addr:province", "addr:city", "addr:suburb", "addr:quarter", "addr:neighbourhood", "addr:block_number", "addr:housenumber"])

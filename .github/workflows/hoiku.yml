@@ -1,0 +1,50 @@
+name: hoiku
+# 保育園のデータを都道府県ごとに同時に取る（全国1回で取るより早い）
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: ${{ github.workflow }}
+jobs:
+  pref:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        pref: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47]
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        env:
+          ONLY: hoiku
+          PREF: ${{ matrix.pref }}
+        run: python3 tools/build_data.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hoiku-${{ matrix.pref }}
+          path: public/data/hoiku/
+          if-no-files-found: warn
+  commit:
+    needs: pref
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: hoiku-*
+          path: dl
+          merge-multiple: true
+      - name: commit
+        run: |
+          mkdir -p public/data/hoiku
+          ls dl || exit 0
+          cp dl/*.json public/data/hoiku/ || exit 0
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          git add public/data/hoiku
+          git diff --cached --quiet && exit 0
+          git commit -m "保育園データを更新"
+          git pull --rebase -q origin main && git push
