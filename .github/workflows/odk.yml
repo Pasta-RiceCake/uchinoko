@@ -29,4 +29,4 @@ jobs:
           git add public/data/odk
           git diff --cached --quiet && exit 0
           git commit -m "子連れおでかけのイベントを更新"
-          git pull --rebase -q origin main && git push
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push && break; sleep $((i*7)); done
