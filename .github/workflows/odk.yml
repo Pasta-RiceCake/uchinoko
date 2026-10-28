@@ -6,7 +6,7 @@ on:
         description: "1つの都道府県だけ読む（例：岡山県）。空なら古い順に"
         default: ""
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "15 8 * * *"
 permissions:
   contents: write
 concurrency: ${{ github.workflow }}
