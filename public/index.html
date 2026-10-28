@@ -783,6 +783,8 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .ga2h{border:1.5px solid var(--ac);display:flex;flex-direction:column;gap:6px}
 .ga2h b{font-size:14.5px}
 .ga2h p{margin:0;font-size:13.5px;line-height:1.7}
+
+.gpeek{border:0;background:none;color:var(--sub);font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:6px 8px;cursor:pointer}
 .pushon{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--sheet);margin:0 0 8px}.pushon .lk{border:0;background:none;color:var(--ac);font:inherit;font-size:13px;font-weight:700;padding:0;cursor:pointer}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
@@ -2198,7 +2200,7 @@ function vPrivacy(){
    "通知をオンにしたときは、通知を送るための情報と、送る予定の通知をサーバーに保存します。ホーム画面のアイコンに自分の画像を使ったときは、その画像を保存します。"])+
   sec("住んでいる場所",["市区町村を入れると、その市の子育てイベントやサービスを集めるために、市区町村の名前だけをサーバーに記録します（だれが入れたかは記録しません）。",
    "「現在地から探す」は、保育園や産院を近い順に並べるためだけに使います。"])+
-  sec("広告について",["このサイトは、楽天アフィリエイトとA8.netの広告を使っています。リンクから買ったり申し込んだりすると、運営に紹介料が入ることがあります。値段は変わりません。",
+  sec("広告について",["このサイトは、楽天アフィリエイト・A8.net・もしもアフィリエイトの広告を使っています。リンクから買ったり申し込んだりすると、運営に紹介料が入ることがあります。値段は変わりません。","Amazonのアソシエイトとして、当サイトは適格販売により収入を得ています。",
    "広告の会社が、紹介を数えるためにクッキーなどを使うことがあります。広告のあるページには、そのことを小さく書いています。"])+
   sec("のせている情報について",["市のイベントやサービスは、市の公式サイトなどから自動で集めたものです。保育園はOpenStreetMap、産院は医療情報ネットの情報をもとにしています。変わっていることもあるので、申し込む前に公式サイトで確かめてください。",
    "病気やケガのページは一般的な目安で、診断ではありません。迷ったら #8000 や病院に相談してください。"])+
@@ -3121,8 +3123,10 @@ function setupGate(){
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
+  <p style="text-align:center;margin:0"><button type="button" class="gpeek">入力しないで、中を見てみる</button></p>
   <details class="sheet gmv"><summary>${isIOS()&&navigator.standalone?"Safariで入れた内容を移す・機種変更した人はこちら":"機種変更した人はこちら"}</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
+  o.querySelector(".gpeek").addEventListener("click",()=>{page=null;stack=[];ungate(o);render(false)});
   o.querySelector("#gmv").addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();mvGet(e.target.c.value)});
   const f=o.querySelector("form"),sync=()=>{const pre=f.mode.value==="pre";o.querySelector("#gdl").textContent=pre?"出産予定日":"誕生日";o.querySelector("#gsex").hidden=pre};
   f.addEventListener("change",sync);sync();

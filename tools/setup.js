@@ -15,8 +15,10 @@ function setupGate(){
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
+  <p style="text-align:center;margin:0"><button type="button" class="gpeek">入力しないで、中を見てみる</button></p>
   <details class="sheet gmv"><summary>${isIOS()&&navigator.standalone?"Safariで入れた内容を移す・機種変更した人はこちら":"機種変更した人はこちら"}</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
+  o.querySelector(".gpeek").addEventListener("click",()=>{page=null;stack=[];ungate(o);render(false)});
   o.querySelector("#gmv").addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();mvGet(e.target.c.value)});
   const f=o.querySelector("form"),sync=()=>{const pre=f.mode.value==="pre";o.querySelector("#gdl").textContent=pre?"出産予定日":"誕生日";o.querySelector("#gsex").hidden=pre};
   f.addEventListener("change",sync);sync();
