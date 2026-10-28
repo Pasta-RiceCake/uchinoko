@@ -782,6 +782,17 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .spsc .spi{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;font-size:12px;opacity:.85;padding:10px 0 14px;border-top:1px solid var(--line);margin:0!important}
 .spil{opacity:.7}.spit{white-space:nowrap}
 .spit a{color:inherit;text-decoration:underline;text-underline-offset:2px;margin-left:6px}
+.sptool{display:flex;flex-direction:column;gap:8px;margin:4px 0 14px}
+.spfind input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:inherit}
+.spsel{width:100%;font:inherit;font-size:15px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:inherit}
+.spsc ol.spvs{list-style:none;padding:0;counter-reset:sp}
+.spsc li.spv{display:flex;align-items:flex-start;gap:10px}
+.spsc li.spv::before,.spsc li.spv::after{content:none}
+.spvt{flex:1;min-width:0}
+.sptb{flex:none;margin-top:1px;font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,currentColor 30%,transparent);background:transparent;color:inherit;opacity:.75;cursor:pointer}
+.sptb.on{opacity:1;background:var(--ac);border-color:var(--ac);color:var(--onac,#fff)}
+.spok{font-weight:700;opacity:1}
+#spmain .spth{display:none}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2260,7 +2271,7 @@ function vAppSet(){
   <section class="h-sec"><div class="hd"><h2>通知</h2></div>${pushUI()}<div class="rows">${NOTI.map(([k,l,d])=>{const on=a.n[k]??d;return `<label class="rw"><span class="grow t">${l}</span><input type="checkbox" class="sw" data-act="noti" data-v="${k}"${on?" checked":""}></label>`}).join("")}</div>
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。</p></section>`;
 }
-const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
 function vMenu(){
   const sub=MSUB;
   return `<div class="ph"><h1>メニュー</h1></div><input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+MENU_().map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>`<button type="button" class="rw" data-act="open" data-v="${k}" data-q="${esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""))}">${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span><span class="chev">${ic("chev",16)}</span></button>`).join("")}</div></div>`).join("");
@@ -2920,6 +2931,45 @@ const SP2=[
   ["写真や動画、何を残せばいい？",["赤ちゃんだけでなく、ママ・パパといっしょの何気ない写真をたくさん","授乳やおむつ替え、お昼寝など、毎日の流れを写真で残したら、あとで見返すと宝物になった","原始反射や沐浴、初めて食べた日は動画で","シャッター音の鳴らないカメラアプリだと、寝顔を撮っても起きない"],[],""],
   ["手形・足形をとりそびれる",["「今度でいいや」と思っていたら、あっという間に大きくなった。早めにとればよかった"],[],""],
   ["ほかに残してよかったもの",["出産前や1歳の誕生日に、子どもへの手紙を書いた","離乳食や体調のメモを手書きノートに。迷ったときに病院に持っていけたし、大きくなった子が見てうれしそう"],[],""]]]];
+const SP_NEW=[
+ ["つわり・妊娠中","つわりや妊娠中の体の困りごとで、先輩ママが試したことです。合うものは人によって本当にちがうので、いくつか試してみてください。",[
+  ["つわりで何も食べられない",["すっぱい物だけは食べられた。すっぱいグミやレモン味のあめを持ち歩いた","なんにでもポン酢をかけて食べていた","炊きたてはにおいがだめで、冷ましたごはんにゆかりをまぜたら食べられた","ピンポン玉くらいの小さいおにぎりを作っておいて、食べられるときに1こずつ","なぜかフライドポテトだけは食べられた。食べられる物を食べればいいと割り切った","ゼリー飲料や冷たいうどん、冷やし中華など、冷たくてのどごしのいい物","1回にたくさんは無理なので、少しずつ何回にも分けて食べた"],[["すっぱいグミ","すっぱい グミ"],["ゼリー飲料","inゼリー"]],"甘いジュースや炭酸ばかりになると、糖分のとりすぎになることも。健診で相談しながら。"],
+  ["おなかが空くと気持ち悪い（食べづわり）",["枕元にクラッカーや小さいビスケットを置いて、起きてすぐ口に入れた","あめやガムを持ち歩いて、空腹にならないようにした","個包装のバウムクーヘンをかばんに入れておいた","夜中に気持ち悪くなるので、寝る前に少しだけ食べた"],[["個包装のビスケット","ビスケット 個包装"]],""],
+  ["においがつらい",["家の中でもマスクをしたら、だいぶ楽になった","柔軟剤やシャンプーを無香料に変えた","ごはんが炊けるにおいがだめで、パックごはんにした","冷蔵庫を開けるのもつらくて、料理は家族にお願いした","ハンカチに好きな香り（ミントなど）をつけて、つらいときにかいだ"],[["無香料の柔軟剤","柔軟剤 無香料"]],""],
+  ["気持ち悪さが少しでもまぎれる方法",["手首の内側のツボを押すバンドをつけたら、気がまぎれた","炭酸水を少しずつ飲むと、すっきりした","しめつけない服にした","がまんしないで横になる。休むのも仕事だと思うようにした","仕事は「母健連絡カード」を出して、時差出勤にしてもらえた"],[["つわりバンド","つわり バンド"],["炭酸水","炭酸水"]],""],
+  ["水も吐いてしまう",["氷をなめると、少しずつ水分がとれた","スポーツドリンクや経口補水液を、スプーンで少しずつ","がまんせず産院に電話したら、点滴をしてもらえて楽になった"],[],"水分がとれない、おしっこがほとんど出ない、体重がどんどん減るときは、すぐ産院へ。妊娠悪阻（にんしんおそ）のこともあります。"],
+  ["おなかが大きくて眠れない",["抱き枕をはさんで横向き（シムスの体位）で寝たら楽だった","大きいクッションを背中にも置いて、寝返りを楽にした","夜眠れない分、昼寝してもいいことにした"],[["抱き枕","抱き枕 妊婦"]],""],
+  ["足がつる・腰が痛い",["寝る前にふくらはぎをのばしたら、つる回数がへった","つったときは、つま先を自分のほうに引っぱってもらった","骨盤ベルトをつけたら楽だった（つけ方は助産師さんに教わった）","湯船であたためると、腰が楽になった"],[["骨盤ベルト","骨盤ベルト 妊婦"]],"おなかの張りや痛みが続くときは、がまんしないで産院へ。"],
+  ["妊娠中の便秘",["朝起きてすぐ、コップ1杯の水を飲むようにした","野菜やヨーグルト、キウイを多めに","薬は自分で買わずに、健診で相談したら妊娠中でも使える物を出してもらえた"],[],""]]],
+ ["1歳ごろ","手づかみ食べ、歯みがき、イヤイヤ期、卒乳など、1歳前後のお悩みです。",[
+  ["手づかみ食べで、まわりがドロドロ",["いすの下にレジャーシートや新聞紙を敷いて、終わったらたたむだけに","ポケット付きのエプロンにしたら、落ちた物がポケットで止まった","吸盤つきのお皿で、ひっくり返されなくなった","スティック状のパンや野菜、ひと口サイズのおにぎりにしたら、つかみやすそうだった","汚れるのは今だけと思って、なるべく口を出さずに見守った"],[["ポケット付きエプロン","食事用エプロン シリコン ポケット"],["吸盤つきのお皿","吸盤 皿 ベビー"]],""],
+  ["遊び食べ・食べムラ",["30分くらいで「ごちそうさま」にして、ダラダラ続けないようにした","お皿にのせる量を少なくして、食べたら「おかわり」にした","いっしょに同じ物を食べると、まねして食べてくれた","日によってぜんぜん食べない日もある。1週間くらいで見ればいいと聞いて気が楽になった"],[],""],
+  ["歯みがきをいやがる",["全部みがこうとせず、むし歯になりやすい所だけ短く","いやがったら、いったんやめて、時間をおいてもう一度","自分でみがかせて「じょうず！」とほめてから、仕上げみがき","ひざに寝かせて、歌をうたいながら。10数えたら終わりにした","歯ブラシを2本用意して、1本はにぎらせておいた"],[["仕上げ用歯ブラシ","仕上げ 歯ブラシ"]],"歯科健診で、みがき方を教えてもらえることもあります。"],
+  ["イヤイヤ期でなにもかも「イヤ！」",["服やおやつを2つ見せて、自分で選ばせたら動いてくれた","「イヤだったね」と気持ちを言葉にしてあげたら、落ち着くのが早くなった","気持ちがおさまるまで、そばで待った","話をそらしたり、場所を変えたりした","危なくないことは、やりたいようにさせてみた","最後は「大丈夫だよ」とぎゅっとした","外出のときは、好きなラムネを持ち歩いて切り札にした"],[],""],
+  ["卒乳・断乳をどうするか",["子どもの様子を見ながら、少しずつ回数をへらした","日にちを決めて、前もって子どもに話しておいた","夜はパパに寝かしつけをお願いした","おっぱいがはってつらいときは、助産師さんに相談した"],[],"やめる時期に正解はありません。ママの体がつらいときは、助産師外来や母乳外来へ。"]]],
+ ["移動・帰省","新幹線・飛行機・車で子どもと移動するときの声です。",[
+  ["新幹線で泣かないか心配",["多目的室やトイレに近い席にした","ごはんやお昼寝の時間に乗れるようにした","おもちゃは一度に出さず、ひとつずつ小出しにした","シールブックや折り紙が長持ちした","かたいアイスはなかなか食べ終わらないので、時間かせぎになった","泣いたらデッキに出て、景色を見ながら少し歩いた"],[["シールブック","シールブック 幼児"]],""],
+  ["飛行機に乗る",["空港のキッズスペースで遊ばせて、機内で寝てくれた","赤ちゃん用のベッド（バシネット）の席を予約した","離着陸のときに授乳やミルク、おしゃぶりで耳の痛みをやわらげた","後ろのほうの席にしたら、まわりに気をつかいすぎずにすんだ"],[],""],
+  ["車での長い移動",["サービスエリアで休むところを先に決めておいた","子どもが寝る時間に出発した","後ろの席に大人がひとり座って、相手をした","チャイルドシートの横に、手が届く袋をかけておやつやおもちゃを入れた"],[["シートバックポケット","シートバックポケット 車"]],""],
+  ["里帰り出産・帰省の準備",["荷物は先に宅配便で送った","おむつやおしりふきは、帰省先で買うことにした","いつも使うものだけリストにして、家族と分担した","里帰り先の小児科と、急なときの病院を先に調べておいた"],[],""]]],
+ ["仕事復帰","育休明けに仕事にもどるときの声です。",[
+  ["育休明けの準備は何から？",["復帰する日を早めに会社に伝えて、時短など働き方を相談した","保育園までの道を、実際に歩いて時間をはかった","雨の日の行き方も決めておいた","入園グッズは早めに用意して、名前つけを少しずつ進めた"],[],""],
+  ["朝と夜がバタバタ",["送りはパパ、お迎えとお風呂はママ、など担当を決めた","服を前の夜に並べておいた","晩ごはんは週末にまとめて作って、冷凍した","ネットスーパーや食材の宅配にたよった"],[],""],
+  ["子どもが熱を出したらどうしよう",["ファミサポ（市区町村の子育て支援）に先に登録しておいた","病児保育やベビーシッターを、一度お試しで使っておいた","夫婦でどちらが休むか、交代の順番を決めた","職場に「休むことがあるかも」と先に話しておいたら、気が楽になった"],[],""]]]];
+const SP_SC=[
+ ["入院・お産",[["陣痛が来たらどうする？",["陣痛タクシーに先に登録しておいたら、あわてずにすんだ","入院バッグを玄関に置いておいた","痛みの波が来たら、長く息をはくことだけ考えた","あぐらや四つんばいなど、楽な姿勢をいろいろ試した","アプリで陣痛の間かくをはかった"],[],"破水した、出血が多い、赤ちゃんの動きが少ないと感じるときは、すぐ産院へ電話を。"]]],
+ ["寝かしつけ",[["夜中に何度も起きる（夜泣き）",["すぐ抱っこせず、少しだけ様子を見たら、また寝ることもあった","部屋の温度や、着せすぎていないかを見直した","ホワイトノイズ（ザーッという音）を流した","昼間に外で遊ぶ時間をふやした","どうしても泣きやまない夜は、パパと交代でみた","「夜泣きは成長のしるし。いつか終わる」と思うようにした"],[],"泣き方がいつもとちがう、熱がある、ぐったりしているときは受診を。"]]],
+ ["便秘・体調",[["熱が出た",["着せすぎず、汗をかいたら着がえさせた","水分を少しずつ、こまめにあげた","熱の高さと時間を、スマホにメモしておいたら病院で話しやすかった","夜に迷ったら、#8000（こども医療でんわ相談）に電話した"],[],"生後3か月未満の発熱、ぐったりしている、水分がとれない、けいれんしたときは、すぐ受診を。"],
+  ["吐いた・下痢をした",["一度にたくさん飲ませず、スプーンで少しずつ","経口補水液を、ひと口ずつ時間をあけてあげた","汚れた服やシーツは、使い捨て手袋で片づけた","家族にうつらないよう、タオルは分けた"],[["経口補水液","経口補水液 乳児"]],"何度も吐く、おしっこが少ない、うんちに血がまじる、ぐったりしているときは、すぐ受診を。"]]]];
+const SP_MORE=[
+ ["授乳",0,["授乳クッションで高さを合わせたら、くわえやすくなった","助産師外来で、くわえさせ方を見てもらった"]],
+ ["寝かしつけ",0,["おくるみでくるんだら、ビクッとして起きることがへった","ママのにおいがついたタオルをそばに置いた"]],
+ ["肌ケア",0,["よだれのあとは、ぬれたガーゼでおさえるようにふいて、すぐ保湿","ミトンで、ひっかいて悪くならないようにした","服や肌着を綿のものにした"]],
+ ["産後の心と体",1,["寝られるときは、家事より先に寝ることにした","ミルクを1回だけでもパパにまかせて、まとめて眠った"]],
+ ["上の子",0,["上の子だけと出かける日をつくった","「お兄ちゃん（お姉ちゃん）だから」と言わないようにした"]]];
+SP_SC.forEach(([t,xs])=>{const f=SP2.find(x=>x[0]===t);if(f)f[2].push(...xs)});
+SP_MORE.forEach(([t,i,vs])=>{const f=SP2.find(x=>x[0]===t);if(f&&f[2][i])f[2][i][1].push(...vs)});
+SP2.push(...SP_NEW);
 const SP_DO=[
  ["知っておく",["よくある病気やケガを知って、かかりつけの小児科を決めておく","赤ちゃんの成長のめやすと、予防接種・健診・行事の予定を知っておく","市区町村の子育てサービスや相談窓口を調べておく","産前産後のママの体と心の変化を、ふたりで知っておく","赤ちゃんの眠りや寝かしつけについて調べておく","離乳食のことを、ふたりで話しておく"]],
  ["育児",["とにかくママがまとめて眠れる時間をつくる（体と心が第一）","「やらないこと」「手をぬく所」を先に決めておく","実家や、有料のサービス（産後ケア・家事代行など）を頼る。早めに一度ためしておくと気が楽","授乳以外のお世話（沐浴・おむつ・ミルク・寝かしつけ）を、パパもひとりでできるようにしておく","ミルクやおむつの時間を、アプリでふたりで共有する","ママがひとりで出かけられる時間をつくる"]],
@@ -2929,28 +2979,42 @@ const SP_DO=[
  ["手続き",["できればふたりとも育休をとる","保育園の見学や、申し込みの時期を調べておく","赤ちゃんのマイナンバーカード・銀行口座をつくる","保険を見直す","内祝いを、産まれる前に選んでおく","住民税などの引き落としを設定しておく"]],
  ["気持ち",["神経質になりすぎず、いい意味でテキトーに。ほかの子とくらべない","休めるときに休む","パパは言われたことだけでなく、自分から動く（ママも育児ははじめて）","なにより、ママの気持ちによりそう"]]];
 let spTab="";
-const SPIC={"入院・お産":"bag","新生児のころ":"swaddle","授乳":"bottle","寝かしつけ":"moon","お風呂":"bunny","便秘・体調":"thermometer","離乳食":"mug","肌ケア":"chick","おでかけ":"rainbow","産後の心と体":"heart","上の子":"hearthands","保育園":"stroller","記録":"book","やってよかった":"star"};
-function vSenpai(){S.spck=S.spck||{};const all=SP2.map(x=>x[0]),t=[...all,"やってよかった"].includes(spTab)?spTab:"";
-  if(!vSenpai.p){SP2.forEach(x=>x[2].forEach(s=>s[2].forEach(g=>AFF_PICK.push(g[1]))));vSenpai.p=1}
-  const H=head("先輩ママの知恵袋","hearthands","pink");
-  const back=`<button type="button" class="spback" data-act="sptab" data-v="">‹ テーマ一覧</button>`;
-  if(!t){const pre=["入院・お産","授乳","新生児のころ","産後の心と体","やってよかった"],order=S.mode==="pre"?[...pre,...all.filter(x=>!pre.includes(x))]:[...all.filter(x=>x!=="入院・お産"),"やってよかった","入院・お産"].filter((x,i,a)=>a.indexOf(x)===i);
-   const card=x=>{const n=x==="やってよかった"?SP_DO.reduce((s,[,xs])=>s+xs.length,0)+"こ":(SP2.find(y=>y[0]===x)[2].length)+"つのお悩み";return `<button type="button" class="spcard" data-act="sptab" data-v="${x}">${pic(SPIC[x],40)}<b>${x}</b><span>${n}</span></button>`};
-   return H+`<p class="lead">「こんなとき、どうした？」を、先輩ママの声で集めました。気になるテーマを選んでください。</p><div class="spgrid">${order.map(card).join("")}</div>
-   <p class="note" style="margin-top:12px">ネットやSNSで見つけた先輩ママの声を、まとめて書き直しています。合う・合わないは子どもによってちがうので、「こんな方法もあるんだ」くらいに見てください。</p>`}
-  if(t==="やってよかった"){const ks=SP_DO.flatMap(([g,xs])=>xs.map((x,i)=>g+i)),dn=ks.filter(k=>S.spck[k]).length;
-   return H+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>やってよかったこと</b><p>出産前〜生後6か月までに、やっておいてよかったこと。パパ向けの声も多いので、ふたりで。全部やらなくて大丈夫。<b>${dn}</b>/${ks.length}</p></div></div>
-   ${SP_DO.map(([g,xs])=>`<section class="h-sec"><div class="hd"><h2>${g}</h2></div><div class="rows">${xs.map((x,i)=>`<label class="rw" style="align-items:flex-start"><input type="checkbox" class="ck" data-act="spck" data-v="${g}${i}"${S.spck[g+i]?" checked":""}><span class="grow"><div class="t ${S.spck[g+i]?"done":""}" style="font-weight:400">${x}</div></span></label>`).join("")}</div></section>`).join("")}`}
-  const [,lead,sc]=SP2.find(x=>x[0]===t),hasI=sc.some(s=>s[2].length);
-  return H+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>${t}</b><p>${lead}</p></div></div>
-  ${sc.map(([q,vs,its,n],k)=>`<details class="spsc"${k?"":" open"}><summary><span class="spq">こんなとき</span><b>${q}</b></summary>
-   <div class="spvs">${vs.map(v=>`<p class="spv">${v}</p>`).join("")}</div>
+function spScene(t,[q,vs,its,n],k,open){S.sptry=S.sptry||{};const ok=vs.filter((_,j)=>S.sptry[t+"|"+q+"|"+j]===2).length;
+  return `<details class="spsc"${open?" open":""} data-sq="${esc((t+q+vs.join("")+(n||"")+its.map(x=>x[0]).join("")).toLowerCase())}"><summary><span class="spq"><span class="spth">${t} ・ </span>ためせる方法 ${vs.length}${ok?` ・ <span class="spok">合った ${ok}</span>`:""}</span><b>${q}</b></summary>
+   <ol class="spvs">${vs.map((v,j)=>{const key=t+"|"+q+"|"+j,s=S.sptry[key]||0;return `<li class="spv"><span class="spvt">${v}</span><button type="button" class="sptb${s===2?" on":""}" data-sptry="${esc(key)}" data-s="2" aria-pressed="${s===2}">合った</button></li>`}).join("")}</ol>
    ${n?`<p class="spn">${n}</p>`:""}
    ${its.length?`<div class="spi"><span class="spil">使った物</span>${its.map(([nm,q])=>`<span class="spit">${nm} <a href="${rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">楽天</a><a href="${azURL(q)}" target="_blank" rel="nofollow sponsored noopener">Amazon</a></span>`).join("")}</div>`:""}
-  </details>`).join("")}
+  </details>`}
+const SPIC={"つわり・妊娠中":"cloud","入院・お産":"bag","新生児のころ":"swaddle","授乳":"bottle","寝かしつけ":"moon","お風呂":"bunny","便秘・体調":"thermometer","離乳食":"mug","肌ケア":"chick","おでかけ":"rainbow","産後の心と体":"heart","上の子":"hearthands","1歳ごろ":"bear","移動・帰省":"socks","保育園":"stroller","仕事復帰":"ribbon","記録":"book","やってよかった":"star"};
+function vSenpai(){S.spck=S.spck||{};S.sptry=S.sptry||{};const all=SP2.map(x=>x[0]),t=[...all,"やってよかった"].includes(spTab)?spTab:"";
+  if(!vSenpai.p){SP2.forEach(x=>x[2].forEach(s=>s[2].forEach(g=>AFF_PICK.push(g[1]))));vSenpai.p=1}
+  const H=head("先輩ママの知恵袋","hearthands","pink");
+  const pre=["つわり・妊娠中","入院・お産","授乳","新生児のころ","産後の心と体","やってよかった"],order=S.mode==="pre"?[...pre,...all.filter(x=>!pre.includes(x))]:[...all.filter(x=>x!=="入院・お産"&&x!=="つわり・妊娠中"),"やってよかった","入院・お産","つわり・妊娠中"].filter((x,i,a)=>a.indexOf(x)===i);
+  const tool=`<div class="sptool"><label class="spfind"><input id="spq" type="search" placeholder="お悩みで探す（例：夜泣き）" autocomplete="off"></label>
+   <select class="spsel" data-act="spsel" aria-label="テーマを選ぶ"><option value="">テーマを選ぶ</option>${order.map(x=>`<option value="${x}"${x===t?" selected":""}>${x==="やってよかった"?"やってよかったこと":x}</option>`).join("")}</select></div>
+   <div id="spres" hidden></div>`;
+  const back=`<button type="button" class="spback" data-act="sptab" data-v="">‹ テーマ一覧</button>`;
+  const allSc=`<div id="spall" hidden>${SP2.map(([tt,,sc])=>sc.map((s,k)=>spScene(tt,s,k,false)).join("")).join("")}</div>`;
+  const nTry=Object.values(S.sptry).filter(x=>x===2).length;
+  if(!t){const card=x=>{const n=x==="やってよかった"?SP_DO.reduce((s,[,xs])=>s+xs.length,0)+"こ":(SP2.find(y=>y[0]===x)[2].length)+"つのお悩み";return `<button type="button" class="spcard" data-act="sptab" data-v="${x}">${pic(SPIC[x],40)}<b>${x}</b><span>${n}</span></button>`};
+   return H+`<p class="lead">「こんなとき、どうした？」を先輩ママの声で集めました。ひとつのお悩みに、ためせる方法をいくつも並べています。合う方法は子どもによってちがうので、ひとつずつ試してみてください。合ったものに「合った」を押しておくと、目印になります。</p>${tool}<div id="spmain">${nTry?`<p class="note" style="margin:0 0 10px">「合った！」を押した方法：<b>${nTry}</b>こ</p>`:""}<div class="spgrid">${order.map(card).join("")}</div>
+   <p class="note" style="margin-top:12px">ネットやSNSで見つけた先輩ママの声を、まとめて書き直しています。「こんな方法もあるんだ」くらいに見てください。</p></div>`+allSc}
+  if(t==="やってよかった"){const ks=SP_DO.flatMap(([g,xs])=>xs.map((x,i)=>g+i)),dn=ks.filter(k=>S.spck[k]).length;
+   return H+tool+`<div id="spmain">`+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>やってよかったこと</b><p>出産前〜生後6か月までに、やっておいてよかったこと。パパ向けの声も多いので、ふたりで。全部やらなくて大丈夫。<b>${dn}</b>/${ks.length}</p></div></div>
+   ${SP_DO.map(([g,xs])=>`<section class="h-sec"><div class="hd"><h2>${g}</h2></div><div class="rows">${xs.map((x,i)=>`<label class="rw" style="align-items:flex-start"><input type="checkbox" class="ck" data-act="spck" data-v="${g}${i}"${S.spck[g+i]?" checked":""}><span class="grow"><div class="t ${S.spck[g+i]?"done":""}" style="font-weight:400">${x}</div></span></label>`).join("")}</div></section>`).join("")}</div>`+allSc}
+  const [,lead,sc]=SP2.find(x=>x[0]===t),hasI=sc.some(s=>s[2].length);
+  return H+tool+`<div id="spmain">`+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>${t}</b><p>${lead}</p></div></div>
+  ${sc.map((s,k)=>spScene(t,s,k,!k)).join("")}
   ${hasI?`<p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p>`:""}
-  <div style="margin-top:14px">${back}</div>`;
+  <div style="margin-top:14px">${back}</div></div>`+allSc;
 }
+document.addEventListener("input",e=>{if(e.target.id!=="spq")return;const q=e.target.value.trim().toLowerCase(),r=document.getElementById("spres"),m=document.getElementById("spmain"),al=document.getElementById("spall");if(!r||!m||!al)return;
+  if(!q){r.hidden=true;r.innerHTML="";m.hidden=false;return}
+  const ws=q.split(/[\s　]+/).filter(Boolean),hit=[...al.children].filter(d=>ws.every(w=>d.dataset.sq.includes(w)));
+  r.innerHTML=hit.length?`<p class="note" style="margin:0 0 10px">${hit.length}件 見つかりました</p>`+hit.slice(0,40).map(d=>d.outerHTML).join(""):`<p class="note">見つかりませんでした。ちがう言葉でも探してみてください（例：「吐く」「眠れない」「泣く」）。</p>`;
+  r.hidden=false;m.hidden=true});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-sptry]");if(!b)return;e.preventDefault();S.sptry=S.sptry||{};const k=b.dataset.sptry,s=+b.dataset.s;S.sptry[k]=S.sptry[k]===s?0:s;if(!S.sptry[k])delete S.sptry[k];save();
+  document.querySelectorAll("[data-sptry]").forEach(x=>{if(x.dataset.sptry===k)x.classList.toggle("on",S.sptry[k]===+x.dataset.s)});});
 function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math.round((t-L[i])/60000));
   const avg=iv.length>=3?Math.round(iv.slice(-3).reduce((a,b)=>a+b,0)/3):null;
   const cp=(v,l)=>v?`<button type="button" class="jtcp" data-act="jtcopy" data-v="${esc(v)}" aria-label="${l}をコピー">コピー</button>`:"";
@@ -3177,6 +3241,7 @@ document.addEventListener("change",e=>{
   else if(a==="noti"){S.app.n[el.dataset.v]=el.checked}
   else if(a==="lfck"){S.pre.lf=S.pre.lf||{};S.pre.lf[el.dataset.v]=el.checked}
   else if(a==="jb"){S.pre.jb=S.pre.jb||{};S.pre.jb[el.dataset.v]=el.checked}
+  else if(a==="spsel"){spTab=el.value;render(false);return}
   else if(a==="spck"){S.spck=S.spck||{};S.spck[el.dataset.v]=el.checked}
   else if(a==="prck2")S.pre.ck[el.dataset.v]=el.checked;
   else if(a==="due")S.due=el.value;
