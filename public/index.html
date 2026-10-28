@@ -793,6 +793,10 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .sptb.on{opacity:1;background:var(--ac);border-color:var(--ac);color:var(--onac,#fff)}
 .spok{font-weight:700;opacity:1}
 #spmain .spth{display:none}
+.wgl{display:inline-flex;align-items:center;gap:6px;font-size:12px;opacity:.75;margin-top:6px}
+.wgl select{font:inherit;font-size:12px;padding:2px 6px;border-radius:8px;border:1px solid var(--line);background:transparent;color:inherit;width:auto}
+.wgn{font-size:12px;opacity:.6;margin-left:8px;font-weight:400}
+.wadd{flex-wrap:wrap}.wadd select{font:inherit;font-size:14px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:inherit;padding:6px 8px}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2570,10 +2574,13 @@ const azURL=(q,pk)=>{const u="https://www.amazon.co.jp/s?k="+encodeURIComponent(
 const azQ=n=>String(n).replace(/【[^】]*】|［[^］]*］|\[[^\]]*\]|＼[^／]*／|送料無料|楽天[^ 　]*/g," ").replace(/\s+/g," ").trim().slice(0,40);
 const buyLinks=q=>`<span class="buy"><a href="${rkURL(q)}" target="_blank" rel="noopener sponsored">楽天で見る</a><a href="${azURL(q)}" target="_blank" rel="noopener sponsored">Amazonで見る</a></span>`;
 const prNote=()=>W().some(w=>affOn(w.t))?`<p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p>`:"";
-function vWants(){
-  return head("欲しい物メモ","ribbonheart","mint")+`${prNote()}<p class="lead">サイズ・色・値段・誰のおすすめか、なども書いておけます。</p><div class="sheet">
-  ${W().map((w,i)=>`<div class="li" style="align-items:flex-start"><span class="grow"><div class="t">${esc(w.t)}</div><input id="wm${i}" data-act="wm" data-i="${i}" value="${esc(w.m)}" placeholder="メモ" aria-label="メモ" style="margin-top:6px">${buyLinks(w.t)}</span><button type="button" class="x" data-act="wantdel" data-i="${i}" style="margin-top:4px">消す</button></div>`).join("")||'<p class="sub">まだありません</p>'}
-  <form class="add" data-form="want"><input name="t" placeholder="欲しい物を追加" aria-label="欲しい物"><button type="submit">追加</button></form></div>
+const WG=["出産準備","赤ちゃんのもの","おもちゃ・絵本","イベント・記念","ママのケア","その他"];
+const WG_PAGE={junbi:"出産準備",rank:"赤ちゃんのもの",goods:"赤ちゃんのもの",home:"赤ちゃんのもの",chiiku:"おもちゃ・絵本",fun:"イベント・記念",nayami:"ママのケア",biyou:"ママのケア"};
+function vWants(){const ws=W(),gs=WG.filter(g=>ws.some(w=>(w.g||"その他")===g));
+  const row=(w,i)=>`<div class="li" style="align-items:flex-start"><span class="grow"><div class="t">${esc(w.t)}</div><input id="wm${i}" data-act="wm" data-i="${i}" value="${esc(w.m)}" placeholder="メモ" aria-label="メモ" style="margin-top:6px">${buyLinks(w.t)}<label class="wgl">ジャンル <select data-act="wg" data-i="${i}" aria-label="ジャンル">${WG.map(g=>`<option${g===(w.g||"その他")?" selected":""}>${g}</option>`).join("")}</select></label></span><button type="button" class="x" data-act="wantdel" data-i="${i}" style="margin-top:4px">消す</button></div>`;
+  return head("欲しい物メモ","ribbonheart","mint")+`${prNote()}<p class="lead">「欲しい」を押した場所で、ジャンルに分けて入ります。サイズ・色・値段・誰のおすすめか、なども書いておけます。</p>
+  ${gs.length?gs.map(g=>`<section class="h-sec"><div class="hd"><h2>${g}<span class="wgn">${ws.filter(w=>(w.g||"その他")===g).length}</span></h2></div><div class="sheet">${ws.map((w,i)=>(w.g||"その他")===g?row(w,i):"").join("")}</div></section>`).join(""):'<div class="sheet"><p class="sub">まだありません</p></div>'}
+  <div class="sheet" style="margin-top:10px"><form class="add wadd" data-form="want"><input name="t" placeholder="欲しい物を追加" aria-label="欲しい物"><select name="g" aria-label="ジャンル">${WG.map(g=>`<option${g==="その他"?" selected":""}>${g}</option>`).join("")}</select><button type="submit">追加</button></form></div>
   <button type="button" class="btn" data-act="open" data-v="goods" style="margin-top:14px;background:var(--ac);color:var(--onac)">話題のグッズを見る</button>`;
 }
 const r100=n=>Math.round(n/100)*100,ret=y=>y>=10000?y/3:y/2;
@@ -3158,7 +3165,7 @@ document.addEventListener("click",e=>{
     case"cityedit":cityEdit=true;render(true);break;
     case"citycancel":cityEdit=false;render(true);break;
     case"citydel":S.city="";cityEdit=false;k();break;
-    case"toymemo":{const j=W().findIndex(w=>w.t===v);if(j>=0)W().splice(j,1);else{W().push({t:v,m:""});toast("欲しい物メモに入れました")}k();break}
+    case"toymemo":{const j=W().findIndex(w=>w.t===v);if(j>=0)W().splice(j,1);else{const g=WG_PAGE[page||tab]||"その他";W().push({t:v,m:"",g});toast("欲しい物メモの「"+g+"」に入れました")}k();break}
     case"rktab":rkTab=v;render(true);break;
     case"funtab":funTab=v;render(true);break;
     case"lftab":lfTab=v;render(true);break;
@@ -3231,6 +3238,7 @@ document.addEventListener("change",e=>{
   else if(a==="gift")S.gifts[i].sent=el.checked;
   else if(a==="ct"){S.contacts[i][1]=el.value;save();toast("保存しました");return}
   else if(a==="wm"){W()[i].m=el.value;save();toast("保存しました");return}
+  else if(a==="wg"){W()[i].g=el.value;save();render(true);return}
   else if(a==="bname")S.name=el.value;
   else if(a==="bbirth"){if(!el.value)return;S.birth=el.value}
   else if(a==="bsex")S.sex=el.value;
@@ -3288,7 +3296,7 @@ addEventListener("submit",e=>{
   else if(t==="ct"){if(!v("t"))return;S.contacts.push([v("t"),""])}
   else if(t==="visit"){if(!v("w")&&!v("m"))return;S.visits.push({d:v("d")||iso(T0),w:v("w"),m:v("m")})}
   else if(t==="gift")S.gifts.push({who:v("who"),rel:v("rel"),what:v("what"),yen:+v("yen")||0,sent:false});
-  else if(t==="want"){if(!v("t"))return;W().push({t:v("t"),m:""})}
+  else if(t==="want"){if(!v("t"))return;W().push({t:v("t"),m:"",g:v("g")||"その他"})}
   else if(t==="azf"){if(!v("t"))return;azS().f.push([v("t"),""])}
   else if(t==="azday"){if(!v("t"))return;const d=azS().day;d.push([v("tm"),v("t")]);d.sort((a,b)=>a[0].padStart(5,"0").localeCompare(b[0].padStart(5,"0")))}
   else if(t==="rnmy"){if(!v("t"))return;rnS().my.push(v("t"))}
