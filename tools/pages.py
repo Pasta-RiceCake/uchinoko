@@ -12,6 +12,18 @@ PRIVATE = {"cal", "fufu", "shop", "chores", "contacts", "visits", "baby", "appse
 EXTRA = {"privacy": ("プライバシーポリシー", "うちの子手帳のプライバシーポリシーです。")}
 
 
+def _seed():
+    src = open(os.path.join(ROOT, "tools/build_svc.py"), encoding="utf-8").read()
+    i = src.index("SEED = ")
+    j = src.index("\n\n", i)
+    ns = {}
+    exec(src[i:j], ns)
+    return set(ns["SEED"])
+
+
+SEED = _seed()
+
+
 def build():
     p = os.path.join(ROOT, "public/index.html")
     s = open(p, encoding="utf-8").read()
@@ -25,9 +37,26 @@ def build():
     sub = dict(re.findall(r'([a-z]+):"([^"]*)"', s[i:s.index("};", i)]))
     pages = {k: (v, sub.get(k, "")) for k, v in labels.items() if k not in PRIVATE}
     pages.update({k: v for k, v in EXTRA.items() if k in labels or True})
+    # 市区町村ごとのページ（その市の内容が集まっている市だけ）
+    cj = json.load(open(os.path.join(ROOT, "public/data/cities.json"), encoding="utf-8"))
+    byc = {v["c"]: k for k, v in cj.items()}
+    i = s.index("const PREF=[")
+    prefs = re.findall(r'"([^"]+)"', s[i:s.index("]", i)])
+    city = {}
+    sd = os.path.join(ROOT, "public/data/svc")
+    for f in sorted(os.listdir(sd)) if os.path.isdir(sd) else []:
+        code = f[:-5]
+        name = byc.get(code)
+        if not name or name not in SEED:  # 家族のいる市は出さない（だれがどこに住んでいるか分からないように）
+            continue
+        pf = next((x for x in prefs if name.startswith(x)), "")
+        if pf:
+            city[code] = [pf, name[len(pf):]]
     # どのページが URL を持つかを画面に教える
-    js = "const SEO_PAGES=" + json.dumps({k: v[0] for k, v in pages.items()}, ensure_ascii=False) + ";\n"
+    js = "const SEO_PAGES=" + json.dumps({k: v[0] for k, v in pages.items()}, ensure_ascii=False) + ";\nconst CITY_PAGES=" + json.dumps(city, ensure_ascii=False) + ";\n"
     assert "function render(keep){\n" in s
+    assert "function vCity(){" in s and "city:vCity," in s
+    s = s.replace("function vCity(){", "function vCityBase(){", 1).replace("city:vCity,", "city:vCityView,", 1)
     s = s.replace("function render(keep){\n", js + "function render(keep){\n  try{syncPath()}catch(_){}\n", 1)
     open(p, "w", encoding="utf-8").write(s)
     base_desc = "妊娠中から子育て中まで、無料で使える子育て手帳「うちの子手帳」。"
@@ -43,6 +72,19 @@ def build():
         os.makedirs(d_, exist_ok=True)
         open(os.path.join(d_, "index.html"), "w", encoding="utf-8").write(h)
         urls.append(f"{SITE}/{k}/")
+    shutil.rmtree(os.path.join(ROOT, "public/city", "c"), ignore_errors=True)
+    for code, (pf, cn) in city.items():
+        title = f"{cn}（{pf}）の子育て支援・給付金｜うちの子手帳"
+        desc = f"{pf}{cn}の子育てで使えるサービス（児童手当・子どもの医療費助成・産後ケア・一時預かり・出産祝いなど）と、{cn}だけの制度をまとめました。" + base_desc
+        u = f"{SITE}/city/c/{code}/"
+        h = s.replace("<title>うちの子手帳</title>", f"<title>{title}</title>", 1)
+        h = re.sub(r'<meta name="description" content="[^"]*">',
+                   f'<meta name="description" content="{desc}">\n<link rel="canonical" href="{u}">\n<meta property="og:title" content="{title}">\n<meta property="og:description" content="{desc}">\n<meta property="og:url" content="{u}">\n<meta property="og:type" content="article">', h, count=1)
+        d_ = os.path.join(ROOT, "public/city/c", code)
+        os.makedirs(d_, exist_ok=True)
+        open(os.path.join(d_, "index.html"), "w", encoding="utf-8").write(h)
+        open(os.path.join(d_, ".page"), "w").write("")
+        urls.append(u)
     # トップにも canonical
     s2 = re.sub(r'(<meta name="description" content="[^"]*">)', r'\1\n<link rel="canonical" href="' + SITE + '/">', s, count=1)
     open(p, "w", encoding="utf-8").write(s2)

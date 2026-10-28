@@ -51,9 +51,10 @@ function joinGate(id){
 async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
-  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),seo=sp&&typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]]&&PAGES[sp[1]];
+  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),cp=location.pathname.match(/^\/city\/c\/(\d{5})\/?$/),seo=(sp&&typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]]&&PAGES[sp[1]])||(cp&&typeof CITY_PAGES!=="undefined"&&CITY_PAGES[cp[1]]);
   pathReady=true;
-  if(seo){page=sp[1];stack=[];render(false)}
+  if(cp&&seo){cityV=cp[1];page="city";stack=[];render(false)}
+  else if(seo){page=sp[1];stack=[];render(false)}
   else if(location.pathname!=="/")history.replaceState(null,"","/");
   if(!S.setup&&await restoreFromURL()){page=null;stack=[];render(false);toast("前に入れた内容を引き継ぎました")}
   if(!S.setup&&!seo)return setupGate();
@@ -62,7 +63,13 @@ async function startGate(){
   keepURL();
 }
 /* ページごとのURL（Google検索用）。見ているページに合わせてURLと題名を変える */
-let pathReady=false;
-function syncPath(){if(!pathReady||typeof SEO_PAGES==="undefined"||/^\/j\//.test(location.pathname))return;const k=page&&SEO_PAGES[page]?page:"",want=k?"/"+k+"/":"/";
-  document.title=k?SEO_PAGES[k]+"｜うちの子手帳":"うちの子手帳";
+let pathReady=false,cityV=null;
+/* 検索から来た市のページ：その市を見せる（わが家の市区町村は変えない） */
+function vCityView(){const cv=cityV&&CITY_PAGES[cityV];if(!cv)return vCityBase();const o=[S.pref,S.city,cityEdit];S.pref=cv[0];S.city=cv[1];cityEdit=false;let h;try{h=vCityBase()}finally{S.pref=o[0];S.city=o[1];cityEdit=o[2]}
+  const i=h.indexOf('<div class="cityfix">'),j=h.indexOf('</section>',i);
+  if(i>=0&&j>i)h=h.slice(0,i)+`<div class="cityfix"><div><div class="s">いま見ている市区町村</div><div class="t">${esc(cv[0]+cv[1])}</div></div><button type="button" class="fav" data-act="cityset" data-v="${cityV}">わが家にする</button></div>`+h.slice(j);
+  return h.replace("わが家の市区町村</h1>",esc(cv[1])+"の子育て支援</h1>")}
+function syncPath(){if(page!=="city")cityV=null;if(!pathReady||typeof SEO_PAGES==="undefined"||/^\/j\//.test(location.pathname))return;const k=page&&SEO_PAGES[page]?page:"",cv=cityV&&CITY_PAGES[cityV],want=cv?"/city/c/"+cityV+"/":k?"/"+k+"/":"/";
+  document.title=cv?cv[1]+"（"+cv[0]+"）の子育て支援・給付金｜うちの子手帳":k?SEO_PAGES[k]+"｜うちの子手帳":"うちの子手帳";
   if(location.pathname!==want)try{history.replaceState(history.state,"",want+location.search)}catch(_){}}
+document.addEventListener("click",e=>{const b=e.target.closest('[data-act="cityset"]');if(!b)return;const cv=CITY_PAGES[b.dataset.v];if(!cv)return;e.stopPropagation();S.pref=cv[0];S.city=cv[1];cityV=null;save();toast("わが家の市区町村にしました");render(true)},true);

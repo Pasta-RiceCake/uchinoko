@@ -22,12 +22,21 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           CITY: ${{ github.event.inputs.city }}
         run: python3 tools/build_svc.py
+      - name: pages
+        # 新しい市が入ったら、市区町村ごとのページを作り直す
+        run: |
+          before=$(ls public/city/c 2>/dev/null | sort | tr '\n' ' ')
+          need=$(python3 -c "import sys;sys.path.insert(0,'tools');import pages,json,os;cj=json.load(open('public/data/cities.json'));byc={v['c']:k for k,v in cj.items()};print(' '.join(sorted(c[:-5] for c in os.listdir('public/data/svc') if byc.get(c[:-5]) in pages.SEED)))")
+          [ "$(echo $before)" = "$(echo $need)" ] && exit 0
+          pip install -q pillow
+          npm i -g -q playwright@1.63.0 && npx -y playwright@1.63.0 install --with-deps chromium >/dev/null
+          python3 tools/real.py
       - name: commit
         run: |
           git config user.name "uchinoko-data"
           git config user.email "uchinoko-data@users.noreply.github.com"
           [ -d public/data/svc ] || exit 0
-          git add public/data/svc
+          git add public/data/svc public
           git diff --cached --quiet && exit 0
           git commit -m "市区町村の使えるサービスを更新"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push && break; sleep $((i*7)); done

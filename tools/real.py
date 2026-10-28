@@ -116,10 +116,26 @@ s = head + s.replace('<div class="wrap">', '</head>\n<body>\n<div class="wrap">'
 s = s.rstrip() + '\n<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{})</script>\n</body>\n</html>\n'
 
 os.makedirs(os.path.join(ROOT, 'public'), exist_ok=True)
+# ---- ページを軽くする：ページに入れていた絵（data:）を public/a/ の別ファイルにする ----
+import hashlib
+s_full = s
+A = os.path.join(ROOT, 'public/a')
+if os.path.isdir(A):
+    for n in os.listdir(A):
+        os.remove(os.path.join(A, n))
+os.makedirs(A, exist_ok=True)
+def _out(m):
+    raw = base64.b64decode(m.group(2))
+    n = hashlib.sha1(raw).hexdigest()[:16] + '.' + m.group(1)
+    fp = os.path.join(A, n)
+    if not os.path.exists(fp):
+        open(fp, 'wb').write(raw)
+    return '/a/' + n
+s = re.sub(r'data:image/(webp|png|jpeg|gif);base64,([A-Za-z0-9+/=]+)', lambda m: _out(m) if len(m.group(2)) > 600 else m.group(0), s)
 open(os.path.join(ROOT, 'public/index.html'), 'w', encoding='utf-8').write(s)
 
 # ---- アイコン（赤ちゃんの顔のイラスト） ----
-m = re.search(r'"baby_face":\s*"data:image/(\w+);base64,([^"]+)"', s)
+m = re.search(r'"baby_face":\s*"data:image/(\w+);base64,([^"]+)"', s_full)
 if m:
     from PIL import Image
     im = Image.open(io.BytesIO(base64.b64decode(m.group(2)))).convert('RGBA')
@@ -136,3 +152,10 @@ print('ok', len(s))
 # ---- ページごとの URL ----
 import importlib.util as _u
 _sp = _u.spec_from_file_location('pages', os.path.join(ROOT, 'tools/pages.py')); _m = _u.module_from_spec(_sp); _sp.loader.exec_module(_m); _m.build()
+
+# ---- 中身を最初からページに書いておく ----
+import subprocess
+try:
+    subprocess.run(['node', os.path.join(ROOT, 'tools/prerender.js')], check=False, timeout=600, env={**os.environ, 'NODE_PATH': subprocess.run(['npm', 'root', '-g'], capture_output=True, text=True).stdout.strip()})
+except Exception as e:
+    print('prerender skip', e)

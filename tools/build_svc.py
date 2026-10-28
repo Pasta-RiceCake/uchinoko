@@ -107,12 +107,21 @@ def ask(city, site):
     return {"s": svc, "x": extra}, model
 
 
+SEED = ["北海道札幌市", "宮城県仙台市", "埼玉県さいたま市", "千葉県千葉市", "神奈川県横浜市", "神奈川県川崎市", "神奈川県相模原市", "新潟県新潟市",
+        "静岡県静岡市", "静岡県浜松市", "愛知県名古屋市", "京都府京都市", "大阪府大阪市", "大阪府堺市", "兵庫県神戸市", "岡山県岡山市", "広島県広島市",
+        "福岡県北九州市", "福岡県福岡市", "熊本県熊本市"] + ["東京都" + x for x in "世田谷区 練馬区 大田区 江戸川区 足立区 杉並区 板橋区 江東区 葛飾区 品川区 北区 新宿区 中野区 豊島区 目黒区 墨田区 港区 渋谷区 文京区 荒川区 台東区 中央区 千代田区".split()]
+
+
 def main():
     if not KEY:
         print("GEMINI_API_KEY がまだ入っていないので、何もしません")
         return
     cities = json.load(open("public/data/cities.json", encoding="utf-8"))
     want = [ONLY] if ONLY else get_json(SITE + "/api/cities").get("cities", [])
+    fam = set(want)
+    if not ONLY:
+        # 家族のいる市のあとに、検索用のページを作る大きな市も少しずつ読む
+        want = want + [x for x in SEED if x not in fam]
     today = datetime.datetime.now(JST)
     todo = []
     for name in want:
@@ -126,7 +135,7 @@ def main():
             age = (today - datetime.datetime.fromisoformat(json.load(open(p, encoding="utf-8"))["at"])).days
         if ONLY or age >= 90:
             todo.append((age, name, c, p))
-    todo.sort(key=lambda x: -x[0])
+    todo.sort(key=lambda x: (x[1] not in fam, -x[0]))
     print("読む市区町村", len(todo), "のうち", min(len(todo), MAX_CITIES))
     os.makedirs(OUT, exist_ok=True)
     for age, name, c, p in todo[:MAX_CITIES]:
