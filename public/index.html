@@ -2213,6 +2213,9 @@ const thxK=i=>iso(T0)+":"+i;
 function thxBar(){const st=S.stamps[iso(T0)]||{},L=S.chores.map((c,i)=>[c,i,st[i]]).filter(x=>x[2]&&x[2]!==myC());S.thx=S.thx||{};
   if(!L.length)return "";
   return `<div class="sec-t">${who[L[0][2]]}がやってくれた家事</div><div class="sheet">${L.map(([c,i])=>`<div class="li"><span class="grow t">${esc(c[0])}</span>${S.thx[thxK(i)]?`<span class="thxd">${decoOn()?dimg(DTHX,"dthx"):"♡ "}ありがとうを送りました</span>`:`<button type="button" class="thx" data-act="thx" data-i="${i}">ありがとう</button>`}</div>`).join("")}</div>`}
+function chShift(i,del){const d=iso(T0),st=S.stamps[d]=S.stamps[d]||{},th=S.thx=S.thx||{},n={},nt={};
+  Object.keys(st).forEach(k=>{const j=+k;if(j===i)return;const j2=del&&j>i?j-1:j;n[j2]=st[k]});S.stamps[d]=n;
+  Object.keys(th).forEach(k=>{const [dd,jj]=k.split(":");if(dd!==d){nt[k]=th[k];return}const j=+jj;if(j===i)return;nt[dd+":"+(del&&j>i?j-1:j)]=th[k]});S.thx=nt}
 function seedChore(){const d=iso(T0);if(S.seedCh===d)return;S.seedCh=d;S.stamps[d]=S.stamps[d]||{};const o=myC()==="mama"?"papa":"mama";if(S.chores.length>1&&S.stamps[d][1]===undefined)S.stamps[d][1]=o;if(S.chores.length>4&&S.stamps[d][4]===undefined)S.stamps[d][4]=myC();save()}
 function vChores(){
   const d=iso(T0),st=S.stamps[d]||{};
@@ -2857,7 +2860,7 @@ document.addEventListener("click",e=>{
     case"icm":S.icm=v;k();break;
     case"ils":S.icm=v==="line"?"line":"ill";k();break;
     case"chtab":chTab=v;render(true);break;
-    case"chdel":S.chores.splice(i,1);chPick=-1;k();break;
+    case"chdel":S.chores.splice(i,1);chShift(i,1);chPick=-1;k();break;
     case"chic":chPick=chPick===i?-1:i;render(true);break;
     case"chset":S.chores[i][2]=v;chPick=-1;k();break;
     case"shquick":{if(S.shop.some(s=>!s.d&&s.t===v)){toast("もうリストに入っています");break}S.shop.unshift({t:v,d:false,st:shF==="すべて"?"":shF});toast(v+"を入れました");k();break}
@@ -2955,7 +2958,7 @@ addEventListener("submit",e=>{
   else if(t==="hkck"){if(!v("t"))return;(S.hk.my=S.hk.my||[]).push(v("t"))}
   else if(t==="odk"){if(!v("t"))return;const x={t:v("t"),m:v("m"),p:S.pref};S.odk.my.unshift(x);const fl=f.elements.ph?.files?.[0];if(fl)shrink(fl,u=>{x.img=u;save();render(true)})}
   else if(t==="city"){S.pref=v("p");S.city=v("c");cityEdit=false}
-  else if(t==="chore"){if(!v("t"))return;S.chores.push([v("t"),"none","star"])}
+  else if(t==="chore"){if(!v("t"))return;S.chores.push([v("t"),"none","star"]);chShift(S.chores.length-1,0)}
   else if(t==="shop"){if(!v("t"))return;S.shop.unshift({t:v("t"),d:false,due:v("due"),st:v("st"),n:v("n")})}
   else if(t==="shfav"){if(!v("t"))return;if(!shFav().includes(v("t")))shFav().push(v("t"))}
   else if(t==="plan2"){if(!v("t"))return;const x={d:v("d")||calSel,t:v("t"),tm:f.elements.ad.checked?"":v("tm"),te:f.elements.ad.checked?"":v("te"),kd:v("kd")||"その他",ic:v("ic")||"clock",w:v("w"),r:v("r")||"前日",m:v("m"),vis:v("vis")||"共有"};
