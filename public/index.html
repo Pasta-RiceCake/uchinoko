@@ -2669,7 +2669,7 @@ function vNames(){const n=nmS(),me=nmMe(),pt=me==="ママ"?"パパ":"ママ",bot
   <div class="sec-t">ふたりとも♡ <span class="sub">${both.length}こ</span></div><div class="sheet">${both.map(x=>`<div class="li nmb"><span class="grow"><div class="nmn">${esc(n.last)}${n.last?" ":""}${esc(x.k||x.y)}</div>${x.k?`<div class="sub">${esc(x.y)}</div>`:""}</span><span class="nmh">♡♡</span></div>`).join("")||'<p class="sub" style="margin:0">まだありません。おたがいに♡をつけてみてください</p>'}</div>
   <div class="sec-t">候補</div><div class="sheet">${n.list.map((x,i)=>x.l.ママ&&x.l.パパ?"":`<div class="li"><span class="grow"><div class="t">${esc(x.k||x.y)}</div><div class="sub">${x.k?esc(x.y)+"・":""}${esc(x.by)}が追加</div></span><button type="button" class="nmlk${x.l[me]?" on":""}" data-act="nmlk" data-i="${i}" aria-label="いいね">${x.l[me]?"♥":"♡"}</button><button type="button" class="x" data-act="nmdel" data-i="${i}">消す</button></div>`).join("")}
   <form class="add nmf" data-form="nm"><input name="y" placeholder="よみ（例：ひなた）" aria-label="よみ"><input name="k" placeholder="漢字（あれば）" aria-label="漢字"><button type="submit">追加</button></form></div>
-  <div class="sheet stack" style="margin-top:12px"><label>苗字（フルネームで見るため）<input data-act="nmlast" value="${esc(n.last)}" placeholder="例：高見"></label></div>
+  <div class="sheet stack" style="margin-top:12px"><label>苗字（フルネームで見るため）<input data-act="nmlast" value="${esc(n.last)}" placeholder="例：山田"></label></div>
   <p class="note">名前に使えるのは、ひらがな・カタカナと、常用漢字・人名用漢字です。出生届は産まれた日を含めて14日以内に出します。</p>`}
 
 
