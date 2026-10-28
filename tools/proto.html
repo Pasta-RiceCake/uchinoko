@@ -2123,7 +2123,7 @@ const thxK=i=>iso(T0)+":"+i;
 function thxBar(){const st=S.stamps[iso(T0)]||{},L=S.chores.map((c,i)=>[c,i,st[i]]).filter(x=>x[2]&&x[2]!==myC());S.thx=S.thx||{};
   if(!L.length)return "";
   return `<div class="sec-t">${who[L[0][2]]}がやってくれた家事</div><div class="sheet">${L.map(([c,i])=>`<div class="li"><span class="grow t">${esc(c[0])}</span>${S.thx[thxK(i)]?`<span class="thxd">${decoOn()?dimg(DTHX,"dthx"):"♡ "}ありがとうを送りました</span>`:`<button type="button" class="thx" data-act="thx" data-i="${i}">ありがとう</button>`}</div>`).join("")}</div>`}
-function seedChore(){if(S.seedCh)return;S.seedCh=1;const d=iso(T0);S.stamps[d]=S.stamps[d]||{};if(S.chores.length>1&&S.stamps[d][1]===undefined)S.stamps[d][1]=myC()==="mama"?"papa":"mama";save()}
+function seedChore(){const d=iso(T0);if(S.seedCh===d)return;S.seedCh=d;S.stamps[d]=S.stamps[d]||{};const o=myC()==="mama"?"papa":"mama";if(S.chores.length>1&&S.stamps[d][1]===undefined)S.stamps[d][1]=o;if(S.chores.length>4&&S.stamps[d][4]===undefined)S.stamps[d][4]=myC();save()}
 function vChores(){
   const d=iso(T0),st=S.stamps[d]||{};
   return head("きょうの家事","hearthands","pink")+`<p class="lead">やったらタップ（もう一度押すと取り消し）。毎日リセットされます。相手がやってくれた家事には「ありがとう」を送れます。</p>
