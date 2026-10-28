@@ -1,0 +1,119 @@
+{
+ "ev": [
+  {
+   "shop": "アカチャンホンポ",
+   "title": "プレママ・プレパパスクール",
+   "desc": "約2時間の体験型の教室。人形で肌着の着せ方や沐浴の練習をしたり、抱っこひもを選んだり、妊娠後期の重さを体験できるジャケットを着たりします。",
+   "how": "無料（有料の回もあり）・公式アプリから予約",
+   "url": "https://www.akachan.jp/",
+   "icon": "stroller"
+  },
+  {
+   "shop": "アカチャンホンポ",
+   "title": "マタニティアドバイザーに相談",
+   "desc": "社内の試験に受かったスタッフが、ベビーカーや抱っこひもなど出産準備品の選び方を、予定日や暮らしに合わせて教えてくれます。いる店舗といない店舗があります。",
+   "how": "店舗で相談・予約しておくとスムーズ",
+   "url": "https://www.akachan.jp/maternity_advisor/",
+   "icon": "bottle"
+  },
+  {
+   "shop": "ベビーザらス",
+   "title": "ハローベビー ストアツアー",
+   "desc": "ベビーアドバイザーが売り場を案内しながら、出産準備品を説明してくれます。",
+   "how": "無料・ネットで予約",
+   "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
+   "icon": "onesie"
+  },
+  {
+   "shop": "ベビーザらス",
+   "title": "オンラインセミナー",
+   "desc": "妊娠中の栄養、マタニティマッサージ、産後のエクササイズなどを家から見られます。",
+   "how": "無料・会員向け",
+   "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
+   "icon": "heart"
+  }
+ ],
+ "gift": [
+  {
+   "shop": "アカチャンホンポ",
+   "title": "プレママ特典",
+   "what": "マタニティマークのキーホルダー、サンプル、エコバッグ、冊子など",
+   "how": "公式アプリに登録して出産予定日を入れる → お店のサービスカウンターで「プレママ特典がほしい」と伝える。2人目でももらえます",
+   "who": "全員（店舗で受け取り）",
+   "url": "https://chirashi.akachan.jp/chirashi/early/index_ydn.html",
+   "icon": "ribbon"
+  },
+  {
+   "shop": "ベビーザらス",
+   "title": "スターカードのプレママ特典",
+   "what": "毎月第1日曜は対象の5,000円以上でポイント20倍など。サンプルバッグの配布は終わっています",
+   "how": "アプリでスターカードに登録して、出産予定日を入れる",
+   "who": "全員（買い物の割引）",
+   "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
+   "icon": "star"
+  },
+  {
+   "shop": "Amazon",
+   "title": "らくらくベビー 出産準備お試しBox",
+   "what": "おむつ・ミルク・おしりふきなどのサンプル",
+   "how": "プライム会員で、らくらくベビーに登録し、ほしい物リストに30個以上入れる。品切れが多いので、こまめに見るのがコツ",
+   "who": "条件を満たした人",
+   "url": "https://www.amazon.co.jp/baby-reg/homepage",
+   "icon": "gift"
+  },
+  {
+   "shop": "楽天",
+   "title": "楽天ママ割",
+   "what": "サンプルボックス",
+   "how": "登録して毎月応募する",
+   "who": "抽選",
+   "url": "https://event.rakuten.co.jp/family/",
+   "icon": "basket"
+  },
+  {
+   "shop": "こどもちゃれんじ",
+   "title": "妊娠中の資料請求プレゼント",
+   "what": "ベビースタイなど",
+   "how": "資料請求をする",
+   "who": "全員（資料請求）",
+   "url": "https://shimajiro.benesse.ne.jp/request/maternity/",
+   "icon": "bunny"
+  },
+  {
+   "shop": "ピジョン",
+   "title": "会員プレゼント",
+   "what": "葉酸サプリやボディケアのサンプル",
+   "how": "会員登録してアンケートに答える",
+   "who": "全員",
+   "url": "https://pigeon.info/campaign/detail-b6ec91295e695480.html",
+   "icon": "bottle2"
+  },
+  {
+   "shop": "ベビーカレンダー",
+   "title": "プレママ全員プレゼント",
+   "what": "母子手帳ケース、エコー写真アルバムなどから",
+   "how": "会員登録して応募する",
+   "who": "全員",
+   "url": "https://baby-calendar.jp/present/",
+   "icon": "book"
+  },
+  {
+   "shop": "トツキトオカ",
+   "title": "アプリのプレゼント",
+   "what": "母子手帳ケース、おむつポーチなどから1つ",
+   "how": "アプリに登録して応募する",
+   "who": "全員",
+   "url": "https://www.totsukitoka-apps.com/",
+   "icon": "heart"
+  },
+  {
+   "shop": "ママびより（カラダノート）",
+   "title": "全員プレゼント",
+   "what": "おむつポーチ、マタニティマーク、お名前シールなど",
+   "how": "アンケートに答える",
+   "who": "全員",
+   "url": "https://mamab.jp/present",
+   "icon": "envelope"
+  }
+ ]
+}

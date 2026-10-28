@@ -2151,12 +2151,16 @@ const PK_GIFT=[
  ["ベビーカレンダー","プレママ全員プレゼント","母子手帳ケース、エコー写真アルバムなどから","会員登録して応募する","全員","https://baby-calendar.jp/present/","book"],
  ["トツキトオカ","アプリのプレゼント","母子手帳ケース、おむつポーチなどから1つ","アプリに登録して応募する","全員","https://www.totsukitoka-apps.com/","heart"],
  ["ママびより（カラダノート）","全員プレゼント","おむつポーチ、マタニティマーク、お名前シールなど","アンケートに答える","全員","https://mamab.jp/present","envelope"]];
-function vPerk(){
+let PKD=null;function pkLoad(){if(PKD!==null)return;PKD=false;nrFetch("/data/perk.json").then(d=>{if(d&&(d.ev||d.gift)){PKD=d;render(true)}})}
+function pkList(){pkLoad();const ev=PKD&&PKD.ev?PKD.ev.filter(x=>!x.ended).map(x=>[x.shop,x.title,x.desc,x.how,x.url,x.icon]):PK_EV,
+  gift=PKD&&PKD.gift?PKD.gift.filter(x=>!x.ended).map(x=>[x.shop,x.title,x.what,x.how,x.who,x.url,x.icon]):PK_GIFT,
+  at=PKD&&PKD.checked?(d=>`${+d[0]}年${+d[1]}月${+d[2]}日`)(PKD.checked.split("-")):PK_AT;return [ev,gift,at]}
+function vPerk(){const [PEV,PGIFT,PAT]=pkList();
   const ext=(u,t)=>`<a class="ext" href="${esc(u)}" target="_blank" rel="noopener">${t} ›</a>`;
-  return head("もらえる特典・お店の教室","gift","pink")+`<p class="prnote">${PK_AT}に、各社の公式サイトなどで確かめた内容です。中身や条件は変わることがあるので、申し込む前に公式サイトを見てください。</p>
-  <section class="h-sec" style="margin-top:12px"><div class="hd"><h2>お店の教室・相談</h2></div><div class="rows">${PK_EV.map(([s,t,d,h,u,i])=>`<div class="rw" style="align-items:flex-start"><span class="bub evic">${pic(i,30)}</span><span class="grow"><div class="s"><b>${esc(s)}</b></div><div class="t">${esc(t)}</div><div class="s">${esc(d)}</div><div class="pkhow">${esc(h)}</div>${ext(u,"公式サイト")}</span></div>`).join("")}</div>
+  return head("もらえる特典・お店の教室","gift","pink")+`<p class="prnote">${PAT}に、各社の公式サイトなどで確かめた内容です${PKD&&PKD.checked?"（毎月 見なおしています）":""}。中身や条件は変わることがあるので、申し込む前に公式サイトを見てください。</p>
+  <section class="h-sec" style="margin-top:12px"><div class="hd"><h2>お店の教室・相談</h2></div><div class="rows">${PEV.map(([s,t,d,h,u,i])=>`<div class="rw" style="align-items:flex-start"><span class="bub evic">${pic(i,30)}</span><span class="grow"><div class="s"><b>${esc(s)}</b></div><div class="t">${esc(t)}</div><div class="s">${esc(d)}</div><div class="pkhow">${esc(h)}</div>${ext(u,"公式サイト")}</span></div>`).join("")}</div>
    <p class="note">お店のイベントは、店舗ごとに日にちがちがいます。行きたいお店のアプリかサイトで、近くの店舗の予定を見てください。</p></section>
-  <section class="h-sec"><div class="hd"><h2>登録するともらえるもの</h2></div><div class="rows">${PK_GIFT.map(([s,t,w,h,k,u,i])=>`<div class="rw" style="align-items:flex-start"><span class="bub evic">${pic(i,30)}</span><span class="grow"><div class="s"><b>${esc(s)}</b><span class="pktag">${esc(k)}</span></div><div class="t">${esc(t)}</div><div class="s">もらえるもの：${esc(w)}</div><div class="pkhow">${esc(h)}</div>${ext(u,"公式サイト")}</span></div>`).join("")}</div>
+  <section class="h-sec"><div class="hd"><h2>登録するともらえるもの</h2></div><div class="rows">${PGIFT.map(([s,t,w,h,k,u,i])=>`<div class="rw" style="align-items:flex-start"><span class="bub evic">${pic(i,30)}</span><span class="grow"><div class="s"><b>${esc(s)}</b><span class="pktag">${esc(k)}</span></div><div class="t">${esc(t)}</div><div class="s">もらえるもの：${esc(w)}</div><div class="pkhow">${esc(h)}</div>${ext(u,"公式サイト")}</span></div>`).join("")}</div>
    <p class="note">登録すると、お店からのメールやお知らせが届くことがあります。いらなくなったら、各サイトで止められます。</p></section>
   <section class="h-sec"><div class="hd"><h2>マタニティマーク</h2></div><div class="rows"><div class="rw"><span class="grow"><div class="t">役所や駅で、無料でもらえます</div><div class="s">母子手帳をもらうときに一緒にもらえることが多いです。駅でも、駅員さんに言うともらえる鉄道会社があります。</div></span></div></div></section>`}
 function vRank(){if(!rkP){AFF_PICK.push(...RANK.flatMap(r=>r[1].map(x=>x[0])));rkP=1}
