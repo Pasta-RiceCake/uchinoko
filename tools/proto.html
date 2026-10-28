@@ -1549,6 +1549,21 @@ html:root[data-th="lux"] nav.tabs button .tb .iln{color:#8A7F70!important}
 html:root[data-th="lux"] nav.tabs button.on::after{background:#C9A85A}
 html:root[data-th="lux"] .h-top .logo{color:#141414!important}
 html:root[data-th="lux"] .ph h1{font-family:"Bodoni Moda","Zen Old Mincho",serif!important;font-style:italic}
+
+:root{--onac:#fff}
+html:root[data-th="tech"],html:root[data-th="tech"][data-col]{--onac:#0B0C24}
+html:root[data-th="night"],html:root[data-th="night"][data-col]{--onac:#151B2B}
+html:root[data-th="yume"],html:root[data-th="yume"][data-col]{--onac:#3E3550}
+html:root[data-th="goth"],html:root[data-th="goth"][data-col]{--onac:#160F13}
+html:root[data-th="doll"],html:root[data-th="doll"][data-col]{--onac:#5A2E36}
+html:root[data-th] :is(.nowtag,.shl button,.pri.sm,.plbtn .pri,.rnf button.ok,.rnbtn button.on.ok,.rnst2,.chips .chip.on,.hkb.on,.today .n){color:var(--onac)!important}
+html:root[data-th] .rnst div.now b::after{color:var(--onac)!important}
+html:root[data-th] :is(.pill,.pktag,.who-btn,.yen,.pladd,.yen small){color:color-mix(in srgb,currentColor 58%,var(--ink))!important}
+html,body{overflow-x:clip}
+html:root[data-th="gal"],html:root[data-th="gal"][data-col]{--onac:#141014}
+html:root[data-th] .kch input:checked+span[style*="--kc:var(--ac)"]{color:var(--onac)!important}
+html:root[data-th] main a:not(.btn):not(.pri):not([class*="bt"]){color:color-mix(in srgb,currentColor 62%,var(--ink))}
+html:root[data-th] .l-home .h{color:color-mix(in srgb,currentColor 60%,var(--ink))!important}
 </style>
 
 <div class="wrap"><main id="main"></main></div>
@@ -2358,7 +2373,7 @@ function vWants(){
   return head("欲しい物メモ","ribbonheart","mint")+`${prNote()}<p class="lead">サイズ・色・値段・誰のおすすめか、なども書いておけます。</p><div class="sheet">
   ${W().map((w,i)=>`<div class="li" style="align-items:flex-start"><span class="grow"><div class="t">${esc(w.t)}</div><input id="wm${i}" data-act="wm" data-i="${i}" value="${esc(w.m)}" placeholder="メモ" aria-label="メモ" style="margin-top:6px">${buyLinks(w.t)}</span><button type="button" class="x" data-act="wantdel" data-i="${i}" style="margin-top:4px">消す</button></div>`).join("")||'<p class="sub">まだありません</p>'}
   <form class="add" data-form="want"><input name="t" placeholder="欲しい物を追加" aria-label="欲しい物"><button type="submit">追加</button></form></div>
-  <button type="button" class="btn" data-act="open" data-v="goods" style="margin-top:14px;background:var(--lemon)">話題のグッズを見る</button>`;
+  <button type="button" class="btn" data-act="open" data-v="goods" style="margin-top:14px;background:var(--ac);color:var(--onac)">話題のグッズを見る</button>`;
 }
 const r100=n=>Math.round(n/100)*100,ret=y=>y>=10000?y/3:y/2;
 let BKD=null;function bookLoad(){if(BKD)return;BKD={};nrFetch("/data/books.json").then(d=>{if(d){BKD=d;render(true)}})}
@@ -2616,9 +2631,10 @@ function render(keep){
   document.getElementById("tabs").innerHTML=(S.mode==="pre"?TABS_P:TABS).map(([k,l,i])=>`<button type="button" class="${(page||"home")===k?"on":""}" data-tab="${k}"><span class="tb">${["app","korea","yume","mono"].includes(S.th)?il(TABIL[i],30):ic(i,22)}</span>${l}</button>`).join("");
   window.scrollTo(0,keep?y:0);
 }
-function open(p){stack.push(page);page=p;render(false)}
+function open(p){stack.push(page);page=p;try{history.pushState({u:stack.length},"")}catch(e){}render(false)}
+addEventListener("popstate",()=>{if(stack.length||page){page=stack.length?stack.pop():null;render(false)}});
 
-document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;stack=[];page=b.dataset.tab==="home"?null:b.dataset.tab;render(false)});
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;stack=[];page=b.dataset.tab==="home"?null:b.dataset.tab;if(page&&!(history.state&&history.state.t)){try{history.pushState({t:1},"")}catch(e){}}render(false)});
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-act]");if(!el||el.tagName==="INPUT"||el.tagName==="SELECT")return;
   const a=el.dataset.act,i=+el.dataset.i,v=el.dataset.v,k=()=>{save();render(true)};
@@ -2665,7 +2681,7 @@ document.addEventListener("click",e=>{
     case"jtbdel":jtBr().splice(i,1);k();break;
     case"jtclr":jtS().log=[];k();break;
     case"jtcopy":{const t=el.dataset.v;try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("長押ししてコピーしてください"))}catch(_){toast("長押ししてコピーしてください")}break}
-    case"back":page=stack.pop()||null;render(false);break;
+    case"back":if(history.state&&history.state.u){history.back()}else{page=stack.pop()||null;render(false)}break;
     case"stamp":{const d=iso(T0);S.stamps[d]=S.stamps[d]||{};const c=S.stamps[d][i];if(c===undefined)S.stamps[d][i]=myC();else if(c===myC())delete S.stamps[d][i];else{toast(who[c]+"がやってくれた家事です");break}k();break}
     case"thx":S.thx=S.thx||{};S.thx[thxK(i)]=true;toast("ありがとうを送りました");k();break;
     case"owner":S.chores[i][1]=order[(order.indexOf(S.chores[i][1])+1)%4];k();break;
