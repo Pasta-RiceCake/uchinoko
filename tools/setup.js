@@ -51,9 +51,18 @@ function joinGate(id){
 async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
+  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),seo=sp&&typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]]&&PAGES[sp[1]];
+  pathReady=true;
+  if(seo){page=sp[1];stack=[];render(false)}
   else if(location.pathname!=="/")history.replaceState(null,"","/");
   if(!S.setup&&await restoreFromURL()){page=null;stack=[];render(false);toast("前に入れた内容を引き継ぎました")}
-  if(!S.setup)return setupGate();
+  if(!S.setup&&!seo)return setupGate();
+  if(!S.setup)return;
   if(!S.share.on)await shStart(true);
   keepURL();
 }
+/* ページごとのURL（Google検索用）。見ているページに合わせてURLと題名を変える */
+let pathReady=false;
+function syncPath(){if(!pathReady||typeof SEO_PAGES==="undefined"||/^\/j\//.test(location.pathname))return;const k=page&&SEO_PAGES[page]?page:"",want=k?"/"+k+"/":"/";
+  document.title=k?SEO_PAGES[k]+"｜うちの子手帳":"うちの子手帳";
+  if(location.pathname!==want)try{history.replaceState(history.state,"",want+location.search)}catch(_){}}

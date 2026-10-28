@@ -131,3 +131,7 @@ if m:
 else:
     print('baby_face のイラストが見つかりません')
 print('ok', len(s))
+
+# ---- ページごとの URL ----
+import importlib.util as _u
+_sp = _u.spec_from_file_location('pages', os.path.join(ROOT, 'tools/pages.py')); _m = _u.module_from_spec(_sp); _sp.loader.exec_module(_m); _m.build()

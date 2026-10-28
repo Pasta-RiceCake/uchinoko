@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7e9ec">
 <meta name="description" content="妊娠中から子育て中まで。予定・手続き・家事・買い物をふたりで共有できる、無料の子育て手帳です。">
+<link rel="canonical" href="https://uchinoko.pocket-app.workers.dev/">
 <script>if(!("standalone" in navigator)){const l=document.createElement("link");l.rel="manifest";l.href="/m/default.webmanifest";document.head.appendChild(l)}</script>
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -3114,7 +3115,9 @@ function fitHero(){const h=document.querySelector(".h-hero");if(!h)return;const 
   const over=()=>{const hr=h.getBoundingClientRect(),br=big.getBoundingClientRect(),R=Math.max(...[...big.children].map(e=>e.getBoundingClientRect().right));if(R>hr.right-8)return true;if(!ph)return false;const p=ph.getBoundingClientRect();return p.width>0&&p.top<br.bottom&&p.bottom>br.top&&p.left>br.left&&R>p.left-6};
   if(!over())return;if(big.querySelector(".sub"))big.classList.add("stk");let k=0,fs=parseFloat(getComputedStyle(n).fontSize);while(over()&&k++<16){fs*=.92;n.style.setProperty("font-size",fs+"px","important")}}
 addEventListener("resize",()=>fitHero());try{document.fonts.ready.then(()=>fitHero())}catch(_){}
+const SEO_PAGES={"pre": "出産までにやること", "jintsu": "陣痛かも？と思ったら", "care": "お産にそなえる体のケア", "sanin": "産院の選び方", "body": "妊娠中の体のこと", "life": "妊娠中のすごし方", "senpai": "先輩ママの知恵袋", "nayami": "お悩み別の便利アイテム", "biyou": "産前産後の美容", "fun": "お楽しみイベント", "junbi": "出産準備品リスト", "rank": "人気ランキング", "perk": "もらえる特典・お店の教室", "money": "お金の見通し", "city": "わが家の市区町村", "hoiku": "保活・保育園", "how": "育児のやり方", "wear": "服の着せ方", "chiiku": "あそび・絵本", "privacy": "プライバシーポリシー", "sick": "急な病気・ケガ", "ill": "よくある病気", "gifts": "内祝いメモ", "odk": "子連れおでかけ", "goods": "話題のグッズ"};
 function render(keep){
+  try{syncPath()}catch(_){}
   if(page!=="city")cityEdit=false;if(page!=="cal"){plEd=null;asPt=false};if(page!=="rinyu"){rnSel=null;rnDate=""};if(page!=="clothes")clEd=false;if(page!=="shop")shFavEd=false;
   const y=window.scrollY;document.documentElement.style.setProperty("--ribbon","url("+IMG.ribbon+")");document.documentElement.dataset.th=S.th;document.documentElement.dataset.col=S.col;document.documentElement.dataset.icm=S.icm==="line"?"line":"ill";
   const html=page?PAGES[page]():vHome();
@@ -3411,12 +3414,21 @@ function joinGate(id){
 async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
+  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),seo=sp&&typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]]&&PAGES[sp[1]];
+  pathReady=true;
+  if(seo){page=sp[1];stack=[];render(false)}
   else if(location.pathname!=="/")history.replaceState(null,"","/");
   if(!S.setup&&await restoreFromURL()){page=null;stack=[];render(false);toast("前に入れた内容を引き継ぎました")}
-  if(!S.setup)return setupGate();
+  if(!S.setup&&!seo)return setupGate();
+  if(!S.setup)return;
   if(!S.share.on)await shStart(true);
   keepURL();
 }
+/* ページごとのURL（Google検索用）。見ているページに合わせてURLと題名を変える */
+let pathReady=false;
+function syncPath(){if(!pathReady||typeof SEO_PAGES==="undefined"||/^\/j\//.test(location.pathname))return;const k=page&&SEO_PAGES[page]?page:"",want=k?"/"+k+"/":"/";
+  document.title=k?SEO_PAGES[k]+"｜うちの子手帳":"うちの子手帳";
+  if(location.pathname!==want)try{history.replaceState(history.state,"",want+location.search)}catch(_){}}
 /* ===== 共有と引き継ぎ（せってい） ===== */
 let mvCode=null,mvArm=false;
 const mvFmt=c=>c.slice(0,4)+"-"+c.slice(4);
