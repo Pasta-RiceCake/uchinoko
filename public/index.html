@@ -776,6 +776,10 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .gmv .sub{margin:10px 0 8px}
 .gios{text-align:center;background:var(--soft);border-radius:14px;padding:10px 12px;margin:0;color:var(--ink)}
 .bkin{display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+.ga2h{border:1.5px solid var(--ac);display:flex;flex-direction:column;gap:6px}
+.ga2h b{font-size:14.5px}
+.ga2h p{margin:0;font-size:13.5px;line-height:1.7}
 .pushon{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--sheet);margin:0 0 8px}.pushon .lk{border:0;background:none;color:var(--ac);font:inherit;font-size:13px;font-weight:700;padding:0;cursor:pointer}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
@@ -3029,10 +3033,12 @@ document.addEventListener("change",e=>{if(e.target.id!=="bphoto")return;const f=
 /* 英語の小見出し */const ENH={"よく使う": "Shortcuts", "次の予定": "Schedule", "きょうの家事": "Housework", "買い物": "Shopping", "内祝い": "Gifts", "保活": "Nursery school", "出産予定日": "Due date", "イベント": "Events", "おでかけ": "Outing", "近くの保育園": "Nearby", "近くの産院": "Nearby", "やることの流れ": "Timeline", "いつ入りたい？": "When", "見学リスト": "Visit list", "月齢ごとのあそび": "Play", "絵本のはじめかた": "Picture books", "こんなときは？": "Q&A", "入院バッグ": "Hospital bag", "使えるサービス": "Services", "通知": "Notice", "テーマ": "Theme", "絵のセット": "Illustrations", "カラー": "Color", "お返しを選ぶ": "Gift shops", "毎日のこと": "Daily", "赤ちゃんのお世話": "Baby care", "病気・もしものとき": "Care & SOS", "行事・お祝い": "Celebrations", "おでかけ・地域": "Outing", "お金・お買い物": "Money & Shopping", "せってい": "Settings", "お産にそなえる": "Birth prep", "体とすごし方": "Body & Life", "そろえるもの": "Essentials", "お金・手続き": "Money & Papers", "産まれたあとに読む": "After birth", "離乳食・幼児食の宅配": "Delivery"};function enTag(){document.querySelectorAll(".h-sec>.hd h2,.sec-t,.menu-g>h2").forEach(h=>{if(h.dataset.en!==undefined)return;const t=(h.childNodes[0]&&h.childNodes[0].nodeType===3?h.childNodes[0].textContent:h.textContent).trim().replace(/（.*$/,"");h.dataset.en=ENH[t]||"";if(!ENH[t])h.removeAttribute("data-en")})}new MutationObserver(()=>enTag()).observe(document.body,{childList:true,subtree:true});enTag();
 /* ===== はじめての画面・パートナーのあいことば ===== */
 const chips=(name,L,cur)=>`<div class="kch">${L.map(([v,l])=>`<label><input type="radio" name="${name}" value="${v}"${cur===v?" checked":""}><span style="--kc:var(--ac)">${l}</span></label>`).join("")}</div>`;
+function isStandalone(){try{return !!navigator.standalone||matchMedia("(display-mode: standalone)").matches}catch(_){return false}}
 function gate(html){const o=document.createElement("div");o.className="gate";o.innerHTML=`<div class="gin">${html}</div>`;document.body.appendChild(o);document.documentElement.classList.add("gated");return o}
 const ungate=o=>{o.remove();document.documentElement.classList.remove("gated");window.scrollTo(0,0)};
 function setupGate(){
   const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">はじめに少しだけ教えてください。あとから「メニュー」でいつでも変えられます。</p></div>
+  ${isStandalone()?"":`<div class="sheet ga2h"><b>はじめる前に、ホーム画面に追加するのがおすすめです</b><p>アプリのようにすぐ開けて、通知も届くようになります。</p>${isIOS()?`<p><b>iPhone</b>：Safariの下にある共有ボタン（四角から矢印が出ている形）→「ホーム画面に追加」。追加したアイコンから開いて始めてください。</p><p class="sub">Safariとホーム画面のアイコンは、保存される場所が別です。先に追加してから入力すると、あとで移す手間がありません。</p>`:`<p><b>Android</b>：Chromeの右上の「︙」→「ホーム画面に追加」（または「アプリをインストール」）。</p>`}</div>`}
   <form class="sheet stack" id="gsetup">
    <div><b>いまは</b>${chips("mode",[["pre","妊娠中"],["mama","子育て中"]],"pre")}</div>
    <div><b>使う人</b>${chips("me",[["ママ","ママ"],["パパ","パパ"]],"ママ")}</div>
@@ -3041,7 +3047,6 @@ function setupGate(){
    <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
-  ${isIOS()&&!navigator.standalone?`<p class="note gios">iPhoneの人は、先に下の<b>共有ボタン →「ホーム画面に追加」</b>をして、追加したアイコンから始めるのがおすすめです。</p>`:""}
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
   <details class="sheet gmv"><summary>${isIOS()&&navigator.standalone?"Safariで入れた内容を移す・機種変更した人はこちら":"機種変更した人はこちら"}</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);

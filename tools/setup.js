@@ -1,9 +1,11 @@
 /* ===== はじめての画面・パートナーのあいことば ===== */
 const chips=(name,L,cur)=>`<div class="kch">${L.map(([v,l])=>`<label><input type="radio" name="${name}" value="${v}"${cur===v?" checked":""}><span style="--kc:var(--ac)">${l}</span></label>`).join("")}</div>`;
+function isStandalone(){try{return !!navigator.standalone||matchMedia("(display-mode: standalone)").matches}catch(_){return false}}
 function gate(html){const o=document.createElement("div");o.className="gate";o.innerHTML=`<div class="gin">${html}</div>`;document.body.appendChild(o);document.documentElement.classList.add("gated");return o}
 const ungate=o=>{o.remove();document.documentElement.classList.remove("gated");window.scrollTo(0,0)};
 function setupGate(){
   const o=gate(`<div class="glogo">${pic("baby_face",72)}<h1>うちの子手帳</h1><p class="lead">はじめに少しだけ教えてください。あとから「メニュー」でいつでも変えられます。</p></div>
+  ${isStandalone()?"":`<div class="sheet ga2h"><b>はじめる前に、ホーム画面に追加するのがおすすめです</b><p>アプリのようにすぐ開けて、通知も届くようになります。</p>${isIOS()?`<p><b>iPhone</b>：Safariの下にある共有ボタン（四角から矢印が出ている形）→「ホーム画面に追加」。追加したアイコンから開いて始めてください。</p><p class="sub">Safariとホーム画面のアイコンは、保存される場所が別です。先に追加してから入力すると、あとで移す手間がありません。</p>`:`<p><b>Android</b>：Chromeの右上の「︙」→「ホーム画面に追加」（または「アプリをインストール」）。</p>`}</div>`}
   <form class="sheet stack" id="gsetup">
    <div><b>いまは</b>${chips("mode",[["pre","妊娠中"],["mama","子育て中"]],"pre")}</div>
    <div><b>使う人</b>${chips("me",[["ママ","ママ"],["パパ","パパ"]],"ママ")}</div>
@@ -12,7 +14,6 @@ function setupGate(){
    <div id="gsex" hidden><b>性別</b>${chips("sex",[["girl","女の子"],["boy","男の子"]],"girl")}<p class="note" style="margin:4px 0 0">お宮参りや初節句の日にちを出すのに使います。</p></div>
    <p class="gerr" hidden></p>
    <button type="submit" class="pri">はじめる</button></form>
-  ${isIOS()&&!navigator.standalone?`<p class="note gios">iPhoneの人は、先に下の<b>共有ボタン →「ホーム画面に追加」</b>をして、追加したアイコンから始めるのがおすすめです。</p>`:""}
   <p class="note" style="text-align:center">パートナーから招待された人は、送られてきたリンクから開いてください。</p>
   <details class="sheet gmv"><summary>${isIOS()&&navigator.standalone?"Safariで入れた内容を移す・機種変更した人はこちら":"機種変更した人はこちら"}</summary><p class="sub">前のスマホの「メニュー」→「共有と引き継ぎ」で出した、8文字のコードを入れてください。</p>
    <form class="add" id="gmv"><input name="c" placeholder="例：AB3K-9PQX" autocapitalize="characters" autocomplete="off" aria-label="引き継ぎコード"><button type="submit">引き継ぐ</button></form></details>`);
