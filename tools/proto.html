@@ -1517,6 +1517,38 @@ html:root[data-th="mono"] .icgrid .cir img{width:42px!important;height:42px!impo
 html:root[data-th="mono"] .icgrid button{gap:6px!important}
 html:root[data-th="mono"] .icgrid{padding-bottom:0!important}
 html:root[data-th="korea"] .icgrid .cir img{width:24px!important;height:24px!important;object-fit:contain}
+
+/* メニューの見出しを内側へ（patch88） */
+html:root:is([data-th="elegant"],[data-th="goth"],[data-th="doll"],[data-th="retro"],[data-th="tech"],[data-th="wa"]) .menu-g>h2{margin:14px 16px 4px!important;padding:0!important}
+html:root:is([data-th="elegant"],[data-th="goth"],[data-th="doll"],[data-th="retro"],[data-th="tech"],[data-th="wa"],[data-th="lux"]) .menu-g>.rows{padding:0 10px 4px!important}
+/* ===== 高級感（patch88：黒×金、英語の見出しが主役） ===== */
+html:root[data-th="lux"],html:root[data-th="lux"][data-col]{--bg:#F5F1EA;--ac:#A8873A;--sub:#8A7F70;--line:#E2DACB;--icon:#141414}
+html:root[data-th="lux"] body{background:#F5F1EA!important}
+html:root[data-th="lux"] .h-sec,html:root[data-th="lux"] .sheet,html:root[data-th="lux"] .menu-g{background:#FFFFFF!important;border:0!important;border-top:1px solid #141414!important;box-shadow:inset 0 3px 0 #FFFFFF,inset 0 4px 0 #C9A85A!important;border-radius:0!important;padding-top:18px!important}
+html:root[data-th="lux"] .menu-g>h2{margin:6px 16px 8px!important}
+html:root[data-th="lux"] .h-sec>.hd h2,html:root[data-th="lux"] .menu-g>h2{font-family:"Zen Old Mincho",serif!important;font-size:10.5px!important;font-weight:400!important;letter-spacing:.32em!important;color:#8A7F70!important}
+html:root[data-th="lux"] .h-sec>.hd h2[data-en]::before,html:root[data-th="lux"] .sec-t[data-en]::before,html:root[data-th="lux"] .menu-g>h2[data-en]::before{content:attr(data-en);display:block!important;font-family:"Bodoni Moda",serif!important;font-style:italic!important;font-size:27px!important;line-height:1.05;letter-spacing:-.01em!important;color:#141414!important;text-transform:none!important;margin:0 0 4px!important;width:auto!important;height:auto!important;background:none!important}
+html:root[data-th="lux"] .sec-t{font-size:10.5px!important;letter-spacing:.32em!important;color:#8A7F70!important}
+html:root[data-th="lux"] .h-sec>.hd button,html:root[data-th="lux"] .h-sec>.hd a{color:#A8873A!important;text-decoration:none!important;font-family:"Bodoni Moda",serif!important;font-style:italic;font-size:13px!important;border-bottom:1px solid #C9A85A;padding-bottom:1px}
+html:root[data-th="lux"] .h-hero{background:#111111!important;border:0!important;border-radius:0!important;padding:30px 20px 24px!important;margin-top:14px!important;box-shadow:inset 0 0 0 6px #111,inset 0 0 0 7px #8C7130!important}
+html:root[data-th="lux"] .h-hero::before{content:"No.";top:16px;left:20px;color:#C9A85A}
+html:root[data-th="lux"] .h-hero .who{padding-left:30px;color:#C9A85A!important;letter-spacing:.34em}
+html:root[data-th="lux"] .h-hero .num{background:linear-gradient(180deg,#F6E7B4 0%,#C9A85A 45%,#8C7130 70%,#E9D49A 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:#C9A85A!important}
+html:root[data-th="lux"] .h-hero .age2,html:root[data-th="lux"] .h-hero .big span:last-child,html:root[data-th="lux"] .h-hero .sub{color:#E9E1D0!important}
+html:root[data-th="lux"] .bph{background:#1D1D1D!important;border:1px solid #8C7130!important;color:#C9A85A!important}
+html:root[data-th="lux"] .icgrid .cir .iln{color:#141414!important}
+html:root[data-th="lux"] .icgrid button{color:#141414;letter-spacing:.06em}
+html:root[data-th="lux"] .rw .t{color:#141414}
+html:root[data-th="lux"] .anchor{background:#F5F1EA!important;border-left:2px solid #C9A85A!important}
+html:root[data-th="lux"] .msw button.on{background:#141414!important;color:#E9D49A!important}
+html:root[data-th="lux"] nav.tabs{background:#111111!important;border-top:1px solid #8C7130!important}
+html:root[data-th="lux"] nav.tabs button{color:#8A7F70}
+html:root[data-th="lux"] nav.tabs button.on{color:#E9D49A}
+html:root[data-th="lux"] nav.tabs button.on .tb .iln{color:#E9D49A!important}
+html:root[data-th="lux"] nav.tabs button .tb .iln{color:#8A7F70!important}
+html:root[data-th="lux"] nav.tabs button.on::after{background:#C9A85A}
+html:root[data-th="lux"] .h-top .logo{color:#141414!important}
+html:root[data-th="lux"] .ph h1{font-family:"Bodoni Moda","Zen Old Mincho",serif!important;font-style:italic}
 </style>
 
 <div class="wrap"><main id="main"></main></div>
@@ -2801,7 +2833,7 @@ addEventListener("submit",e=>{
 document.addEventListener("change",e=>{if(e.target.id!=="ownic")return;const f=e.target.files?.[0];if(!f)return;openCrop(f,u=>{S.app.own=u;S.app.ic="own";save();render(true);toast("アイコンにしました")},true);e.target.value=""});
 document.addEventListener("change",e=>{if(e.target.id!=="bphoto")return;const f=e.target.files?.[0];if(!f)return;openCrop(f);e.target.value=""});
 
-/* 英語の小見出し */const ENH={"よく使う": "Shortcuts", "次の予定": "Schedule", "きょうの家事": "Housework", "買い物": "Shopping", "内祝い": "Gifts", "保活": "Nursery school", "出産予定日": "Due date", "イベント": "Events", "おでかけ": "Outing", "近くの保育園": "Nearby", "近くの産院": "Nearby", "やることの流れ": "Timeline", "いつ入りたい？": "When", "見学リスト": "Visit list", "月齢ごとのあそび": "Play", "絵本のはじめかた": "Picture books", "こんなときは？": "Q&A", "入院バッグ": "Hospital bag", "使えるサービス": "Services", "通知": "Notice", "テーマ": "Theme", "絵のセット": "Illustrations", "カラー": "Color", "お返しを選ぶ": "Gift shops", "毎日のこと": "Daily", "赤ちゃんのお世話": "Baby care"};function enTag(){document.querySelectorAll(".h-sec>.hd h2,.sec-t").forEach(h=>{if(h.dataset.en!==undefined)return;const t=(h.childNodes[0]&&h.childNodes[0].nodeType===3?h.childNodes[0].textContent:h.textContent).trim().replace(/（.*$/,"");h.dataset.en=ENH[t]||"";if(!ENH[t])h.removeAttribute("data-en")})}new MutationObserver(()=>enTag()).observe(document.body,{childList:true,subtree:true});enTag();
+/* 英語の小見出し */const ENH={"よく使う": "Shortcuts", "次の予定": "Schedule", "きょうの家事": "Housework", "買い物": "Shopping", "内祝い": "Gifts", "保活": "Nursery school", "出産予定日": "Due date", "イベント": "Events", "おでかけ": "Outing", "近くの保育園": "Nearby", "近くの産院": "Nearby", "やることの流れ": "Timeline", "いつ入りたい？": "When", "見学リスト": "Visit list", "月齢ごとのあそび": "Play", "絵本のはじめかた": "Picture books", "こんなときは？": "Q&A", "入院バッグ": "Hospital bag", "使えるサービス": "Services", "通知": "Notice", "テーマ": "Theme", "絵のセット": "Illustrations", "カラー": "Color", "お返しを選ぶ": "Gift shops", "毎日のこと": "Daily", "赤ちゃんのお世話": "Baby care", "病気・もしものとき": "Care & SOS", "行事・お祝い": "Celebrations", "おでかけ・地域": "Outing", "お金・お買い物": "Money & Shopping", "せってい": "Settings", "お産にそなえる": "Birth prep", "体とすごし方": "Body & Life", "そろえるもの": "Essentials", "お金・手続き": "Money & Papers", "産まれたあとに読む": "After birth"};function enTag(){document.querySelectorAll(".h-sec>.hd h2,.sec-t,.menu-g>h2").forEach(h=>{if(h.dataset.en!==undefined)return;const t=(h.childNodes[0]&&h.childNodes[0].nodeType===3?h.childNodes[0].textContent:h.textContent).trim().replace(/（.*$/,"");h.dataset.en=ENH[t]||"";if(!ENH[t])h.removeAttribute("data-en")})}new MutationObserver(()=>enTag()).observe(document.body,{childList:true,subtree:true});enTag();
 render(false);
 })();
 </script>
