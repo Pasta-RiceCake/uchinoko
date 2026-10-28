@@ -2,3 +2,5 @@ node_modules/
 .wrangler/
 .dev.vars
 __pycache__/
+tools/qa/*.txt
+tools/__pycache__/
