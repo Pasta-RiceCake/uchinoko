@@ -832,17 +832,17 @@ html:root[data-th] .seg.hyseg{background:var(--sheet)!important;border-radius:14
 .hycard{background:var(--sheet);border-radius:16px;padding:12px 14px 12px 16px;margin:0 0 10px;border-left:6px solid var(--hc)}
 .hyc{display:flex;align-items:center;gap:8px;margin:0 0 6px}.hyc b{font-size:15px}
 .hycard ul{margin:0;padding:0 0 0 1.2em;line-height:1.8;font-size:14px}
-.hywrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;background:var(--sheet);padding:0 0 6px}
-.hygrid{display:grid;gap:4px;position:relative;padding:6px 6px 0 0;width:max-content}
-.hyhd{font-size:12px;font-weight:700;text-align:center;padding:6px 0;position:relative;z-index:2}
-.hyhd.now{color:var(--ac)}
-.hyst{position:sticky;left:0;z-index:3;background:var(--sheet)}
-.hycat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;text-align:center;padding:4px 2px;border-right:4px solid var(--hc)}
-.hycell{font-size:11.5px;line-height:1.45;padding:7px 6px;border-radius:8px;background:color-mix(in srgb,var(--hc) 24%,var(--sheet));position:relative;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center}
-.hycell.now{background:color-mix(in srgb,var(--hc) 50%,var(--sheet));font-weight:700;box-shadow:0 0 0 2px var(--hc) inset}
-.hysep{height:4px}
-.hycell.long{justify-content:flex-start}.hyt{position:sticky;left:88px;right:8px;padding:0 6px}
-.hycol{background:color-mix(in srgb,var(--ac) 10%,transparent);border-radius:8px;z-index:1}
+.hywrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;background:var(--sheet)}
+.hygrid{display:grid;row-gap:0;column-gap:0;position:relative;width:max-content;padding:0 0 8px}
+.hystripe{z-index:0}.hystripe.odd{background:color-mix(in srgb,currentColor 3%,transparent)}
+.hystripe.now{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.hyhd{font-size:12px;font-weight:700;text-align:center;padding:10px 0 8px;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.8}
+.hyhd.now{opacity:1;color:var(--ac)}.hyhd small{font-size:10px;font-weight:400}
+.hyst{position:sticky;left:0;z-index:3;background:var(--sheet);grid-column:1}
+.hycat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:700;text-align:center;padding:4px;line-height:1.3}
+.hycell{z-index:1;margin:3px;padding:8px 6px;border-radius:10px;background:color-mix(in srgb,var(--hc) 20%,var(--sheet));font-size:11px;line-height:1.45;display:flex;align-items:center;justify-content:center;text-align:center;min-height:30px}
+.hycell.long{justify-content:flex-start}.hyt{position:sticky;left:76px;padding:0 6px}
+.hysep{grid-column:1/-1;height:1px;margin:6px 0;background:var(--line);z-index:1}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2363,14 +2363,14 @@ function vHayami(){const now=Math.max(0,Math.min(12,S.mode==="pre"?0:months()));
    return H+`<div class="hynav"><button type="button" data-act="hym" data-v="${m-1}"${m<=0?" disabled":""} aria-label="前の月">‹</button><div class="hynow"><b>${m}か月</b>${m===now&&S.mode!=="pre"?`<span>いまここ</span>`:""}</div><button type="button" data-act="hym" data-v="${m+1}"${m>=12?" disabled":""} aria-label="次の月">›</button></div>
    <div class="hymbar">${Array.from({length:13},(_,i)=>`<button type="button" class="${i===m?"on":""}${i===now&&S.mode!=="pre"?" now":""}" data-act="hym" data-v="${i}">${i}</button>`).join("")}</div>
    ${at(m).map(([c,i,xs],ci)=>`<section class="hycard" style="--hc:${HYC[ci]}"><div class="hyc">${pic(i,30)}<b>${c}</b></div>${xs.length?`<ul>${xs.map(x=>`<li>${x}</li>`).join("")}</ul>`:`<p class="sub" style="margin:0">とくになし</p>`}</section>`).join("")}`}
-  const W=13;
-  return H+`<p class="sub" style="font-size:12px;margin:6px 0 8px">横にスクロールできます。${S.mode!=="pre"?"色のついた列が、いまの月齢です。":""}</p><div class="hywrap" id="hywrap"><div class="hygrid" style="grid-template-columns:76px repeat(${W},86px)">
-   <div class="hyhd hyst" style="grid-row:1;grid-column:1">月齢</div>${Array.from({length:W},(_,i)=>`<div class="hyhd${i===now&&S.mode!=="pre"?" now":""}" style="grid-row:1;grid-column:${i+2}">${i}か月</div>`).join("")}
-   ${(()=>{let r=2,out="";HY.forEach(([c,i,ls],ci)=>{out+=`<div class="hycat hyst" style="--hc:${HYC[ci]};grid-row:${r}/span ${ls.length};grid-column:1">${pic(i,26)}<span>${c}</span></div>`;
-     ls.forEach(l=>{l.forEach(([a,b,x])=>{out+=`<div class="hycell${S.mode!=="pre"&&now>=a&&now<b?" now":""}${b-a>2?" long":""}" style="--hc:${HYC[ci]};grid-row:${r};grid-column:${a+2}/${b+2}">${b-a>2?`<span class="hyt">${x}</span>`:x}</div>`});r++});
-     out+=`<div class="hysep" style="grid-row:${r};grid-column:1/-1"></div>`;r++});
-     if(S.mode!=="pre")out+=`<div class="hycol" style="grid-row:1/${r};grid-column:${now+2}"></div>`;return out})()}
-  </div></div>`;
+  const W=13,pre=S.mode==="pre";
+  let r=2,cells="";HY.forEach(([c,i,ls],ci)=>{cells+=`<div class="hycat hyst" style="grid-row:${r}/span ${ls.length}">${pic(i,24)}<span>${c}</span></div>`;
+    ls.forEach(l=>{l.forEach(([a,b,x])=>{cells+=`<div class="hycell${b-a>2?" long":""}" style="--hc:${HYC[ci]};grid-row:${r};grid-column:${a+2}/${b+2}">${b-a>2?`<span class="hyt">${x}</span>`:x}</div>`});r++});
+    cells+=`<div class="hysep" style="grid-row:${r}"></div>`;r++});
+  const cols=Array.from({length:W},(_,i)=>`<div class="hystripe${i%2?" odd":""}${!pre&&i===now?" now":""}" style="grid-row:1/${r};grid-column:${i+2}"></div>`).join("");
+  return H+`<p class="sub" style="font-size:12px;margin:6px 0 8px">横にスクロールできます。${pre?"":"色のついた列が、いまの月齢です。"}</p><div class="hywrap" id="hywrap"><div class="hygrid" style="grid-template-columns:68px repeat(${W},84px)">
+   ${cols}<div class="hyhd hyst" style="grid-row:1;grid-column:1"></div>${Array.from({length:W},(_,i)=>`<div class="hyhd${!pre&&i===now?" now":""}" style="grid-row:1;grid-column:${i+2}">${i}か月${!pre&&i===now?"<small>いまここ</small>":""}</div>`).join("")}
+   ${cells}</div></div>`;
 }
 function vMenu(){
   const sub=MSUB,hid=S.mhide=S.mhide||{},all=mnTab==="all",fixed=g=>g==="せってい";
