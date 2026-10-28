@@ -10,9 +10,12 @@ jobs:
     steps:
       - name: site
         run: |
-          for u in / /senpai/ /robots.txt /sitemap.xml; do echo "== $u"; curl -s -o /tmp/o -w '%{http_code}\n' "https://uchinoko.pocket-app.workers.dev$u"; grep -o 'google-site-verification[^>]*\|<title>[^<]*' /tmp/o | head -3; head -c 300 /tmp/o | grep -v '^<' ; echo; done
+          set +e
+          for u in / /senpai/ /robots.txt /sitemap.xml; do echo "== $u"; curl -s -o /tmp/o -w '%{http_code}\n' "https://uchinoko.pocket-app.workers.dev$u"; grep -o 'google-site-verification[^>]*\|<title>[^<]*' /tmp/o | head -3; head -c 300 /tmp/o | grep -v '^<' ; echo; done; grep -o 'mntab\|vHayami\|SEO_PAGES' /tmp/o | sort | uniq -c
           curl -s -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" -o /tmp/g -w 'googlebot %{http_code}\n' https://uchinoko.pocket-app.workers.dev/; grep -c google-site-verification /tmp/g || true
       - name: checks
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs --jq '.check_runs[] | [.name,.status,.conclusion,.completed_at] | @tsv' || true
+        run: gh api repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs --jq '.check_runs[] | [.name,.status,.conclusion,.completed_at,.output.summary] | @tsv' || true
+          gh api repos/${{ github.repository }}/commits/6e2dbe2/check-runs --jq '.check_runs[] | [.name,.status,.conclusion,.completed_at,(.output.summary//"")[0:300]] | @tsv' || true
+          gh api repos/${{ github.repository }}/commits/6e2dbe2/statuses --jq '.[] | [.context,.state,.description] | @tsv' || true
