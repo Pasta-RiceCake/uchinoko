@@ -752,6 +752,25 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .spv::before{content:"「"}.spv::after{content:"」"}
 .spi{font-size:12px;opacity:.85;margin:4px 0 0!important;line-height:1.7}
 .spl a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.spgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px 14px;border-radius:16px;border:1px solid var(--line);background:var(--sheet);color:inherit;font:inherit;cursor:pointer;text-align:center}
+.spcard b{font-size:15px}.spcard span{font-size:12px;opacity:.7}
+.spback{border:0;background:none;color:inherit;font:inherit;font-size:14px;opacity:.75;padding:6px 0;cursor:pointer}
+.sphd{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;background:var(--sheet);margin:6px 0 14px}
+.sphd b{font-size:17px}.sphd p{margin:4px 0 0;font-size:13px;line-height:1.6;opacity:.85}
+.spsc{background:var(--sheet);border-radius:16px;padding:0 14px;margin:0 0 10px}
+.spsc summary{list-style:none;cursor:pointer;padding:14px 22px 14px 0;position:relative;display:flex;flex-direction:column;gap:4px}
+.spsc summary::-webkit-details-marker{display:none}
+.spsc summary::after{content:"＋";position:absolute;right:0;top:50%;transform:translateY(-50%);opacity:.5}
+.spsc[open] summary::after{content:"－"}
+.spsc summary b{font-size:15px;line-height:1.5}
+.spq{font-size:11px;letter-spacing:.08em;opacity:.6}
+.spsc .spvs{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.spsc .spv{margin:0!important;padding:10px 12px;border-radius:4px 14px 14px 14px;background:color-mix(in srgb,currentColor 7%,transparent);line-height:1.7;font-size:14px}
+.spn{font-size:12px;line-height:1.6;padding:8px 10px;border-radius:10px;border:1px dashed color-mix(in srgb,currentColor 35%,transparent);margin:0 0 12px!important}
+.spsc .spi{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;font-size:12px;opacity:.85;padding:10px 0 14px;border-top:1px solid var(--line);margin:0!important}
+.spil{opacity:.7}.spit{white-space:nowrap}
+.spit a{color:inherit;text-decoration:underline;text-underline-offset:2px;margin-left:6px}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -2815,20 +2834,27 @@ const SP_DO=[
  ["手続き",["できればふたりとも育休をとる","保育園の見学や、申し込みの時期を調べておく","赤ちゃんのマイナンバーカード・銀行口座をつくる","保険を見直す","内祝いを、産まれる前に選んでおく","住民税などの引き落としを設定しておく"]],
  ["気持ち",["神経質になりすぎず、いい意味でテキトーに。ほかの子とくらべない","休めるときに休む","パパは言われたことだけでなく、自分から動く（ママも育児ははじめて）","なにより、ママの気持ちによりそう"]]];
 let spTab="";
-function vSenpai(){const tabs=[...SP2.map(x=>x[0]),"やってよかった"],t=tabs.includes(spTab)?spTab:(S.mode==="pre"?"入院・お産":"新生児のころ");S.spck=S.spck||{};
+const SPIC={"入院・お産":"bag","新生児のころ":"swaddle","授乳":"bottle","寝かしつけ":"moon","お風呂":"bunny","便秘・体調":"thermometer","離乳食":"mug","肌ケア":"chick","おでかけ":"rainbow","産後の心と体":"heart","上の子":"hearthands","保育園":"stroller","記録":"book","やってよかった":"star"};
+function vSenpai(){S.spck=S.spck||{};const all=SP2.map(x=>x[0]),t=[...all,"やってよかった"].includes(spTab)?spTab:"";
   if(!vSenpai.p){SP2.forEach(x=>x[2].forEach(s=>s[2].forEach(g=>AFF_PICK.push(g[1]))));vSenpai.p=1}
-  const seg=`<div class="chips spch">${tabs.map(x=>`<button type="button" class="chip${x===t?" on":""}" data-act="sptab" data-v="${x}">${x}</button>`).join("")}</div>`;
-  if(t==="やってよかった"){const all=SP_DO.flatMap(([g,xs])=>xs.map((x,i)=>g+i)),dn=all.filter(k=>S.spck[k]).length;
-   return head("先輩ママの知恵袋","hearthands","pink")+seg+`<p class="lead">先輩パパ・ママに聞いた「出産前〜生後6か月までに、やっておいてよかったこと」です。パパ向けの声も多いので、ふたりで見てください。全部やらなくて大丈夫。<b>${dn}</b>/${all.length}</p>
+  const H=head("先輩ママの知恵袋","hearthands","pink");
+  const back=`<button type="button" class="spback" data-act="sptab" data-v="">‹ テーマ一覧</button>`;
+  if(!t){const pre=["入院・お産","授乳","新生児のころ","産後の心と体","やってよかった"],order=S.mode==="pre"?[...pre,...all.filter(x=>!pre.includes(x))]:[...all.filter(x=>x!=="入院・お産"),"やってよかった","入院・お産"].filter((x,i,a)=>a.indexOf(x)===i);
+   const card=x=>{const n=x==="やってよかった"?SP_DO.reduce((s,[,xs])=>s+xs.length,0)+"こ":(SP2.find(y=>y[0]===x)[2].length)+"つのお悩み";return `<button type="button" class="spcard" data-act="sptab" data-v="${x}">${pic(SPIC[x],40)}<b>${x}</b><span>${n}</span></button>`};
+   return H+`<p class="lead">「こんなとき、どうした？」を、先輩ママの声で集めました。気になるテーマを選んでください。</p><div class="spgrid">${order.map(card).join("")}</div>
+   <p class="note" style="margin-top:12px">ネットやSNSで見つけた先輩ママの声を、まとめて書き直しています。合う・合わないは子どもによってちがうので、「こんな方法もあるんだ」くらいに見てください。</p>`}
+  if(t==="やってよかった"){const ks=SP_DO.flatMap(([g,xs])=>xs.map((x,i)=>g+i)),dn=ks.filter(k=>S.spck[k]).length;
+   return H+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>やってよかったこと</b><p>出産前〜生後6か月までに、やっておいてよかったこと。パパ向けの声も多いので、ふたりで。全部やらなくて大丈夫。<b>${dn}</b>/${ks.length}</p></div></div>
    ${SP_DO.map(([g,xs])=>`<section class="h-sec"><div class="hd"><h2>${g}</h2></div><div class="rows">${xs.map((x,i)=>`<label class="rw" style="align-items:flex-start"><input type="checkbox" class="ck" data-act="spck" data-v="${g}${i}"${S.spck[g+i]?" checked":""}><span class="grow"><div class="t ${S.spck[g+i]?"done":""}" style="font-weight:400">${x}</div></span></label>`).join("")}</div></section>`).join("")}`}
   const [,lead,sc]=SP2.find(x=>x[0]===t),hasI=sc.some(s=>s[2].length);
-  return head("先輩ママの知恵袋","hearthands","pink")+seg+`<p class="lead">${lead}</p>
-  <section class="h-sec">${sc.map(([q,vs,its,n],k)=>`<details class="svc"${k?"":" open"}><summary><span class="grow"><b>${q}</b><span class="sub" style="display:block;font-size:12px;margin-top:2px">先輩ママの声 ${vs.length}</span></span></summary>
+  return H+back+`<div class="sphd">${pic(SPIC[t],44)}<div><b>${t}</b><p>${lead}</p></div></div>
+  ${sc.map(([q,vs,its,n],k)=>`<details class="spsc"${k?"":" open"}><summary><span class="spq">こんなとき</span><b>${q}</b></summary>
    <div class="spvs">${vs.map(v=>`<p class="spv">${v}</p>`).join("")}</div>
-   ${its.length?`<p class="spi">使った物：${its.map(([nm,q])=>`${nm}<span class="spl">（<a href="${rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">楽天</a>・<a href="${azURL(q)}" target="_blank" rel="nofollow sponsored noopener">Amazon</a>）</span>`).join("、")}</p>`:""}
-   ${n?`<p class="note" style="margin-top:6px">${n}</p>`:""}</details>`).join("")}
+   ${n?`<p class="spn">${n}</p>`:""}
+   ${its.length?`<div class="spi"><span class="spil">使った物</span>${its.map(([nm,q])=>`<span class="spit">${nm} <a href="${rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">楽天</a><a href="${azURL(q)}" target="_blank" rel="nofollow sponsored noopener">Amazon</a></span>`).join("")}</div>`:""}
+  </details>`).join("")}
   ${hasI?`<p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p>`:""}
-  <p class="note">ネットやSNSで見つけた先輩ママの声を、まとめて書き直しています。合う・合わないは子どもによってちがうので、「こんな方法もあるんだ」くらいに見てください。</p></section>`;
+  <div style="margin-top:14px">${back}</div>`;
 }
 function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math.round((t-L[i])/60000));
   const avg=iv.length>=3?Math.round(iv.slice(-3).reduce((a,b)=>a+b,0)/3):null;
