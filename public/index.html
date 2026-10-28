@@ -756,6 +756,7 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .nybr{margin-top:4px;font-weight:600}
 .ktb a.amz{color:inherit;border-color:currentColor;opacity:.85}
 .bkl{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:0 0 auto}.bkl a{font-size:12px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.jw.jbmine{opacity:.75}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1837,15 +1838,15 @@ function katteSec(){if(!ktP){AFF_PICK.push(...KATTE.map(x=>x[1]));ktP=1}return `
   ${KATTE.some(x=>affOn(x[1]))?`<p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p>`:""}</details>`}
 const JBW={"産後でOK":"jw-p","病院にあることも":"jw-h","あると安心":"jw-a"};
 function vJunbi(){
-  S.pre.jb=S.pre.jb||{};const all=[...JUNBI.flatMap(x=>x[2]).filter(([n])=>!HID("jb:"+n)),...(S.pre.myjb||[]).map(n=>[n])],done=all.filter(([n])=>S.pre.jb[n]).length;
+  S.pre.jb=S.pre.jb||{};const MG=S.pre.myjbg||{},all=[...JUNBI.flatMap(x=>x[2]).filter(([n])=>!HID("jb:"+n)),...Object.values(MG).flat().map(n=>[n]),...(S.pre.myjb||[]).map(n=>[n])],done=all.filter(([n])=>S.pre.jb[n]).length;
   const ok=w=>jbF==="すべて"||(jbF==="いま買うもの"?!w||w==="あると安心":w===jbF);
   return head("出産準備品リスト","onesie","pink")+`<p class="lead">そろったらチェック。全部で${all.length}こ中 <b>${done}</b>こ そろっています。最初は少なめにして、足りなければ買い足しでOKです。</p>
   <div class="chips jbch">${["すべて","いま買うもの","産後でOK","病院にあることも"].map(x=>`<button type="button" class="chip${jbF===x?" on":""}" data-act="jbf" data-v="${x}">${x}</button>`).join("")}</div>
   ${katteSec()}
-  ${JUNBI.map(([g,tip,it])=>{const L=it.filter(([n,,,w])=>!HID("jb:"+n)&&ok(w));if(!L.length&&jbF!=="すべて")return "";const dn=it.filter(([n])=>!HID("jb:"+n)&&S.pre.jb[n]).length,tot=it.filter(([n])=>!HID("jb:"+n)).length;
-   return `<section class="h-sec"><div class="hd"><h2>${g}</h2><span class="sub">${dn}/${tot}</span></div>${tip&&jbF==="すべて"?`<p class="jbtip">${tip}</p>`:""}<div class="rows">${L.map(([n,q,note,w])=>{const on=W().some(x=>x.t===n);return `<label class="rw"><input type="checkbox" class="ck" data-act="jb" data-v="${esc(n)}"${S.pre.jb[n]?" checked":""}><span class="grow"><div class="t ${S.pre.jb[n]?"done":""}">${n}${w?`<span class="jw ${JBW[w]}">${w}</span>`:""}</div><div class="s">${[q,note].filter(Boolean).join("・")}</div></span><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(n)}">${on?"メモ済み":"欲しい"}</button><button type="button" class="x" data-act="hide" data-v="jb:${esc(n)}">消す</button></label>`}).join("")}</div>${it.some(([n])=>HID("jb:"+n))?`<button type="button" class="x" style="margin:6px 0 10px" data-act="unhide" data-v="${it.map(([n])=>"jb:"+esc(n)).join(",")}">消したものを戻す</button>`:""}</section>`}).join("")}
-  <section class="h-sec"><div class="hd"><h2>自分で追加したもの</h2></div><div class="rows">${(S.pre.myjb||[]).map((n,i)=>`<label class="rw"><input type="checkbox" class="ck" data-act="jb" data-v="${esc(n)}"${S.pre.jb[n]?" checked":""}><span class="grow"><div class="t ${S.pre.jb[n]?"done":""}">${esc(n)}</div></span><button type="button" class="x" data-act="myjbdel" data-i="${i}">消す</button></label>`).join("")||'<p class="sub" style="margin:4px 0">リストにない物を足せます（例：ベビーガード、絵本）</p>'}</div>
-   <form class="add" data-form="myjb" style="padding-bottom:10px"><input name="t" placeholder="準備品を追加" aria-label="準備品を追加"><button type="submit">追加</button></form></section>
+  ${JUNBI.map(([g,tip,it])=>{const L=it.filter(([n,,,w])=>!HID("jb:"+n)&&ok(w));if(!L.length&&jbF!=="すべて")return "";const my=MG[g]||[],dn=it.filter(([n])=>!HID("jb:"+n)&&S.pre.jb[n]).length+my.filter(n=>S.pre.jb[n]).length,tot=it.filter(([n])=>!HID("jb:"+n)).length+my.length;
+   return `<section class="h-sec"><div class="hd"><h2>${g}</h2><span class="sub">${dn}/${tot}</span></div>${tip&&jbF==="すべて"?`<p class="jbtip">${tip}</p>`:""}<div class="rows">${L.map(([n,q,note,w])=>{const on=W().some(x=>x.t===n);return `<label class="rw"><input type="checkbox" class="ck" data-act="jb" data-v="${esc(n)}"${S.pre.jb[n]?" checked":""}><span class="grow"><div class="t ${S.pre.jb[n]?"done":""}">${n}${w?`<span class="jw ${JBW[w]}">${w}</span>`:""}</div><div class="s">${[q,note].filter(Boolean).join("・")}</div></span><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(n)}">${on?"メモ済み":"欲しい"}</button><button type="button" class="x" data-act="hide" data-v="jb:${esc(n)}">消す</button></label>`}).join("")}${my.map((n,i)=>`<label class="rw"><input type="checkbox" class="ck" data-act="jb" data-v="${esc(n)}"${S.pre.jb[n]?" checked":""}><span class="grow"><div class="t ${S.pre.jb[n]?"done":""}">${esc(n)}<span class="jw jbmine">追加</span></div></span><button type="button" class="x" data-act="myjbgdel" data-v="${esc(g)}" data-i="${i}">消す</button></label>`).join("")}</div><form class="add" data-form="myjbg" style="padding:6px 0 10px"><input type="hidden" name="g" value="${esc(g)}"><input name="t" placeholder="${esc(g)}に追加" aria-label="${esc(g)}に追加"><button type="submit">追加</button></form>${it.some(([n])=>HID("jb:"+n))?`<button type="button" class="x" style="margin:6px 0 10px" data-act="unhide" data-v="${it.map(([n])=>"jb:"+esc(n)).join(",")}">消したものを戻す</button>`:""}</section>`}).join("")}
+  ${(S.pre.myjb||[]).length?`<section class="h-sec"><div class="hd"><h2>自分で追加したもの</h2></div><div class="rows">${(S.pre.myjb||[]).map((n,i)=>`<label class="rw"><input type="checkbox" class="ck" data-act="jb" data-v="${esc(n)}"${S.pre.jb[n]?" checked":""}><span class="grow"><div class="t ${S.pre.jb[n]?"done":""}">${esc(n)}</div></span><button type="button" class="x" data-act="myjbdel" data-i="${i}">消す</button></label>`).join("")||'<p class="sub" style="margin:4px 0">リストにない物を足せます（例：ベビーガード、絵本）</p>'}</div>
+   </section>`:""}
   <p class="note">産院で用意してくれる物もあるので、「入院のしおり」も見てください。「産後でOK」の物は、赤ちゃんの様子を見てから買っても間に合います。</p>`;
 }
 const SANIN=[["産院の種類","<strong>総合病院・大学病院</strong>：持病がある、双子など、リスクが高いときに安心。NICU（赤ちゃんの集中治療室）があることも。<br><strong>個人の産婦人科</strong>：食事や部屋が充実していることが多い。<br><strong>助産院</strong>：自然なお産。医師がいないので、リスクがあると利用できません。"],
@@ -2958,6 +2959,7 @@ document.addEventListener("click",e=>{
     case"owndel":S.app.own="";if(S.app.ic==="own")S.app.ic="baby_face";k();break;
     case"appic":S.app.ic=v;S.app.ics=ilSet();k();break;
     case"appbg":S.app.bg=i;k();break;
+    case"myjbgdel":e.preventDefault();(S.pre.myjbg[v]||[]).splice(i,1);k();break;
     case"myjbdel":e.preventDefault();S.pre.myjb.splice(i,1);k();break;
     case"mybagdel":e.preventDefault();S.pre.mybag.splice(i,1);k();break;
     case"hide":e.preventDefault();S.pre.hide=S.pre.hide||{};S.pre.hide[v]=1;k();toast("消しました");break;
@@ -3062,6 +3064,7 @@ document.addEventListener("input",e=>{if(e.target.id!=="msearch")return;const q=
 addEventListener("submit",e=>{
   const f=e.target,t=f.dataset.form;if(!t)return;e.preventDefault();const v=n=>(f.elements[n]?.value||"").trim();
   if(t==="mytodo"){if(!v("t"))return;S.pre.mytodo=S.pre.mytodo||{};(S.pre.mytodo[v("g")]=S.pre.mytodo[v("g")]||[]).push(v("t"))}
+  else if(t==="myjbg"){if(!v("t"))return;S.pre.myjbg=S.pre.myjbg||{};(S.pre.myjbg[v("g")]=S.pre.myjbg[v("g")]||[]).push(v("t"))}
   else if(t==="myjb"){if(!v("t"))return;(S.pre.myjb=S.pre.myjb||[]).push(v("t"))}
   else if(t==="mybag"){if(!v("t"))return;(S.pre.mybag=S.pre.mybag||[]).push(v("t"))}
   else if(t==="hkck"){if(!v("t"))return;(S.hk.my=S.hk.my||[]).push(v("t"))}
