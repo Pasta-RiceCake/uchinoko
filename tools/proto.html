@@ -727,6 +727,16 @@ form.add input{min-width:0}
 .svloc{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;background:var(--soft);font-size:10.5px;font-weight:600;color:var(--ac);vertical-align:2px}
 .svcity{margin:8px 0 4px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:13.5px;line-height:1.7}.svcity b{display:block;font-size:12px;color:var(--ac);margin-bottom:2px}
 .kao{font-family:"Noto Sans Duployan","Noto Sans Balinese","Noto Sans Bassa Vah","Noto Sans Bamum","Noto Sans Kannada",sans-serif;white-space:nowrap;margin-left:4px;font-size:16px;line-height:1;vertical-align:-2px}
+html,body{touch-action:manipulation}
+html:root[data-th="lux"] .h-hero{display:flex!important;align-items:center;gap:12px}
+html:root[data-th="lux"] .h-hero>div:first-child{flex:1 1 auto;min-width:0;container-type:inline-size}
+html:root[data-th="lux"] .h-hero .phwrap{flex:none}
+html:root[data-th="lux"] .h-hero .big{flex-wrap:wrap;row-gap:2px}
+html:root[data-th="lux"] .h-hero .big .sub{flex-basis:100%;margin:0 0 2px!important}
+html:root[data-th="lux"] .h-hero .num.n1,html:root[data-th="lux"] .h-hero .num.n2{font-size:min(128px,62cqi)!important}
+html:root[data-th="lux"] .h-hero .num.n3{font-size:min(128px,46cqi)!important}
+html:root[data-th="lux"] .h-hero .num.n4{font-size:min(128px,36cqi)!important}
+.h-hero .big.stk{flex-wrap:wrap}.h-hero .big.stk .sub{display:block;flex-basis:100%;width:100%}
 /* 下のタブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--sheet);box-shadow:0 -4px 16px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(4,1fr);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);border-radius:22px 22px 0 0;border-top:var(--bd)}
@@ -1826,7 +1836,7 @@ function vHomePre(){
   const todo=todoItems(PRETODO.indexOf(cur)).filter(([k])=>!S.pre.ck[k]);
   return `<div class="h-top"><span class="logo">うちの子手帳</span>${modeSw()}</div>
   <div class="h-hero"><div><div class="who">出産予定日 <span class="nw">${md(due())}</span></div>
-    <div class="big"><span class="sub">あと</span><span class="num">${Math.max(0,left)}</span><span>日</span></div>
+    <div class="big"><span class="sub">あと</span><span class="num n${String(Math.max(0,left)).length}">${Math.max(0,left)}</span><span>日</span></div>
     <div class="age2">妊娠${w}週${d}日</div></div>${photoBox()}</div>
   <button type="button" class="jthome${w>=36?" big":""}" data-act="open" data-v="jintsu"><span class="grow"><b>陣痛かも？と思ったら</b><span>産院の電話・間隔のはかり方・家族への連絡</span></span>${ic("chev",16)}</button>
   <section class="h-sec"><div class="hd"><h2>いまやること（${cur[2]}）</h2><button type="button" data-act="open" data-v="pre">ぜんぶ</button></div><div class="rows">
@@ -1873,7 +1883,7 @@ function vHome(){if(S.mode==="pre")return vHomePre();
   };
   return `<div class="h-top"><span class="logo">うちの子手帳</span>${modeSw()}</div>
   <div class="h-hero"><div><div class="who">${esc(S.name||"赤ちゃん")}</div>
-    <div class="big">${d<0?`<span class="sub">生まれるまで</span><span class="num">${-d}</span><span>日</span>`:`<span class="num">${d}</span><span>日目</span>`}</div>
+    <div class="big">${d<0?`<span class="sub">生まれるまで</span><span class="num n${String(-d).length}">${-d}</span><span>日</span>`:`<span class="num n${String(d).length}">${d}</span><span>日目</span>`}</div>
     <div class="age2">${d<0?"予定日 "+md(birth()):(Math.floor(m/12)?Math.floor(m/12)+"歳":"")+(m%12)+"か月と"+rest+"日"}</div></div>
     ${photoBox()}</div>
   ${S.home.map(k=>B[k]?B[k]():k.startsWith("pg:")?pgCard(k.slice(3)):"").join("")}
@@ -2644,12 +2654,16 @@ function vFun(){if(!funP){AFF_PICK.push(...Object.values(FUN).flat().flatMap(x=>
 const PAGES={perk:vPerk,fun:vFun,jintsu:vJintsu,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,privacy:vPrivacy,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCity,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
 const TABS=[["home","ホーム","t-home"],["cal","カレンダー","t-cal"],["chores","家事","t-chore"],["menu","メニュー","t-menu"]];
 let stack=[];
+function fitHero(){const h=document.querySelector(".h-hero");if(!h)return;const big=h.querySelector(".big"),ph=h.querySelector(".phwrap"),n=h.querySelector(".big .num");if(!big||!n)return;n.style.removeProperty("font-size");big.classList.remove("stk");
+  const over=()=>{const hr=h.getBoundingClientRect(),br=big.getBoundingClientRect(),R=Math.max(...[...big.children].map(e=>e.getBoundingClientRect().right));if(R>hr.right-8)return true;if(!ph)return false;const p=ph.getBoundingClientRect();return p.width>0&&p.top<br.bottom&&p.bottom>br.top&&p.left>br.left&&R>p.left-6};
+  if(!over())return;if(big.querySelector(".sub"))big.classList.add("stk");let k=0,fs=parseFloat(getComputedStyle(n).fontSize);while(over()&&k++<16){fs*=.92;n.style.setProperty("font-size",fs+"px","important")}}
+addEventListener("resize",()=>fitHero());try{document.fonts.ready.then(()=>fitHero())}catch(_){}
 function render(keep){
   try{seedChore()}catch(_){}
   if(page!=="city")cityEdit=false;if(page!=="cal"){plEd=null;asPt=false};if(page!=="rinyu"){rnSel=null;rnDate=""};if(page!=="clothes")clEd=false;if(page!=="shop")shFavEd=false;
   const y=window.scrollY;document.documentElement.style.setProperty("--ribbon","url("+IMG.ribbon+")");document.documentElement.dataset.th=S.th;document.documentElement.dataset.col=S.col;document.documentElement.dataset.icm=S.icm==="line"?"line":"ill";
   const html=page?PAGES[page]():vHome();
-  document.getElementById("main").innerHTML=page==="cal"&&!stack.length?html:html;
+  document.getElementById("main").innerHTML=page==="cal"&&!stack.length?html:html;if(!page)fitHero();
   document.getElementById("tabs").innerHTML=(S.mode==="pre"?TABS_P:TABS).map(([k,l,i])=>`<button type="button" class="${(page||"home")===k?"on":""}" data-tab="${k}"><span class="tb">${["app","korea","yume","mono"].includes(S.th)?il(TABIL[i],30):ic(i,22)}</span>${l}</button>`).join("");
   window.scrollTo(0,keep?y:0);
 }
