@@ -2420,7 +2420,7 @@ function vHoiku(){
     const ci=cityInfo();
     return nrHead("hoiku")+`<div class="seg hkseg" style="margin:0 0 10px">${["すべて","保育園","こども園","小規模","幼稚園","その他"].map(f=>`<button type="button" class="${f===hf?"on":""}" data-act="hkf" data-v="${f}">${f}</button>`).join("")}</div>
     <div class="rows">${L.slice(0,nrMore.hoiku).map(({x,k})=>{const fav=S.hk.favs.includes(x[0]);return `<div class="rw" style="align-items:flex-start">${k!==null?`<span class="d"><span class="num">${kmTxt(k)}</span><small>km</small></span>`:""}<span class="grow"><div class="t">${esc(x[0])}</div><div class="s">${x[1]}${x[4]?"・"+esc(x[4]):""}</div>${x[5]?`<a class="ext" href="${esc(x[5])}" target="_blank" rel="noopener">園のホームページ ›</a>`:""}</span>
-     <button type="button" class="heart${fav?" on":""}" data-act="hkfav" data-v="${esc(x[0])}">${fav?"見学リスト済":"見学リストへ"}</button></div>`}).join("")||`<p class="sub" style="padding:8px 0">見つかりませんでした</p>`}</div>
+     <button type="button" class="hkb${fav?" on":""}" data-act="hkfav" data-v="${esc(x[0])}">${fav?"見学リスト済":"見学リストへ"}</button></div>`}).join("")||`<p class="sub" style="padding:8px 0">見つかりませんでした</p>`}</div>
     ${L.length>nrMore.hoiku?`<button type="button" class="pladd" data-act="nrmore" data-v="hoiku">もっと見る（あと${L.length-nrMore.hoiku}件）</button>`:""}
     <p class="note">空き状況は、市区町村が毎月出しています。${ci?.u?`<a class="ext" href="${esc(ci.u)}" target="_blank" rel="noopener">${esc(S.city)}の公式サイト ›</a> で「保育園 空き状況」を見てください。`:"お住まいの市区町村のサイトで確認してください。"}</p>`+nrSrc("hoiku")})()}</section>
   <section class="h-sec"><div class="hd"><h2>見学で見ること</h2></div><div class="rows">
