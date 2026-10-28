@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /api/
+Disallow: /j/
 Sitemap: https://uchinoko.pocket-app.workers.dev/sitemap.xml

@@ -56,7 +56,7 @@ def build():
     open(os.path.join(ROOT, "public/sitemap.xml"), "w", encoding="utf-8").write(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
         "".join(f"<url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n")
-    open(os.path.join(ROOT, "public/robots.txt"), "w", encoding="utf-8").write(f"User-agent: *\nDisallow: /api/\nSitemap: {SITE}/sitemap.xml\n")
+    open(os.path.join(ROOT, "public/robots.txt"), "w", encoding="utf-8").write(f"User-agent: *\nDisallow: /api/\nDisallow: /j/\nSitemap: {SITE}/sitemap.xml\n")
     print("pages", len(pages))
 
 
