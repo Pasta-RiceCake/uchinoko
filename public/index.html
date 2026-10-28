@@ -2790,13 +2790,13 @@ const BY_POST=[
  ["美容院・ネイルの再開","1か月健診のあとから","長い時間座るのがつらくなければ大丈夫。託児つきの美容院や、赤ちゃんと一緒に入れるサロンもあります。授乳の間の2〜3時間で終わるメニューを選ぶと安心です。"]];
 const BY_ITEM=[["産後用の骨盤ベルト","産後 骨盤ベルト","寝たままつけられるものが産院でも人気"],["産後ガードル","産後ガードル","おなかと骨盤まわりをささえる。はきやすい前開きタイプも"],["妊娠線クリーム・オイル","妊娠線 クリーム","においが少なく、のびのいいものが人気"]];
 let byTab=null,byP=0;
-function vBiyou(){if(!byP){AFF_PICK.push(...BY_ITEM.map(x=>x[1]));byP=1}const t=byTab||(S.mode==="pre"?"pre":"post");
+function vBiyou(){const t=byTab||(S.mode==="pre"?"pre":"post");
   const L=t==="pre"?BY_PRE:BY_POST;
   return head("産前産後の美容","ribbon","pink")+`<div class="seg segw" style="margin:8px 0 4px">${[["pre","妊娠中"],["post","産後"]].map(([k,l])=>`<button type="button" class="${k===t?"on":""}" data-act="bytab" data-v="${k}">${l}</button>`).join("")}</div>
   <section class="h-sec">${L.map(([q,w,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b><span class="sub" style="display:block;font-size:12px;margin-top:2px">${w}</span></span></summary><p>${a}</p></details>`).join("")}
   ${t==="pre"?`<p class="note">サロンの予約のときは、妊娠中であることと週数を伝えてください。体調がすぐれない日は無理せず予定を変えて大丈夫です。</p>`:`<p class="note">出血が増える、強い痛みがある、気分の落ちこみが続くときは、産院や市区町村の保健師さんに相談してください。</p>`}</section>
-  <section class="h-sec"><div class="hd"><h2>あると助かる物</h2></div><div class="rows">${BY_ITEM.map(([nm,q,why])=>{const on=W().some(x=>x.t===nm);return `<div class="rw kt"><span class="grow"><div class="t">${nm}</div><div class="s">${why}</div><div class="ktb"><a href="${rkURL(q)}" target="_blank" rel="nofollow sponsored noopener">楽天で見る</a><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(nm)}">${on?"メモ済み":"欲しい"}</button></div></span></div>`}).join("")}</div>
-  <p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p></section>`;
+  <section class="h-sec"><div class="hd"><h2>あると助かる物</h2></div><div class="rows">${BY_ITEM.map(([nm,q,why])=>{const on=W().some(x=>x.t===nm);return `<div class="rw kt"><span class="grow"><div class="t">${nm}</div><div class="s">${why}</div><div class="ktb"><a href="${rkURL(q)}" target="_blank" rel="noopener">楽天で見る</a><button type="button" class="fav${on?" on":""}" data-act="toymemo" data-v="${esc(nm)}">${on?"メモ済み":"欲しい"}</button></div></span></div>`}).join("")}</div>
+  </section>`;
 }
 function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math.round((t-L[i])/60000));
   const avg=iv.length>=3?Math.round(iv.slice(-3).reduce((a,b)=>a+b,0)/3):null;
