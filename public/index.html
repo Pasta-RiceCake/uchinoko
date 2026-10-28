@@ -804,6 +804,14 @@ html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button
 .spstar svg{color:var(--ac)}.spstar b{flex:1}.spstar span{font-size:12px;opacity:.7}
 .spsi{color:var(--ac);line-height:0;padding-top:2px}.spsi svg{width:28px;height:28px}
 .spst{padding:12px 14px!important}.spst>b{display:block;margin:2px 0 10px;font-size:15px}.spst .spq{margin:0}
+.mnseg{margin:4px 0 6px}
+html:root[data-th] .seg.mnseg{background:var(--sheet)!important;border-radius:14px!important;padding:2px 6px!important}
+html:root[data-th] .mnlead{padding:6px 10px;border-radius:10px;background:var(--sheet)}
+.mnlead{font-size:12px;margin:0 0 10px!important;line-height:1.6}
+.mnrow{display:flex;align-items:center;gap:8px}
+.mnrow>.rw{flex:1;min-width:0}
+.mnpick{flex:none;font:inherit;font-size:12px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;opacity:.6;cursor:pointer;margin-right:4px}
+.mnpick.on{opacity:1;background:var(--ac);border-color:var(--ac);color:var(--onac,#fff)}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2286,9 +2294,15 @@ function vAppSet(){
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。</p></section>`;
 }
 const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+let mnTab="my";
 function vMenu(){
-  const sub=MSUB;
-  return `<div class="ph"><h1>メニュー</h1></div><input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+MENU_().map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>`<button type="button" class="rw" data-act="open" data-v="${k}" data-q="${esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""))}">${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span><span class="chev">${ic("chev",16)}</span></button>`).join("")}</div></div>`).join("");
+  const sub=MSUB,hid=S.mhide=S.mhide||{},all=mnTab==="all",fixed=g=>g==="せってい";
+  const G=MENU_().map(([t,items])=>[t,all||fixed(t)?items:items.filter(x=>!hid[x[0]])]).filter(x=>x[1].length);
+  const nh=Object.keys(hid).filter(k=>hid[k]).length;
+  return `<div class="ph"><h1>メニュー</h1></div><div class="seg segw mnseg"><button type="button" class="${all?"":"on"}" data-act="mntab" data-v="my">わたしのメニュー</button><button type="button" class="${all?"on":""}" data-act="mntab" data-v="all">すべてのメニュー</button></div>
+  <p class="sub mnlead">${all?"「出す」がついているものが、わたしのメニューに出ます。いらないものは押して外してください。":nh?`いらないメニューを${nh}こ かくしています。もどすときは「すべてのメニュー」から。`:"いらないメニューは、「すべてのメニュー」でかくせます。"}</p>
+  <input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+G.map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>{const q=esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""));const row=`<button type="button" class="rw" data-act="open" data-v="${k}"${all?"":` data-q="${q}"`}>${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span>${all?"":`<span class="chev">${ic("chev",16)}</span>`}</button>`;
+   return all?`<div class="mnrow" data-q="${q}">${row}${fixed(t)?"":`<button type="button" class="mnpick${hid[k]?"":" on"}" data-act="mnhide" data-v="${k}" aria-pressed="${!hid[k]}">${hid[k]?"出さない":"出す"}</button>`}</div>`:row}).join("")}</div></div>`).join("");
 }
 let chPick=-1;
 const myC=()=>S.me==="パパ"?"papa":"mama";
@@ -3197,6 +3211,8 @@ document.addEventListener("click",e=>{
     case"chtab":chTab=v;render(true);break;
     case"bytab":byTab=v;render(true);break;
     case"sptab":spTab=v;render(true);break;
+    case"mntab":mnTab=v;render(false);break;
+    case"mnhide":S.mhide=S.mhide||{};if(S.mhide[v])delete S.mhide[v];else S.mhide[v]=true;k();break;
     case"chdel":S.chores.splice(i,1);chShift(i,1);chPick=-1;k();break;
     case"chic":chPick=chPick===i?-1:i;render(true);break;
     case"chset":S.chores[i][2]=v;chPick=-1;k();break;
