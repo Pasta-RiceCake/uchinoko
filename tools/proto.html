@@ -1808,9 +1808,12 @@ const TAX=[
  ["税金の扶養（年末調整）","毎年の年末調整のとき",
   ["16歳未満の子どもは、税金の「扶養控除」はありません。でも、年末調整の書類の「16歳未満の扶養親族」の欄には書いておきます（住民税の計算に使われます）","児童手当があるので、税金の扶養がなくても損ではありません"]],
  ["育休の年は、パートナーの年末調整で「配偶者控除」","育休・産休でお休みした年",
-  ["育児休業給付金と出産手当金は、税金のかからないお金なので、収入に数えません","そのため、お休みした年はママのお給料が少なくなり、パパの年末調整で配偶者控除・配偶者特別控除が使えることが多いです","ママのその年のお給料（育休前に働いた分）が201万円くらいまでなら対象です（パパの所得が1,000万円以下の場合）。会社の年末調整の書類に書くのを忘れずに"]],
+  ["育児休業給付金と出産手当金は、税金のかからないお金なので、収入に数えません","そのため、お休みした年はママのお給料が少なくなり、パパの年末調整で配偶者控除・配偶者特別控除が使えることが多いです","ママのその年のお給料（育休前に働いた分）が136万円以下なら配偶者控除、それより多くても配偶者特別控除が使えることがあります（2026年分から。パパの所得が1,000万円以下の場合）。会社の年末調整の書類に書くのを忘れずに"]],
  ["帝王切開や入院が長くなったとき（高額療養費）","保険がきく治療になったとき",
   ["帝王切開・切迫早産の入院などは健康保険がきき、1か月の自己負担に上限があります","マイナ保険証を使うか、事前に「限度額適用認定証」をもらっておくと、窓口で払うのが上限までになります","民間の医療保険に入っていれば、給付金が出ることもあります。保険会社に確認を"]]];
+let TAXD=null;function taxLoad(){if(TAXD!==null)return;TAXD=false;nrFetch("/data/tax.json").then(d=>{if(d&&d.items){TAXD=d;render(true)}})}
+function taxList(){taxLoad();const it=TAXD&&TAXD.items||{};return TAX.map(([t,w,ps])=>{const x=it[t];return x&&Array.isArray(x.points)&&x.points.length?[t,x.when||w,x.points,x.src||[]]:[t,w,ps,[]]})}
+const taxDate=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(s||"");return m?`${+m[1]}年${+m[2]}月${+m[3]}日`:""};
 const SANIN=[["産院の種類","<strong>総合病院・大学病院</strong>：持病がある、双子など、リスクが高いときに安心。NICU（赤ちゃんの集中治療室）があることも。<br><strong>個人の産婦人科</strong>：食事や部屋が充実していることが多い。<br><strong>助産院</strong>：自然なお産。医師がいないので、リスクがあると利用できません。"],
  ["選ぶときのポイント","家から近いか（陣痛のときに行ける距離か）／分娩の予約がいつまでか（人気の所は妊娠初期でいっぱいになることも）／無痛分娩ができるか／立ち会い・面会のルール／赤ちゃんと同じ部屋か別の部屋か／費用"],
  ["費用の目安","健康保険から「出産育児一時金」50万円が出ます。病院が直接受け取る仕組み（直接支払制度）を使うと、窓口で払うのは差額だけです。出産費用の全国平均は50万円前後で、地域や産院で差があります。"],
@@ -2608,7 +2611,7 @@ function vMoney(){const m=mnS(),c=mnCalc(),emp=m.job==="会社員";
   ${emp&&c.sal?`<div class="sec-t">育休中に入るお金の予定</div><div class="sheet">${[...c.pays.map(p=>[p.d,"育児休業給付金（"+p.n+"か月分）",man(p.amt)]),...jt.map(d=>[d,"児童手当（2か月分）","3万円"])].sort((a,b)=>a[0]-b[0]).map(([d,t,y])=>`<div class="li"><span class="grow"><b>${d.getFullYear()}年${d.getMonth()+1}月ごろ</b><div class="sub">${t}</div></span><b class="yen">${y}</b></div>`).join("")}
    <button type="button" class="pladd" data-act="mncal">＋ カレンダーに入れる</button></div>
    <p class="note">1か月あたりの目安：最初の6か月 <b>${man(c.a67)}</b>、そのあと <b>${man(c.a50)}</b>。育休中は社会保険料がかからず、給付金に税金もかからないので、手取りで見ると働いていたときの8割くらいになります。</p>`:""}
-  <div class="sec-t">税金・扶養のこと</div><section class="h-sec">${TAX.map(([t,w,ps])=>`<details class="svc"><summary><span class="grow"><b>${t}</b><span class="sub" style="display:block;font-size:12px;margin-top:2px">${w}</span></span></summary>${ps.map(x=>`<p>・${x}</p>`).join("")}</details>`).join("")}<p class="note">税金のしくみは年によって変わることがあります。くわしくは国税庁のサイトや、会社・税務署で確認してください。</p></section>
+  <div class="sec-t">税金・扶養のこと</div><section class="h-sec">${taxList().map(([t,w,ps,src])=>`<details class="svc"><summary><span class="grow"><b>${t}</b><span class="sub" style="display:block;font-size:12px;margin-top:2px">${w}</span></span></summary>${ps.map(x=>`<p>・${x}</p>`).join("")}${src.length?`<p class="sub" style="font-size:12px">元のページ：${src.map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("・")}</p>`:""}</details>`).join("")}<p class="note">${TAXD&&TAXD.checked?`国税庁・厚生労働省などのページと、${taxDate(TAXD.checked)}に見くらべています（毎月）。`:"税金のしくみは年によって変わることがあります。"}くわしくは国税庁のサイトや、会社・税務署で確認してください。</p></section>
   <p class="note">金額は目安です。上限額は毎年8月に見直され、入る日は会社や市区町村の手続きで前後します。くわしくは会社やハローワーク、市区町村で確認してください。</p>`}
 
 /* ===== 症状の記録 ===== */

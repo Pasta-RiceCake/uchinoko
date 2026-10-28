@@ -1,0 +1,33 @@
+name: tax
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "1 にすると、ページが変わっていなくても全部見くらべる"
+        required: false
+        default: ""
+  schedule:
+    - cron: "30 7 5-7 * *"
+permissions:
+  contents: write
+concurrency: ${{ github.workflow }}
+jobs:
+  tax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TAX_FORCE: ${{ inputs.force }}
+        run: python3 tools/build_tax.py
+      - name: commit
+        run: |
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          [ -f public/data/tax.json ] || exit 0
+          git add public/data/tax.json
+          git diff --cached --quiet && exit 0
+          git commit -m "税金・扶養のことを公式ページと見くらべて更新"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push && break; sleep $((i*7)); done
