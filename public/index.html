@@ -751,6 +751,8 @@ html:root[data-th="lux"] .h-hero .num.n4{font-size:min(128px,36cqi)!important}
 .drow img{height:58px;width:auto;max-width:19%;object-fit:contain}.drow .da{transform:rotate(-5deg)}.drow .db{transform:rotate(5deg) translateY(-6px)}
 .ch{position:relative}.dstk{position:absolute;right:-6px;top:-10px;width:54px;height:auto;transform:rotate(10deg);pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
 .dthx{height:22px;width:auto;vertical-align:-6px;margin-right:4px}
+.segw.hkseg button{flex:0 0 auto!important;padding-inline:12px!important}
+html:root[data-th="elegant"] .seg button.on,html:root[data-th="gal"] .seg button.on,html:root[data-th="pop"] .seg button.on,html:root[data-th="natural"] .seg button.on,html:root[data-th="goth"] .seg button.on,html:root[data-th="doll"] .seg button.on,html:root[data-th="retro"] .seg button.on,html:root[data-th="tech"] .seg button.on,html:root[data-th="wa"] .seg button.on,html:root[data-th="lux"] .seg button.on,html:root[data-th="night"] .seg button.on{font-weight:700!important;box-shadow:inset 0 -2px 0 currentColor!important;border-radius:0!important}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1868,7 +1870,7 @@ function vSanin(){
   return head("産院の選び方","crib","mint")+`<section class="h-sec" style="margin-top:12px">${SANIN.map(([q,a],i)=>`<details class="svc"${i===0?" open":""}><summary><span class="grow"><b>${q}</b></span></summary><p>${a}</p></details>`).join("")}</section>
   <section class="h-sec"><div class="hd"><h2>近くの産院</h2><button type="button" data-act="hkloc">現在地から探す</button></div>
    ${(()=>{nrLoad("sanin");const L=nrList("sanin",n=>snf==="すべて"||n[1]===snf);if(!S.pref)return nrHead("sanin");if(!L)return `<p class="sub">読みこみ中…</p>`;
-    return nrHead("sanin")+`<div class="seg hkseg" style="margin:0 0 10px">${["すべて","病院","クリニック","助産院"].map(f=>`<button type="button" class="${f===snf?"on":""}" data-act="snf" data-v="${f}">${f}</button>`).join("")}</div>
+    return nrHead("sanin")+`<div class="seg segw hkseg" style="margin:0 0 10px">${["すべて","病院","クリニック","助産院"].map(f=>`<button type="button" class="${f===snf?"on":""}" data-act="snf" data-v="${f}">${f}</button>`).join("")}</div>
     <div class="rows">${L.slice(0,nrMore.sanin).map(({x,k})=>`<div class="rw" style="align-items:flex-start">${k!==null?`<span class="d"><span class="num">${kmTxt(k)}</span><small>km</small></span>`:""}<span class="grow"><div class="t">${esc(x[0])}</div><div class="s">${x[1]}${x[6]?"（"+esc(x[6])+"）":""}${x[4]?"・"+esc(x[4]):""}</div>${x[5]?`<a class="ext" href="${esc(x[5])}" target="_blank" rel="noopener">ホームページ ›</a>`:""}</span></div>`).join("")||`<p class="sub" style="padding:8px 0">見つかりませんでした</p>`}</div>
     ${L.length>nrMore.sanin?`<button type="button" class="pladd" data-act="nrmore" data-v="sanin">もっと見る（あと${L.length-nrMore.sanin}件）</button>`:""}`+nrSrc("sanin")})()}</section>
   <section class="h-sec"><div class="hd"><h2>費用・無痛分娩をくらべる</h2></div><div class="rows"><a class="rw" href="https://birth-navi.mhlw.go.jp/" target="_blank" rel="noopener"><span class="grow"><div class="t">出産なび（厚生労働省）</div><div class="s">気になる産院が見つかったら、ここで出産費用の目安、無痛分娩、立ち会い、個室などを並べて比べられます</div></span><span class="chev">${ic("chev",16)}</span></a></div>
@@ -2066,7 +2068,7 @@ function evRows(filter,empty){evLoad();const ci=cityInfo(),d=ci&&EVD[ci.c];
   const today=iso(new Date()),L=d.ev.filter(e=>e.d>=today&&filter(e));
   const kinds=[...new Set(d.ev.filter(e=>e.d>=today&&filter(e)).map(e=>e.k))];
   const F=L.filter(e=>evk==="すべて"||e.k===evk);
-  return `${kinds.length>1?`<div class="seg hkseg" style="margin:0 0 10px">${["すべて",...kinds].map(k=>`<button type="button" class="${k===evk?"on":""}" data-act="evk" data-v="${k}">${k==="すべて"?k:k.split("・")[0]}</button>`).join("")}</div>`:""}
+  return `${kinds.length>1?`<div class="seg segw hkseg" style="margin:0 0 10px">${["すべて",...kinds].map(k=>`<button type="button" class="${k===evk?"on":""}" data-act="evk" data-v="${k}">${k==="すべて"?k:k.split("・")[0]}</button>`).join("")}</div>`:""}
    <div class="rows">${F.slice(0,evMore).map(e=>{const dt=new Date(e.d+"T00:00"),inCal=S.plans.some(p=>p.d===e.d&&p.t===e.t);return `<div class="rw ev" style="align-items:flex-start"><span class="d"><span class="num">${dt.getDate()}</span><small>${dt.getMonth()+1}月（${"日月火水木金土"[dt.getDay()]}）</small></span>
     <span class="grow"><div class="t">${esc(e.t)}</div><div class="s">${[e.tm,e.pl].filter(Boolean).map(esc).join("・")}</div>${e.to?`<div class="s">対象：${esc(e.to)}</div>`:""}${e.n?`<div class="s">${esc(e.n)}</div>`:""}
     <div class="evb">${e.u?`<a class="ext" href="${esc(e.u)}" target="_blank" rel="noopener">くわしく ›</a>`:""}<button type="button" class="lk" data-act="evcal" data-v="${esc(e.d)}" data-t="${esc(e.t)}" data-tm="${esc(e.tm)}" data-pl="${esc(e.pl)}"${inCal?" disabled":""}>${inCal?"カレンダーに入れました":"カレンダーに入れる"}</button></div></span></div>`}).join("")||`<p class="sub" style="padding:8px 0">${empty}</p>`}</div>
@@ -2451,7 +2453,7 @@ function vHoiku(){
   <section class="h-sec"><div class="hd"><h2>近くの保育園</h2><button type="button" data-act="hkloc">現在地から探す</button></div>
    ${(()=>{nrLoad("hoiku");const L=nrList("hoiku",n=>hf==="すべて"||n[1]===hf);if(!S.pref)return nrHead("hoiku");if(!L)return `<p class="sub">読みこみ中…</p>`;
     const ci=cityInfo();
-    return nrHead("hoiku")+`<div class="seg hkseg" style="margin:0 0 10px">${["すべて","保育園","こども園","小規模","幼稚園","その他"].map(f=>`<button type="button" class="${f===hf?"on":""}" data-act="hkf" data-v="${f}">${f}</button>`).join("")}</div>
+    return nrHead("hoiku")+`<div class="seg segw hkseg" style="margin:0 0 10px">${["すべて","保育園","こども園","小規模","幼稚園","その他"].map(f=>`<button type="button" class="${f===hf?"on":""}" data-act="hkf" data-v="${f}">${f}</button>`).join("")}</div>
     <div class="rows">${L.slice(0,nrMore.hoiku).map(({x,k})=>{const fav=S.hk.favs.includes(x[0]);return `<div class="rw" style="align-items:flex-start">${k!==null?`<span class="d"><span class="num">${kmTxt(k)}</span><small>km</small></span>`:""}<span class="grow"><div class="t">${esc(x[0])}</div><div class="s">${x[1]}${x[4]?"・"+esc(x[4]):""}</div>${x[5]?`<a class="ext" href="${esc(x[5])}" target="_blank" rel="noopener">園のホームページ ›</a>`:""}</span>
      <button type="button" class="hkb${fav?" on":""}" data-act="hkfav" data-v="${esc(x[0])}">${fav?"見学リスト済":"見学リストへ"}</button></div>`}).join("")||`<p class="sub" style="padding:8px 0">見つかりませんでした</p>`}</div>
     ${L.length>nrMore.hoiku?`<button type="button" class="pladd" data-act="nrmore" data-v="hoiku">もっと見る（あと${L.length-nrMore.hoiku}件）</button>`:""}
@@ -2470,7 +2472,7 @@ function gdLoad(){if(GDD!==null)return;GDD="loading";fetch("/data/goods.json").t
 const gdAuto=()=>{if(S.mode==="pre")return "pre";const m=months();return m<4?"m0":m<7?"m4":m<12?"m7":m<24?"y1":m<36?"y2":"y3"};
 function vGoods(){
   gdLoad();const live=GDD&&GDD.ages,tab=gdTab||gdAuto(),L=live&&live[tab];
-  const tabs=`<div class="seg hkseg" style="margin:0 0 10px">${GDA.filter(([k])=>!live||live[k]).map(([k,l])=>`<button type="button" class="${k===tab?"on":""}" data-act="gdtab" data-v="${k}">${l}</button>`).join("")}</div>`;
+  const tabs=`<div class="seg segw hkseg" style="margin:0 0 10px">${GDA.filter(([k])=>!live||live[k]).map(([k,l])=>`<button type="button" class="${k===tab?"on":""}" data-act="gdtab" data-v="${k}">${l}</button>`).join("")}</div>`;
   const row=(t,w,f,a,n,by)=>{const on=W().some(x=>x.t===t),b0=by&&by[0];return `<div class="li gd" style="align-items:flex-start">${b0&&b0.img?`<img class="rkimg" src="${esc(b0.img)}" alt="" loading="lazy" width="64" height="64">`:""}<span class="grow"><div class="t">${esc(t)}${n>1?`<span class="gdn">${n}つのサイトで話題</span>`:""}</div><div class="sub">${esc(w)}</div>
     ${f&&f.length?`<div class="gdsrc">話題のもと：${f.map(esc).join("・")}</div>`:""}${a&&a.length?`<div class="gdarts">${a.map(x=>`<a href="${esc(x.l)}" target="_blank" rel="noopener">${esc(x.s||"記事")} ›</a>`).join("")}</div>`:""}
     ${by&&by.length?`<div class="gdbuy">${b0.n?`<div class="rkn">${esc(b0.n)}</div>`:""}${by.map((x,i)=>`<a href="${esc(x.u)}" target="_blank" rel="nofollow sponsored noopener"${i===0?' class="low"':""}><span>${esc(x.s)}</span><b>${Number(x.p).toLocaleString()}円</b>${i===0&&by.length>1?"<small>いちばん安い</small>":""}</a>`).join("")}</div>`:""}</span>
