@@ -2167,7 +2167,7 @@ function vPerk(){
 function vRank(){if(!rkP){AFF_PICK.push(...RANK.flatMap(r=>r[1].map(x=>x[0])));rkP=1}
   const tabs=(S.mode==="pre"?["マタニティ","出産準備","授乳グッズ","おでかけ"]:["ベビー用品","おもちゃ・知育","おでかけ","ベビー服","内祝い"]);if(!tabs.includes(rkTab))rkTab=S.mode==="pre"?"マタニティ":"ベビー用品";
   rkLoad();const items=RANK.find(r=>r[0]===rkTab)[1],live=RKD?.tabs?.[rkTab];
-  return head("人気ランキング","star","lemon")+`<p class="prnote">楽天ランキングより・すみません、リンクの一部は広告です。無料で続けるために、置かせてもらっています</p>
+  return head("人気ランキング","star","lemon")+`<p class="prnote">楽天ランキングより。すみません、リンクの一部は広告です。無料で続けるために、置かせてもらっています</p>
   <div class="chips">${tabs.map(t=>`<button type="button" class="${t===rkTab?"on":""}" data-act="rktab" data-v="${t}">${t}</button>`).join("")}</div>
   <section class="h-sec"><div class="hd"><h2>${rkTab}の人気</h2><span class="sub" style="font-size:12px">毎週入れ替え</span></div><div class="rows">
    ${live?live.map((x,k)=>{const on=W().some(w=>w.t===x.n);return `<div class="rw rkl"><span class="rk rk${k+1}">${k+1}</span>${x.img?`<img class="rkimg" src="${esc(x.img)}" alt="" loading="lazy" width="56" height="56">`:""}<span class="grow"><div class="t rkn">${esc(x.n)}</div><div class="s">${x.p?Number(x.p).toLocaleString()+"円":""}${x.r?`・★${x.r}（${x.rc}件）`:""}</div><a class="lk" href="${esc(x.u)}" target="_blank" rel="noopener sponsored">楽天で見る</a></span><button type="button" class="heart${on?" on":""}" data-act="toymemo" data-v="${esc(x.n)}" aria-label="欲しい物メモ">${on?"♥":"♡"}</button></div>`}).join("")
