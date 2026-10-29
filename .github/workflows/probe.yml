@@ -17,6 +17,13 @@ jobs:
         run: |
           set +e
           for u in "https://twitter.com/Interior/status/507185938620219395" "https://www.youtube.com/watch?v=dQw4w9WgXcQ" "https://www.tiktok.com/@scout2015/video/6718335390845095173" "https://www.instagram.com/instagram/" "https://www.threads.net/@instagram"; do echo "== $u"; curl -s "https://uchinoko.pocket-app.workers.dev/api/og?u=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1],safe=""))' "$u")" | python3 -c 'import sys,json;j=json.load(sys.stdin);print(j.get("t"),"|",(j.get("n") or "")[:120],"| img",len(j.get("img") or ""))'; done
+      - name: idwr
+        run: |
+          set +e
+          B=https://id-info.jihs.go.jp/surveillance/idwr/provisional/2026/41
+          for f in 2026-41-teiten.csv 2026-41-zensu.csv week41-trend.csv; do echo "== $f"; curl -s -o /tmp/f "$B/$f" -w '%{http_code}\n'; iconv -f cp932 -t utf-8 /tmp/f | head -c 2500; echo; iconv -f cp932 -t utf-8 /tmp/f | wc -l; done
+          curl -s -o /dev/null -w 'w42 %{http_code}\n' https://id-info.jihs.go.jp/surveillance/idwr/provisional/2026/42/2026-42-teiten.csv
+          curl -s -o /dev/null -w 'w43 %{http_code}\n' https://id-info.jihs.go.jp/surveillance/idwr/provisional/2026/43/2026-43-teiten.csv
       - name: checks
         env:
           GH_TOKEN: ${{ github.token }}
