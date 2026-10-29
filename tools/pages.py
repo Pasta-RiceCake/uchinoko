@@ -9,7 +9,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://uchinoko.pocket-app.workers.dev"
 PRIVATE = {"memo", "cal", "fufu", "shop", "chores", "contacts", "visits", "baby", "appset", "kise", "homeedit", "shareinfo", "menu", "sync",
            "wants", "clothes", "azuke", "rinyu", "bplan", "names", "events"}
-EXTRA = {"privacy": ("プライバシーポリシー", "うちの子手帳のプライバシーポリシーです。")}
+EXTRA = {"privacy": ("プライバシーポリシー", "うちの子手帳のプライバシーポリシーです。"), "about": ("このサイトについて", "うちの子手帳を作った人、情報の出どころ、まちがいの知らせ方。")}
 
 
 def _seed():
