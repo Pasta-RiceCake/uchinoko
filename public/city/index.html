@@ -879,6 +879,10 @@ input.dpin::-webkit-date-and-time-value{text-align:left}
 .bornb{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--ac);color:var(--onac);border:0;border-radius:16px;padding:14px 16px;margin:0 0 12px}
 .bornb b{display:block;font-size:16px}.bornb span span{font-size:12px;opacity:.9}
 button.lnk{background:none;border:0;padding:0;color:var(--ac);text-decoration:underline;font:inherit}
+.calls a{display:block;background:var(--sheet);border-radius:var(--r2);padding:12px;text-align:center;border:var(--bd);color:var(--ink);text-decoration:none}
+.calls a b{display:block;font-size:24px;letter-spacing:.03em;color:var(--ink)}.calls a span{font-size:12px;display:block}
+.calls a.c119{grid-column:1/-1;background:color-mix(in srgb,var(--red) 14%,var(--sheet))}.calls a.c119 b{color:var(--red)}
+.telb{flex:0 0 auto;align-self:center;background:var(--ac);color:var(--onac);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;text-decoration:none}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2789,7 +2793,7 @@ function vSick(){
   const s=SICK[symSel];const cpr=symSel===0;
   const box=(cls,label,arr)=>arr.length?`<div class="${cls}"><div class="h">${label}</div>${arr.map(x=>`<div>・${x}</div>`).join("")}</div>`:"";
   return head("急な病気・ケガ","thermometer","red")+`
-  <div class="calls"><div><span>迷ったら（夜間・休日）</span><b>#8000</b><span>子どもの医療相談</span></div><div><span>救急車か迷ったら</span><b>#7119</b><span>使えない地域も</span></div></div>
+  <div class="calls"><a href="tel:%238000"><span>迷ったら（夜間・休日）</span><b>#8000</b><span>子どもの医療相談</span></a><a href="tel:%237119"><span>救急車か迷ったら</span><b>#7119</b><span>使えない地域も</span></a><a class="c119" href="tel:119"><span>ぐったり・息が苦しい・けいれん</span><b>119</b><span>すぐ救急車</span></a></div>
   <button type="button" class="pladd" data-act="open" data-v="visits" style="margin:0 0 4px">熱やようすを記録する（受診で見せられます）</button><div class="sec-t">どうしましたか？</div>
   <div class="sym">${SICK.map((x,i)=>`<button type="button" class="${i===symSel?"on":""}" data-act="sym" data-i="${i}"><span class="bub">${ic(x[1],22)}</span>${x[0]}</button>`).join("")}</div>
   <div class="sec-t">${s[0]}</div>
@@ -3018,10 +3022,15 @@ function vGifts(){
    <button class="btn" type="submit" style="grid-column:1/-1">追加する</button></form></details>
   <section class="h-sec" style="margin-top:18px"><div class="hd"><h2>お返しを選ぶ</h2></div><div class="rows">${GIFTSHOP.filter(g=>g[3]||A8[g[2]]).map(([t,s,a,u])=>a&&A8[a]?`<a class="rw" href="${a8u(a)}" target="_blank" rel="nofollow sponsored noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">お店を見る</span>${a8px(a)}</a>`:`<a class="rw" href="${u}" target="_blank" rel="noopener"><span class="grow"><div class="t">${t}</div><div class="s">${s}</div></span><span class="chev">お店を見る</span></a>`).join("")}</div></section>`;
 }
+const telU=v=>{if(/例/.test(v||""))return "";const t=String(v||"").replace(/[^\d#+]/g,"");return t.replace(/\D/g,"").length>=3?"tel:"+t.replace(/#/g,"%23"):""};
+const telB=v=>{const u=telU(v);return u?`<a class="telb" href="${u}" aria-label="${esc(v)}に電話する">電話</a>`:""};
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest('a[href^="tel:%23"]');if(!a||!IOS)return;e.preventDefault();const n=decodeURIComponent(a.getAttribute("href").slice(4));
+ (navigator.clipboard?.writeText(n)||Promise.reject()).then(()=>toast(n+" をコピーしました。電話アプリで貼りつけてかけてください"),()=>toast("電話アプリで "+n+" と押してかけてください"))},true);
 function vContacts(){
-  return head("連絡先","envelope","sky")+`<div class="calls"><div><span>子どもの医療相談</span><b>#8000</b></div><div><span>救急相談</span><b>#7119</b></div></div>
-  <p class="lead">押すと書きかえられます。パートナーや祖父母が見てもわかるように。</p><div class="sheet">
-  ${S.contacts.map((c,i)=>`<div class="li"><span class="grow"><div class="sub">${esc(c[0])}</div><input id="ct${i}" data-act="ct" data-i="${i}" value="${esc(c[1])}" aria-label="${esc(c[0])}" style="border:none;background:none;padding:2px 0;font-weight:700"></span></div>`).join("")}
+  return head("連絡先","envelope","sky")+`<div class="calls"><a href="tel:%238000"><span>子どもの医療相談</span><b>#8000</b><span>${IOS?"押すと番号をコピー":"押すと電話"}</span></a><a href="tel:%237119"><span>救急相談</span><b>#7119</b><span>${IOS?"押すと番号をコピー":"押すと電話"}</span></a><a class="c119" href="tel:119"><span>救急車</span><b>119</b></a></div>
+  <p class="lead">番号を押すと書きかえられます。右の「電話」で、そのまま電話をかけられます。パートナーや祖父母が見てもわかるように。</p><div class="sheet">
+  ${S.contacts.map((c,i)=>`<div class="li"><span class="grow"><div class="sub">${esc(c[0])}</div><input id="ct${i}" data-act="ct" data-i="${i}" value="${esc(c[1])}" aria-label="${esc(c[0])}" style="border:none;background:none;padding:2px 0;font-weight:700"></span>${telB(c[1])}</div>`).join("")}
   <form class="add" data-form="ct"><input name="t" placeholder="項目を追加（例：担任の先生）" aria-label="項目"><button type="submit">追加</button></form></div>`;
 }
 function vVisits(){
@@ -3060,7 +3069,7 @@ let azPv=false;
 const azS=()=>{S.az=S.az||{f:AZ0.map(([k])=>[k,""]),day:[]};return S.az};
 function azText(){const a=azS(),c=S.contacts.filter(x=>x[1]);return `【${S.name||"こども"}の引き継ぎ】${months()>=0?"（"+months()+"か月）":""}\n`+a.f.filter(x=>x[1]).map(([k,v])=>`■${k}\n${v}`).join("\n")+(a.day.length?"\n■1日の流れ\n"+a.day.map(([t,x])=>t+" "+x).join("\n"):"")+(c.length?"\n■連絡先\n"+c.map(([k,v])=>k+" "+v).join("\n"):"")}
 function vAzuke(){const a=azS();
-  if(azPv)return head("引き継ぎシート","bear","sky")+`<div class="sheet azpv"><div class="azt">${esc(S.name||"こども")}の引き継ぎ<span class="sub">${months()>=0?months()+"か月":""}</span></div>${a.f.filter(x=>x[1]).map(([k,v])=>`<div class="azr"><div class="sub">${esc(k)}</div><div>${esc(v).replace(/\n/g,"<br>")}</div></div>`).join("")}${a.day.length?`<div class="azr"><div class="sub">1日の流れ</div>${a.day.map(([t,x])=>`<div><b>${esc(t)}</b>　${esc(x)}</div>`).join("")}</div>`:""}${S.contacts.filter(x=>x[1]).length?`<div class="azr"><div class="sub">連絡先</div>${S.contacts.filter(x=>x[1]).map(([k,v])=>`<div>${esc(k)}　<b>${esc(v)}</b></div>`).join("")}</div>`:""}</div>
+  if(azPv)return head("引き継ぎシート","bear","sky")+`<div class="sheet azpv"><div class="azt">${esc(S.name||"こども")}の引き継ぎ<span class="sub">${months()>=0?months()+"か月":""}</span></div>${a.f.filter(x=>x[1]).map(([k,v])=>`<div class="azr"><div class="sub">${esc(k)}</div><div>${esc(v).replace(/\n/g,"<br>")}</div></div>`).join("")}${a.day.length?`<div class="azr"><div class="sub">1日の流れ</div>${a.day.map(([t,x])=>`<div><b>${esc(t)}</b>　${esc(x)}</div>`).join("")}</div>`:""}${S.contacts.filter(x=>x[1]).length?`<div class="azr"><div class="sub">連絡先</div>${S.contacts.filter(x=>x[1]).map(([k,v])=>`<div>${esc(k)}　<b>${telU(v)?`<a href="${telU(v)}">${esc(v)}</a>`:esc(v)}</b></div>`).join("")}</div>`:""}</div>
   <div class="plbtn" style="margin-top:12px"><button type="button" class="pri" data-act="azcopy">文章をコピーしてLINEに貼る</button><button type="button" data-act="azpv">書きかえる</button></div>`;
   return head("引き継ぎシート","bear","sky")+`<p class="lead">じいじ・ばあば、一時保育、シッターさんに預けるとき用。一度書いておけば、毎回LINEで長文を打たなくてすみます。</p>
   <div class="sheet">${a.f.map(([k,v],i)=>`<label class="azf"><span class="sub">${esc(k)}</span><textarea rows="2" data-act="azf" data-i="${i}" placeholder="${esc((AZ0.find(x=>x[0]===k)||[,""])[1])}">${esc(v)}</textarea></label>`).join("")}
@@ -3452,7 +3461,7 @@ function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math
   return head("陣痛かも？","clock","pink")+`<p class="lead">あわてなくて大丈夫。上から順に見ていけばOKです。番号は前もって入れておいてください。</p>
   <section class="h-sec jtcall"><div class="hd"><h2>1. 産院に電話</h2></div>
    <label class="azf"><span class="sub">産院の名前</span><input data-act="jtf" data-v="hosp" value="${esc(j.hosp)}" placeholder="例：さくらレディースクリニック"></label>
-   <div class="jtrow"><label class="azf grow"><span class="sub">電話番号</span><input data-act="jtf" data-v="tel" value="${esc(j.tel)}" inputmode="tel" placeholder="例：03-0000-0000"></label>${cp(j.tel,"産院の番号")}</div>
+   <div class="jtrow"><label class="azf grow"><span class="sub">電話番号</span><input data-act="jtf" data-v="tel" value="${esc(j.tel)}" inputmode="tel" placeholder="例：03-0000-0000"></label>${cp(j.tel,"産院の番号")}${telB(j.tel)}</div>
    <p class="note" style="margin:6px 0 10px">「陣痛の間隔」「破水したか」「出血があるか」「母子手帳の番号」を聞かれることが多いです。</p></section>
   <section class="h-sec"><div class="hd"><h2>2. 陣痛の間隔をはかる</h2></div>
    <button type="button" class="jtbtn" data-act="jtlog">痛みが来た！</button>
@@ -3709,7 +3718,7 @@ document.addEventListener("change",e=>{
   if(a==="evdone")S.done[el.dataset.id]=el.checked;
   else if(a==="shop"){S.shop[i].d=el.checked;S.shop[i].by=el.checked?(S.me||"ママ"):"";if(el.checked)toast("買いました")}
   else if(a==="gift")S.gifts[i].sent=el.checked;
-  else if(a==="ct"){S.contacts[i][1]=el.value;save();toast("保存しました");return}
+  else if(a==="ct"){S.contacts[i][1]=el.value;save();toast("保存しました");render(true);return}
   else if(a==="wm"){W()[i].m=el.value;save();toast("保存しました");return}
   else if(a==="wg"){W()[i].g=el.value;save();render(true);return}
   else if(a==="bname")S.name=el.value;
