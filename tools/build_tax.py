@@ -88,7 +88,7 @@ def check(item, texts):
     return {**item, "when": r.get("when") or item["when"], "points": ps, "why": r.get("why", "")}
 
 
-def main():
+def main(BASE=BASE, OUT=OUT, SRC=SRC, FORCE=FORCE):
     today = datetime.datetime.now(JST).date().isoformat()
     base = json.load(open(BASE))
     try:

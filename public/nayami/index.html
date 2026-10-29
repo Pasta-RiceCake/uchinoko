@@ -2472,9 +2472,13 @@ YOBO.push(["all","産後・授乳中のこと",[
   ["授乳中でもワクチンは受けられる？","<p>ふつうに使われているワクチンは、授乳中でも受けられます。授乳をやめる必要もありません。</p>"],
   ["授乳中の薬","<p>多くの薬は、授乳中でも使えます。自分で判断してやめたり、授乳をやめたりせず、医師か薬剤師に「授乳中です」と伝えて相談してください。国立成育医療研究センターの「妊娠と薬情報センター」にも、授乳中に使える薬の一覧があります。</p>"],
   ["お酒・カフェイン","<p>お酒は、母乳に出るので授乳中はひかえましょう。飲んだときは、時間をあけてから授乳を。コーヒーは1日1〜2杯くらいなら大丈夫です。</p>"]]]);
+let VAXD=null;function vaxLoad(){if(VAXD!==null)return;VAXD=false;nrFetch("/data/vax.json").then(d=>{if(d&&d.items){VAXD=d;if(page==="yobo")render(true)}})}
+function vaxA(q,a){vaxLoad();const x=VAXD&&VAXD.items[q];if(!x)return a;const src=(x.src||[]).map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("・");
+ const body=x.upd?`<p><b>${esc(x.when)}</b></p><p>${x.points.map(p=>"・"+p).join("<br>")}</p>`:a;
+ return body+`<p class="note">${VAXD.checked?esc(VAXD.checked.replace(/-/g,"/"))+" に、":""}国のページと見くらべて確かめています。${src?"元のページ："+src:""}</p>`}
 function vYobo(){
   const g=S.mode==="pre"?[YOBO[0],YOBO[1],YOBO[2],YOBO[5],YOBO[3],YOBO[4],YOBO[6]]:[YOBO[3],YOBO[4],YOBO[6],YOBO[5],YOBO[0],YOBO[1],YOBO[2]];
-  return head("ワクチン・葉酸・アレルギー","heart","mint")+`<p class="lead">国や学会の情報をもとに、わかっていることだけをまとめています。くわしくは産院・小児科で聞いてください。</p>`+g.map(([m,h,it])=>`<section class="h-sec"><div class="hd"><h2>${h}</h2></div>${it.map(([q,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b></span></summary>${a}</details>`).join("")}</section>`).join("")+`<p class="note" style="margin-top:12px">2026年10月時点の情報です。ワクチンの受け方は、お住まいの市区町村の案内で確認してください。</p>`;
+  return head("ワクチン・葉酸・アレルギー","heart","mint")+`<p class="lead">国や学会の情報をもとに、わかっていることだけをまとめています。くわしくは産院・小児科で聞いてください。</p>`+g.map(([m,h,it])=>`<section class="h-sec"><div class="hd"><h2>${h}</h2></div>${it.map(([q,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b></span></summary>${vaxA(q,a)}</details>`).join("")}</section>`).join("")+`<p class="note" style="margin-top:12px">2026年10月時点の情報です。ワクチンの受け方は、お住まいの市区町村の案内で確認してください。</p>`;
 }
 const WASH=[["肌着・服・スタイ・ガーゼ","1回使ったら","汗やよだれで、すぐ汚れます"],["バスタオル","1回使ったら",""],
  ["おくるみ","2〜3日に1回","吐きもどし・うんち・汗がついたら、その日に"],["フィットシーツ・防水シーツ","週1〜2回","汚れたらすぐ替えられるように、2〜3枚あると楽"],
