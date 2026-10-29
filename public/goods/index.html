@@ -864,6 +864,7 @@ html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important
 .ryr{align-items:center;gap:8px}.rylv{flex:none;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}.rylv.l3{background:var(--ac);color:var(--onac);border-color:var(--ac)}.rylv.l2,.rylv.l1{border-color:var(--ac);color:var(--ac)}.rytr{flex:none;font-size:11px;opacity:.7;white-space:nowrap}
 .swst{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}.swst li{display:flex;flex-direction:column;gap:6px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:10px}.swst svg{width:100%;max-width:150px;height:auto;align-self:center}.swst span{font-size:13px;line-height:1.6}.swst b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ac);color:var(--onac);font-size:12px;margin-right:6px}
 .swc{fill:color-mix(in srgb,var(--ac) 12%,var(--sheet));stroke:var(--ac);stroke-width:1.5;stroke-linejoin:round}.swf{fill:color-mix(in srgb,var(--ac) 30%,var(--sheet));stroke:var(--ac);stroke-width:1.5;stroke-linejoin:round}.swk{fill:var(--sheet);stroke:currentColor;stroke-width:1.5}.swl{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.swe{fill:currentColor}.swa{fill:none;stroke:var(--ac);stroke-width:2;stroke-linecap:round;stroke-dasharray:3 3}
+.swst[hidden]{display:none}.swtab{margin:8px 0 4px}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2593,8 +2594,22 @@ const SWS=[
  ["片方の腕を胸の上に。左の布で体を包んで、背中の下に入れます",`${SWB}<path d="M38 28 L82 28" class="swl"/>${SWBODY}${SWH(28)}<path d="M8 60 L38 30 Q70 36 82 46 L80 84 Q50 92 30 82 z" class="swf"/><path d="M22 66 Q50 60 78 66" class="swa"/>`],
  ["下の布を、胸のあたりまで上げます。足はM字に曲がるよう、ゆったり包みます",`${SWB}<path d="M38 28 L82 28" class="swl"/>${SWBODY}${SWH(28)}<path d="M8 60 L38 30 Q70 36 82 46 L80 84 Q50 92 30 82 z" class="swf"/><path d="M30 96 Q60 46 90 96 L60 114 z" class="swf"/><path d="M50 98 q-10 -8 -2 -18 M70 98 q10 -8 2 -18" class="swl"/><path d="M60 110 l0 -40" class="swa"/>`],
  ["右の布で包んで、背中の下に入れたらできあがり",`<path d="M40 40 Q60 30 80 40 Q90 76 72 104 Q60 110 48 104 Q30 76 40 40 z" class="swf"/><path d="M42 50 Q62 60 80 46 M44 76 Q60 84 78 72" class="swl"/>${SWH(30)}`]];
-const SWAD=`<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>おくるみの巻き方</h2></div><div class="sub" style="margin:-2px 0 8px">くるまれると、おなかの中にいたときのように落ちつく赤ちゃんが多いです。</div>
- <ol class="swst">${SWS.map(([t,s],i)=>`<li><svg viewBox="0 0 120 120" aria-hidden="true">${s}</svg><span><b>${i+1}</b>${t}</span></li>`).join("")}</ol>
+const SWAD0=1;const SWR=`<rect x="10" y="22" width="100" height="84" rx="4" class="swc"/>`;
+const SWARM=`<path d="M50 56 q10 6 20 0" class="swl"/>`;
+const SWO=[
+ ["長方形の布を横長に広げ、顔だけ出るように寝かせます。腕は胸の前にそろえます",`${SWR}${SWBODY}${SWARM}${SWH(28)}`],
+ ["片方の上の角を持ち、反対側の肩に向けて包み、肩の下に入れます",`${SWR}${SWBODY}${SWH(28)}<path d="M10 22 L74 40 L70 84 L10 70 z" class="swf"/>`],
+ ["反対側の上の角も同じように包みます",`${SWR}${SWBODY}${SWH(28)}<path d="M10 22 L74 40 L70 84 L10 70 z" class="swf"/><path d="M110 22 L46 40 L50 84 L110 70 z" class="swf"/>`],
+ ["下の角を、それぞれ斜め上の肩へ持ち上げて入れます。足はM字に曲がるようゆったり。丸く台形になったらできあがり",`<path d="M42 40 Q60 32 78 40 L86 98 Q60 108 34 98 z" class="swf"/><path d="M38 96 Q60 70 82 96" class="swl"/><path d="M50 98 q-8 -8 -1 -16 M70 98 q8 -8 1 -16" class="swl"/>${SWH(30)}`]];
+const SWT=[
+ ["布を三角に折って逆三角形に置き、わきの下に折り目がくるように寝かせます。足元の布は軽く折り上げます",`<polygon points="8,34 112,34 60,112" class="swc"/>${SWBODY}${SWH(28)}<path d="M44 46 l-10 -10 M76 46 l10 -10" class="swl"/>`],
+ ["片方の布を胸にかぶせて、反対側のわきの下から背中の下に入れます",`<polygon points="8,34 112,34 60,112" class="swc"/>${SWBODY}${SWH(28)}<path d="M44 46 l-10 -10 M76 46 l10 -10" class="swl"/><path d="M8 34 L80 48 L74 88 L40 80 z" class="swf"/>`],
+ ["もう片方も巻いて、布の先を胸元にはさんだらできあがり。手は外に出して動かせます",`<path d="M42 46 Q60 40 78 46 L80 96 Q60 106 40 96 z" class="swf"/><path d="M44 50 Q60 62 78 52" class="swl"/><path d="M42 48 l-12 -12 M78 48 l12 -12" class="swl"/>${SWH(30)}`]];
+const SWKIND=[["基本巻き","生後0〜2か月ごろ。ひし形の布で",SWS],["おひなまき","生後0〜2か月ごろ。長方形の布で、体を丸く包む",SWO],["半巻き（手を出す）","手をよく動かすようになったら（3〜4か月ごろ）。寝返りが始まったらやめる",SWT]];
+const swList=(L,i)=>`<ol class="swst" data-swk="${i}"${i?" hidden":""}>${L.map(([t,s],j)=>`<li><svg viewBox="0 0 120 120" aria-hidden="true">${s}</svg><span><b>${j+1}</b>${t}</span></li>`).join("")}</ol>`;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-sw]");if(!b)return;e.stopPropagation();const sec=b.closest("section");sec.querySelectorAll("[data-sw]").forEach(x=>x.classList.toggle("on",x===b));sec.querySelectorAll("[data-swk]").forEach(o=>o.hidden=o.dataset.swk!==b.dataset.sw);sec.querySelector(".swsub").textContent=SWKIND[+b.dataset.sw][1]},true);
+const SWAD=`<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>おくるみの巻き方</h2></div><div class="sub" style="margin:-2px 0 4px">くるまれると、おなかの中にいたときのように落ちつく赤ちゃんが多いです。巻き方は3つ。どれも足はゆったりが大事です。</div>
+ <div class="mmcats swtab">${SWKIND.map(([n],i)=>`<button type="button" class="${i?"":"on"}" data-sw="${i}">${n}</button>`).join("")}</div><p class="sub swsub" style="margin:0 0 8px;font-size:12px">${SWKIND[0][1]}</p>${SWKIND.map(([,,L],i)=>swList(L,i)).join("")}
  <details class="svc"><summary><span class="grow"><b>気をつけること（大事）</b></span></summary><p>・<b>足はきつく巻かない</b>。足をまっすぐのばしてきつく巻くと、股関節がはずれやすくなります（日本小児整形外科学会）。ひざが曲がって、足が自由に動くくらいに<br>・胸もきつくしない。手のひらが入るくらいのゆとりを<br>・顔に布がかからないように<br>・あおむけで寝かせる。くるんだまま、うつぶせや横向きにしない<br>・暑くしすぎない。汗ばんでいたら、うすい布にするか、くるむのをやめる<br>・<b>寝返りしそうになったら（生後2〜4か月ごろ）やめる</b>。くるまれたまま寝返ると、自分で戻れずあぶないです</p></details>
  <details class="svc"><summary><span class="grow"><b>うまくいかないときは</b></span></summary><p>・手を胸の前で合わせるようにすると、落ちつく子が多いです<br>・いやがって泣くときは、むりに巻かなくて大丈夫。片手だけ出す、腕は出して体だけ包む、でもOK<br>・巻くのがむずかしいときは、マジックテープやファスナーでとめるタイプのおくるみ（スワドル）も便利です。足元が袋になっていて、足が動かせるものを選ぶと安心</p></details></section>`;
 function vMenu(){
