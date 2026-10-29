@@ -873,6 +873,12 @@ html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important
 .dpr{display:flex;gap:8px}.dpr select{flex:1;min-width:0;font-size:17px;padding:10px 8px}
 .dpb{display:flex;gap:10px;justify-content:flex-end;align-items:center}.dpb .btn{min-width:120px}
 input.dpin{cursor:pointer}
+input.dpin{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;text-align:left;min-height:2.6em}
+input.dpin::-webkit-date-and-time-value{text-align:left}
+.dpbox label{display:grid;gap:4px}
+.bornb{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--ac);color:var(--onac);border:0;border-radius:16px;padding:14px 16px;margin:0 0 12px}
+.bornb b{display:block;font-size:16px}.bornb span span{font-size:12px;opacity:.9}
+button.lnk{background:none;border:0;padding:0;color:var(--ac);text-decoration:underline;font:inherit}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2128,6 +2134,7 @@ const PRETODO=[[0,15,"〜15週",[["boshi","母子手帳をもらう（妊娠届�
 [36,42,"36週〜",[["taxi","陣痛タクシーに登録"],["renraku","病院と家族の連絡先をまとめる"],["todoke","出生届・児童手当の流れを確認"]]]];
 const BAG=[["b1","母子手帳・保険証・診察券"],["b2","前開きのパジャマ"],["b3","産褥ショーツ・授乳ブラ"],["b4","ペットボトル用ストローキャップ"],["b5","長めの充電ケーブル"],["b6","退院の日の赤ちゃんの服・おくるみ"],["b7","産褥ナプキン（病院でもらえるか確認）"]];
 const due=()=>new Date((S.due||iso(addD(T0,100)))+"T00:00:00");
+if(!S.born&&S.due&&S.birth!==S.due&&(S.mode==="pre"||S.birth>=iso(T0))){S.birth=S.due;save()}
 const preW=()=>{const left=Math.round((due()-T0)/864e5),g=280-left;return{left,w:Math.floor(g/7),d:g%7}};
 const HID=k=>S.pre.hide?.[k];
 const todoItems=g=>[...PRETODO[g][3].filter(([k])=>!HID(k)),...((S.pre.mytodo||{})[g]||[]).map((t,n)=>["u"+g+"_"+n+"_"+t,t,n])];
@@ -2149,12 +2156,12 @@ function vHomePre(){
   <div class="h-hero"><div><div class="who">出産予定日 <span class="nw">${md(due())}</span></div>
     <div class="big"><span class="sub">あと</span><span class="num n${String(Math.max(0,left)).length}">${Math.max(0,left)}</span><span>日</span></div>
     <div class="age2">妊娠${w}週${d}日</div></div>${photoBox()}</div>
-  <button type="button" class="jthome${w>=36?" big":""}" data-act="open" data-v="jintsu"><span class="grow"><b>陣痛かも？と思ったら</b><span>産院の電話・間隔のはかり方・家族への連絡</span></span>${ic("chev",16)}</button>
+  ${w>=36?`<button type="button" class="bornb" data-act="born"><span class="grow"><b>生まれました！</b><span>誕生日を入れて、子育て中に切りかえる</span></span>${ic("chev",16)}</button>`:""}<button type="button" class="jthome${w>=36?" big":""}" data-act="open" data-v="jintsu"><span class="grow"><b>陣痛かも？と思ったら</b><span>産院の電話・間隔のはかり方・家族への連絡</span></span>${ic("chev",16)}</button>
   ${st3()}<section class="h-sec"><div class="hd"><h2>いまやること（${cur[2]}）</h2><button type="button" data-act="open" data-v="pre">ぜんぶ</button></div><div class="rows">
    ${todo.map(([k,t])=>preRow(k,t,"")).join("")||'<p class="sub" style="margin:4px 0 10px">この時期のやることは全部できました</p>'}</div></section>
   <section class="h-sec"><div class="hd"><h2>よく使う</h2></div><div class="icgrid">${[["pre","やること","ribbonheart"],["junbi","準備品","onesie"],["sanin","産院","crib"],["body","体のこと","thermometer"],["life","すごし方","heart"],["rank","ランキング","star"],["wants","欲しい物","basket"],["city","市区町村","envelope"]].slice(0,8).map(([k,l,i])=>`<button type="button" data-act="open" data-v="${k}"><span class="cir">${il(i,40)}</span>${l}</button>`).join("")}</div></section>
   <section class="h-sec"><div class="hd"><h2>出産予定日</h2></div><div class="row" style="padding-bottom:10px"><input type="date" id="dueIn" data-act="due" value="${iso(due())}" aria-label="出産予定日"></div>
-   <p class="note">生まれたら、上の「子育て中」に切りかえて誕生日を入れてください。</p></section>`;
+   <p class="note">生まれたら、<button type="button" class="lnk" data-act="born">「生まれました」を押して</button>誕生日を入れてください。</p></section>`;
 }
 function openCrop(f,cb,sq){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
   const V=260,base=Math.max(V/im.width,V/im.height);let z=1,x=0,y=0,drag=null;
@@ -3565,6 +3572,18 @@ function dpOpen(el){
 }
 document.addEventListener("click",e=>{const el=e.target.closest&&e.target.closest(".dpin");if(!el)return;e.preventDefault();e.stopPropagation();dpOpen(el)},true);
 document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("dpin")){e.preventDefault();dpOpen(e.target)}},true);
+function bornOpen(){
+  const ov=document.createElement("div");ov.className="dp";
+  ov.innerHTML=`<form class="dpbox" data-bornf><p class="dpt">おめでとうございます！</p><p class="note" style="margin:0">誕生日を入れると、子育て中の画面に切りかわります。予定やイベントの日にちも、誕生日に合わせて変わります。</p>
+   <label class="sub">誕生日<input type="date" name="b" value="${iso(T0)}" max="${iso(T0)}"></label>
+   <label class="sub">名前（あとからでも大丈夫です）<input name="n" value="${esc(S.name&&!/（例）/.test(S.name)?S.name:"")}"></label>
+   <label class="sub">性別<select name="s"><option value="girl"${S.sex==="girl"?" selected":""}>女の子</option><option value="boy"${S.sex==="boy"?" selected":""}>男の子</option></select></label>
+   <div class="dpb"><button type="button" class="x" data-c="no">やめる</button><button type="submit" class="btn">✓ 決定</button></div></form>`;
+  document.body.appendChild(ov);
+  ov.addEventListener("click",e=>{if(e.target.closest("[data-c=no]"))ov.remove()});
+  ov.querySelector("form").addEventListener("submit",e=>{e.preventDefault();const f=e.target;if(!f.b.value)return toast("誕生日を入れてください");
+   S.birth=f.b.value;S.born=1;if(f.n.value.trim())S.name=f.n.value.trim();S.sex=f.s.value;S.mode="post";page=null;stack=[];save();ov.remove();render(false);toast("おめでとうございます！")});
+}
 function open(p){stack.push(page);page=p;try{history.pushState({u:stack.length},"")}catch(e){}render(false)}
 addEventListener("popstate",()=>{if(stack.length||page){page=stack.length?stack.pop():null;render(false)}});
 
@@ -3574,7 +3593,7 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act,i=+el.dataset.i,v=el.dataset.v,k=()=>{save();render(true)};
   switch(a){
     case"share":open("fufu");break;
-    case"open":open(v);break;case"st3x":S.st3=S.st3||{};S.st3[S.mode==="pre"?"pre":"kid"]=1;save();render(true);break;case"grp":page=v;render(false);break;
+    case"open":open(v);break;case"born":bornOpen();break;case"st3x":S.st3=S.st3||{};S.st3[S.mode==="pre"?"pre":"kid"]=1;save();render(true);break;case"grp":page=v;render(false);break;
     case"azpv":azPv=!azPv;render(false);break;
     case"azdaydel":azS().day.splice(i,1);k();break;
     case"azcopy":{const t=azText();try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("コピーできませんでした"))}catch(_){toast("コピーできませんでした")}break}
@@ -3717,7 +3736,7 @@ document.addEventListener("change",e=>{
   else if(a==="wm"){W()[i].m=el.value;save();toast("保存しました");return}
   else if(a==="wg"){W()[i].g=el.value;save();render(true);return}
   else if(a==="bname")S.name=el.value;
-  else if(a==="bbirth"){if(!el.value)return;S.birth=el.value}
+  else if(a==="bbirth"){if(!el.value)return;S.birth=el.value;if(!S.born&&el.value>iso(T0))S.due=el.value}
   else if(a==="bsex")S.sex=el.value;
   else if(a==="hkmonth")S.hk.month=el.value;
   else if(a==="hkck")S.hk.ck[i]=el.checked;
@@ -3729,7 +3748,7 @@ document.addEventListener("change",e=>{
   else if(a==="spsel"){spTab=el.value;render(false);return}
   else if(a==="spck"){S.spck=S.spck||{};S.spck[el.dataset.v]=el.checked}
   else if(a==="prck2")S.pre.ck[el.dataset.v]=el.checked;
-  else if(a==="due")S.due=el.value;
+  else if(a==="due"){S.due=el.value;if(!S.born&&el.value&&(S.mode==="pre"||S.birth>=iso(T0)))S.birth=el.value}
   else if(a==="azf"){azS().f[i][1]=el.value;save();toast("保存しました");return}
   else if(a==="rndate"){rnDate=el.value;render(true);return}
   else if(a==="rnd"){if(el.value)rnS().f[rnSel].d=el.value}
