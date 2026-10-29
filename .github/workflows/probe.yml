@@ -13,6 +13,10 @@ jobs:
           set +e
           for u in / /senpai/ /city/c/14100/ /a/ /robots.txt /sitemap.xml; do echo "== $u"; curl -s -o /tmp/o -w '%{http_code}\n' "https://uchinoko.pocket-app.workers.dev$u"; grep -o 'google-site-verification[^>]*\|<title>[^<]*' /tmp/o | head -3; head -c 300 /tmp/o | grep -v '^<' ; echo; done; grep -o 'mntab\|vHayami\|SEO_PAGES' /tmp/o | sort | uniq -c
           curl -s -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" -o /tmp/g -w 'googlebot %{http_code}\n' https://uchinoko.pocket-app.workers.dev/; grep -c google-site-verification /tmp/g || true
+      - name: og
+        run: |
+          set +e
+          for u in "https://twitter.com/Interior/status/507185938620219395" "https://www.youtube.com/watch?v=dQw4w9WgXcQ" "https://www.tiktok.com/@scout2015/video/6718335390845095173" "https://www.instagram.com/instagram/" "https://www.threads.net/@instagram"; do echo "== $u"; curl -s "https://uchinoko.pocket-app.workers.dev/api/og?u=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1],safe=""))' "$u")" | python3 -c 'import sys,json;j=json.load(sys.stdin);print(j.get("t"),"|",(j.get("n") or "")[:120],"| img",len(j.get("img") or ""))'; done
       - name: checks
         env:
           GH_TOKEN: ${{ github.token }}

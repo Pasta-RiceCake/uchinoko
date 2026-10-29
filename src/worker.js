@@ -1,3 +1,4 @@
+import { og } from "./og.js";
 import { pushInit, pushKey, pushSub, pushOff, pushSched, pushTest, pushPartner, pushCron } from "./push.js";
 // うちの子手帳: ふたりの共有データを D1 に置くだけの小さな API。
 // それ以外（画面）は public/ の静的ファイルをそのまま返す。
@@ -228,6 +229,7 @@ export default {
     if (m) return await manifest(env, m[1], url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
     if (url.pathname === "/api/cities" && req.method === "GET") return await cities(env);
+    if (url.pathname === "/api/og" && req.method === "GET") return await og(url);
     if (url.pathname === "/api/city" && req.method === "POST") return await cityWant(req, env);
     if (url.pathname === "/api/push/key" && req.method === "GET") {
       await init(env.DB);

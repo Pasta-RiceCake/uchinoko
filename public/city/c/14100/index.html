@@ -850,6 +850,16 @@ html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important
 .mmcats{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}.mmcats button{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:inherit}.mmcats button.on{background:var(--ac);color:var(--onac);border-color:var(--ac)}
 .mmn{white-space:pre-wrap;word-break:break-word}.mmims{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mmims img{width:72px;height:72px;object-fit:cover;border-radius:8px}.mmims.big img{width:100%;height:auto;max-height:70vh;object-fit:contain}.mmth{position:relative}.mmth .x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ac);color:var(--onac);font-size:13px;line-height:1}
 .mmfile{display:block;text-align:center;margin-top:6px;cursor:pointer}.mmf label:not(.mmfile){display:flex;flex-direction:column;gap:4px}.mmf input,.mmf select,.mmf textarea{font-size:16px}
+.mmchips{display:flex;flex-wrap:wrap;gap:6px}.mmchips label{cursor:pointer}.mmchips input{position:absolute;opacity:0;pointer-events:none}.mmchips span{display:inline-block;border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 12px;font-size:13px}.mmchips input:checked+span{background:var(--ac);color:var(--onac);border-color:var(--ac)}.mmchips input:focus-visible+span{outline:2px solid var(--ac);outline-offset:2px}
+.mmqb{display:flex;gap:8px;align-items:stretch}.mmqb .mmfile{flex:1;margin:0;font-size:13px;border:1px dashed var(--line);border-radius:999px;padding:10px 8px;background:var(--sheet)}.mmqb .pri{flex:1;border:0;border-radius:999px;padding:10px 8px;background:var(--ac);color:var(--onac);font:inherit;font-weight:700}.mmq textarea{font-size:16px}
+.mmgrid{display:flex;flex-direction:column;gap:10px}.mmc{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:12px 14px 8px}
+.mmtop{display:flex;gap:12px;align-items:flex-start}.mmtx{flex:1;min-width:0}.mmth1{flex:none;width:84px;height:84px;object-fit:cover;border-radius:10px;order:2}
+.mmmeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}.mmcat,.mmsite{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}.mmcat{background:var(--ac);color:var(--onac);border-color:var(--ac)}
+.mmti{display:block;font-size:15px;line-height:1.45}.mmc .mmn{margin:4px 0 0;font-size:13px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.mmc.open .mmn{display:block;-webkit-line-clamp:unset}
+.mmc .mmims.big{display:none}.mmc.open .mmims.big{display:flex}.mmc.open .mmth1{width:100%;height:auto;max-height:70vh;object-fit:contain;order:0}.mmc.open .mmtop{flex-direction:column}
+.mmbtm{display:flex;gap:14px;justify-content:flex-end;align-items:center;margin-top:8px;font-size:13px}.mmbtm button,.mmbtm a{background:none;border:0;padding:4px 0;font:inherit;color:var(--ac);text-decoration:none;cursor:pointer}.mmbtm .mmmore{margin-right:auto;color:inherit;opacity:.7}
+.mmpaste{border:1px solid var(--ac);color:var(--ac);background:none;border-radius:999px;padding:9px;font:inherit;font-size:14px;font-weight:700}
+.mmpv{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--sheet)}.mmpv img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:none}.mmpv div{min-width:0}.mmpv b{display:block;font-size:14px}.mmpv p{margin:2px 0 0;font-size:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2486,23 +2496,44 @@ function mmForm(x){const p=mmPre||{};x=x||{};const cat=x.cat||mmCat||MCATS[0];
   <label class="sub">メモ（投稿の文をコピーして貼っても、自分の言葉でまとめてもOK）<textarea name="n" rows="5">${esc(x.n||p.n||"")}</textarea></label>
   <div class="sub">スクショ・写真${(x.im||[]).length?`<div class="mmims">${x.im.map((b,i)=>`<span class="mmth"><img src="${mmImg(x.id,i,b)}" alt=""><button type="button" class="x" data-mm="imdel" data-i="${i}" aria-label="この画像を消す">×</button></span>`).join("")}</div>`:""}<label class="pladd mmfile"><span>スクショ・写真をえらぶ</span><input name="f" type="file" accept="image/*" multiple hidden></label></div>
   <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-mm="cancel">やめる</button>${x.id?`<button type="button" data-mm="del">消す</button>`:""}</div></form>`}
+let mmLast="";
+let mmOG=null,mmCatT=false,mmTm=0;
+const MMKW=[["寝かしつけ","寝 ねんね 夜泣き 睡眠 ネントレ 昼寝 寝かしつけ"],["離乳食・ごはん","離乳食 ごはん 食べ レシピ ミルク 授乳 おやつ 幼児食 母乳 ご飯"],["病気・ケガ","熱 病院 小児科 風邪 咳 鼻水 ケガ 予防接種 湿疹 便秘 下痢 嘔吐 アトピー"],
+ ["グッズ","買って 購入 グッズ 便利 おすすめ 100均 ダイソー セリア 楽天 Amazon 西松屋 アカホン 神アイテム 買ってよかった"],["あそび","遊び あそび おもちゃ 絵本 知育 手遊び 公園"],["家事・収納","収納 家事 掃除 洗濯 片付け 時短 作り置き"],["お金","お金 節約 給付 手当 貯金 保険 NISA ポイント 税金 申請"]];
+function mmGuess(s){s=s||"";for(const c of MCATS)if(c.length>1&&s.includes(c))return c;let best="",bn=0;for(const [c,w] of MMKW){if(!MCATS.includes(c))continue;const n=w.split(" ").filter(k=>s.includes(k)).length;if(n>bn){bn=n;best=c}}return best}
+function mmPrev(){const d=document.getElementById("mmprev");if(!d)return;if(!mmOG){d.innerHTML="";return}
+ d.innerHTML=mmOG.busy?`<p class="sub" style="margin:0">中身を読みこみ中…</p>`:(mmOG.t||mmOG.n||mmOG.img)?`<div class="mmpv">${mmOG.img?`<img src="${mmOG.img}" alt="">`:""}<div><b>${esc(mmOG.t||mmSite(mmOG.u))}</b>${mmOG.n?`<p>${esc(mmOG.n)}</p>`:""}</div></div>`:`<p class="sub" style="margin:0">中身は読みこめませんでした（${esc(mmSite(mmOG.u))}はログインが必要なことがあります）。リンクだけ保存できます。文を残したいときは、投稿の文もコピーして貼ってください。</p>`}
+function mmPick(c){if(!c||mmCatT)return;const r=[...document.querySelectorAll('.mmq [name=c]')].find(x=>x.value===c);if(r)r.checked=true}
+async function mmFetch(u){mmOG={u,busy:1};mmPrev();try{const r=await fetch("/api/og?u="+encodeURIComponent(u));const j=r.ok?await r.json():{};if(!mmOG||mmOG.u!==u)return;mmOG={u,t:j.t||"",n:j.n||"",img:j.img||""}}catch(_){if(mmOG&&mmOG.u===u)mmOG={u}}
+ mmPrev();const ta=document.querySelector(".mmq textarea");mmPick(mmGuess((mmOG.t||"")+" "+(mmOG.n||"")+" "+(ta?ta.value:"")))}
+function mmOnInput(ta){const v=ta.value,m=v.match(/https?:\/\/\S+/);clearTimeout(mmTm);mmTm=setTimeout(()=>{if(m&&(!mmOG||mmOG.u!==m[0]))mmFetch(m[0]);else if(!m){mmOG=null;mmPrev();mmPick(mmGuess(v))}},350)}
+document.addEventListener("input",e=>{if(e.target.matches(".mmq textarea"))mmOnInput(e.target)},true);
+document.addEventListener("change",e=>{if(e.target.matches(".mmq [name=c]"))mmCatT=true},true);
+const mmB64=d=>{const [h,b]=d.split(","),bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:(h.match(/data:([^;]+)/)||[])[1]||"image/jpeg"})};
+function mmQuick(){const p=mmPre||{},cat=mmCat||mmLast||MCATS[0],pre=[p.n,p.u].filter(Boolean).join("\n");
+ return `<form class="sheet stack mmf mmq" data-mm="quick"><textarea name="x" rows="2" placeholder="ここにリンクを貼る（文でもOK）" aria-label="リンクや文">${esc(pre)}</textarea><button type="button" class="mmpaste" data-mm="paste">コピーしたリンクを貼る</button><div id="mmprev"></div>
+ <div class="sub" style="font-size:12px;margin-bottom:-4px">入れるカテゴリ</div><div class="mmchips">${MCATS.map(c=>`<label><input type="radio" name="c" value="${esc(c)}"${c===cat?" checked":""}><span>${esc(c)}</span></label>`).join("")}<label><input type="radio" name="c" value="_new"><span>＋</span></label></div>
+ <input name="nc" placeholder="新しいカテゴリの名前" hidden>
+ <div class="mmqb"><label class="mmfile"><span>スクショをつける</span><input name="f" type="file" accept="image/*" multiple hidden></label><button type="submit" class="pri">保存</button></div></form>`}
 function vMemo(){
  if(MEMO===null){mmLoad();return head("わたしのお役立ちメモ","book","sky")+`<p class="sub">読みこみ中…</p>`}
  const L=MEMO.filter(x=>!mmCat||x.cat===mmCat),cnt=c=>MEMO.filter(x=>x.cat===c).length,ed=mmEd&&mmEd!=="new"?MEMO.find(x=>x.id===mmEd):null;
- return head("わたしのお役立ちメモ","book","sky")+`<p class="lead">SNSで見つけた知恵や、自分で調べたことを、カテゴリに分けてためておけます。</p>
- ${mmEd?mmForm(ed):`<button type="button" class="pladd" data-mm="new">＋ メモを追加する</button>`}
- ${MEMO.length?`<div class="mmcats"><button type="button" class="${mmCat?"":"on"}" data-mm="cat" data-v="">すべて ${MEMO.length}</button>${MCATS.filter(c=>cnt(c)).map(c=>`<button type="button" class="${c===mmCat?"on":""}" data-mm="cat" data-v="${esc(c)}">${esc(c)} ${cnt(c)}</button>`).join("")}</div>
+ return head("わたしのお役立ちメモ","book","sky")+`<p class="lead">インスタやXで「リンクをコピー」して、ここに貼るだけ。中身とカテゴリは自動で入ります。</p>
+ ${ed?mmForm(ed):mmQuick()}
+ ${MEMO.length?`<div class="sec-t" style="margin-top:16px">保存したメモ</div><div class="mmcats"><button type="button" class="${mmCat?"":"on"}" data-mm="cat" data-v="">すべて ${MEMO.length}</button>${MCATS.filter(c=>cnt(c)).map(c=>`<button type="button" class="${c===mmCat?"on":""}" data-mm="cat" data-v="${esc(c)}">${esc(c)} ${cnt(c)}</button>`).join("")}</div>
  <input id="mmq" type="search" class="msearch" placeholder="メモをさがす" aria-label="メモをさがす">
- <div class="stack" id="mmlist">${L.map(x=>{const s=mmSite(x.u);return `<details class="svc mmit" data-q="${esc((x.t+" "+x.n+" "+x.cat+" "+s).toLowerCase())}"><summary><span class="grow"><b>${esc(x.t||"（タイトルなし）")}</b><span class="sub" style="display:block;font-size:12px">${esc(x.cat)}${s?"・"+esc(s):""}・${new Date(x.at).toLocaleDateString("ja-JP")}</span></span></summary>
-  ${x.n?`<p class="mmn">${esc(x.n)}</p>`:""}${(x.im||[]).length?`<div class="mmims big">${x.im.map((b,i)=>`<img src="${mmImg(x.id,i,b)}" alt="保存したスクショ">`).join("")}</div>`:""}
-  <div class="plbtn">${x.u?`<a class="pri" href="${esc(x.u)}" target="_blank" rel="noopener">元の投稿を開く</a>`:""}<button type="button" data-mm="edit" data-v="${x.id}">書きかえる</button></div></details>`}).join("")||`<p class="sub">このカテゴリのメモはまだありません</p>`}</div>`:`<p class="sub" style="margin-top:12px">まだメモはありません。${/Android/.test(navigator.userAgent)?"ホーム画面に追加したアプリなら、インスタやXの「共有」から、うちの子手帳を選んでも送れます。":"インスタやXの投稿の「リンクをコピー」で、リンクを貼りつけられます。"}</p>`}
+ <div class="mmgrid" id="mmlist">${L.map(x=>{const s=mmSite(x.u),im=x.im||[],more=(x.n||"").length>90||im.length>1;return `<article class="mmc" data-q="${esc((x.t+" "+x.n+" "+x.cat+" "+s).toLowerCase())}">
+  <div class="mmtop">${im.length?`<img class="mmth1" src="${mmImg(x.id,0,im[0])}" alt="">`:""}<div class="mmtx"><div class="mmmeta"><span class="mmcat">${esc(x.cat)}</span>${s?`<span class="mmsite">${esc(s)}</span>`:""}</div>
+  <b class="mmti">${esc(x.t||"（タイトルなし）")}</b>${x.n&&x.n.split("\n")[0].slice(0,40)!==x.t?`<p class="mmn">${esc(x.n)}</p>`:x.n&&x.n.length>x.t.length?`<p class="mmn">${esc(x.n.slice(x.t.length).trim())}</p>`:""}</div></div>
+  ${im.length>1?`<div class="mmims big">${im.slice(1).map((b,i)=>`<img src="${mmImg(x.id,i+1,b)}" alt="保存したスクショ">`).join("")}</div>`:""}
+  <div class="mmbtm">${more?`<button type="button" class="mmmore" data-mm="more">ぜんぶ見る</button>`:""}${x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener">元の投稿 ›</a>`:""}<button type="button" data-mm="edit" data-v="${x.id}">書きかえる</button></div></article>`}).join("")||`<p class="sub">このカテゴリのメモはまだありません</p>`}</div>`:`<p class="sub" style="margin-top:12px">まだメモはありません。${/Android/.test(navigator.userAgent)?"ホーム画面に追加したアプリなら、インスタやXの「共有」から、うちの子手帳を選んでも送れます。":"インスタやXの投稿の「リンクをコピー」で、リンクを貼りつけられます。"}</p>`}
  <p class="note" style="margin-top:14px">このメモは、このスマホの中だけに保存されます。パートナーには共有されず、機種変更の引き継ぎにも入りません。元の投稿が消えたり鍵がかかっても、ここに書いた文とスクショは残ります。人の投稿の文やスクショは、自分で見るためだけに使ってください（人に送ったり、公開したりしないでください）。</p>`}
 document.addEventListener("click",async e=>{const b=e.target.closest("[data-mm]");if(!b||b.tagName==="FORM")return;e.stopPropagation();const a=b.dataset.mm;
- if(a==="new"){mmEd="new";render(true)}else if(a==="cancel"){mmEd=null;mmPre=null;render(true)}else if(a==="cat"){mmCat=b.dataset.v;render(true)}else if(a==="edit"){mmEd=b.dataset.v;render(true);scrollTo(0,0)}
+ if(a==="paste"){const ta=document.querySelector(".mmq textarea");try{const t=await navigator.clipboard.readText();if(t){ta.value=t.trim();mmOnInput(ta)}else toast("コピーしたものがありません")}catch(_){ta.focus();toast("ここを長押しして「ペースト」を押してください")}}else if(a==="more"){const c=b.closest(".mmc");c.classList.toggle("open");b.textContent=c.classList.contains("open")?"とじる":"ぜんぶ見る"}else if(a==="new"){mmEd="new";render(true)}else if(a==="cancel"){mmEd=null;mmPre=null;render(true)}else if(a==="cat"){mmCat=b.dataset.v;render(true)}else if(a==="edit"){mmEd=b.dataset.v;render(true);scrollTo(0,0)}
  else if(a==="del"){const id=b.closest("form").dataset.id;if(b.dataset.ok!=="1"){b.dataset.ok="1";b.textContent="本当に消す";return}await mmDel(id);MEMO=MEMO.filter(x=>x.id!==id);mmEd=null;toast("消しました");render(true)}
  else if(a==="imdel"){const x=MEMO.find(y=>y.id===mmEd);if(x){x.im.splice(+b.dataset.i,1);Object.keys(mmURL).forEach(k=>{if(k.startsWith(x.id+":"))delete mmURL[k]});await mmSave(x);render(true)}}},true);
-document.addEventListener("change",e=>{const f=e.target.closest(".mmf");if(f&&e.target.name==="f"){const n=e.target.files.length;f.querySelector(".mmfile span").textContent=n?n+"枚えらびました":"スクショ・写真をえらぶ";return}if(!f||e.target.name!=="c")return;const nc=f.elements.nc;nc.hidden=e.target.value!=="_new";if(!nc.hidden)nc.focus()},true);
-document.addEventListener("input",e=>{if(e.target.id!=="mmq")return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".mmit").forEach(d=>d.hidden=!!q&&!d.dataset.q.includes(q))},true);
+document.addEventListener("change",e=>{const f=e.target.closest(".mmf");if(f&&e.target.name==="f"){const n=e.target.files.length,q=f.classList.contains("mmq");f.querySelector(".mmfile span").textContent=n?n+"枚つけました":q?"スクショをつける":"スクショ・写真をえらぶ";return}if(!f||e.target.name!=="c")return;const nc=f.elements.nc;if(f.classList.contains("mmq")){nc.hidden=f.querySelector("[name=c]:checked").value!=="_new";if(!nc.hidden)nc.focus();return}nc.hidden=e.target.value!=="_new";if(!nc.hidden)nc.focus()},true);
+document.addEventListener("input",e=>{if(e.target.id!=="mmq")return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".mmc").forEach(d=>d.hidden=!!q&&!d.dataset.q.includes(q))},true);
 document.addEventListener("submit",async e=>{const f=e.target;if(f.dataset.mm!=="save")return;e.preventDefault();e.stopPropagation();const v=n=>(f.elements[n].value||"").trim();
  let c=v("c");if(c==="_new"){c=v("nc");if(!c)return toast("カテゴリの名前を入れてください");if(!MCATS.includes(c)){MCATS.push(c);await mmCatsSave()}}
  const old=f.dataset.id&&MEMO.find(x=>x.id===f.dataset.id),x=old||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:Date.now(),im:[]};
@@ -2512,11 +2543,21 @@ document.addEventListener("submit",async e=>{const f=e.target;if(f.dataset.mm!==
  for(const fl of [...f.elements.f.files].slice(0,10)){const b=await mmShrink(fl);if(b)x.im.push(b)}
  try{await mmSave(x)}catch(_){bt.disabled=false;bt.textContent="保存する";return toast("保存できませんでした。スマホの空きを確かめてください")}
  if(!old)MEMO.unshift(x);mmEd=null;mmPre=null;mmCat="";toast("保存しました");render(true)},true);
+document.addEventListener("submit",async e=>{const f=e.target;if(f.dataset.mm!=="quick")return;e.preventDefault();e.stopPropagation();
+ const raw=(f.elements.x.value||"").trim(),files=[...f.elements.f.files];let c=(f.querySelector("[name=c]:checked")||{}).value||MCATS[0];
+ if(!raw&&!files.length)return toast("リンクや文を貼ってください");
+ if(c==="_new"){c=(f.elements.nc.value||"").trim();if(!c)return toast("カテゴリの名前を入れてください");if(!MCATS.includes(c)){MCATS.push(c);await mmCatsSave()}}
+ const m=raw.match(/https?:\/\/\S+/),u=m?m[0]:"",n=(m?raw.replace(u,""):raw).trim(),x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:Date.now(),im:[],u,n,cat:c};
+ const g=mmOG&&mmOG.u===u&&!mmOG.busy?mmOG:null;if(g){x.t=g.t||(n.split("\n")[0]||"").slice(0,40)||mmSite(u)+"の投稿";x.n=[n,g.n].filter(Boolean).join("\n\n");if(g.img)try{x.im.push(mmB64(g.img))}catch(_){}}else x.t=(n.split("\n")[0]||"").slice(0,40)||(mmSite(u)?mmSite(u)+"の投稿":"スクショ");
+ const bt=f.querySelector("[type=submit]");bt.disabled=true;bt.textContent="保存中…";
+ for(const fl of files.slice(0,10)){const b=await mmShrink(fl);if(b)x.im.push(b)}
+ try{await mmSave(x)}catch(_){bt.disabled=false;bt.textContent="保存";return toast("保存できませんでした。スマホの空きを確かめてください")}
+ MEMO.unshift(x);mmLast=c;mmPre=null;mmOG=null;mmCatT=false;toast("保存しました");render(true)},true);
 /* Android の「共有」から来たとき（/?share=1&title=&text=&url=） */
 const MM_Q=new URLSearchParams(location.search),MM_P=location.pathname;
 function mmShare(){const q=MM_Q;if(!q.has("share")&&!/^\/share\/?$/.test(MM_P))return;const t=q.get("title")||"",tx=q.get("text")||"",m=(q.get("url")||tx).match(/https?:\/\/\S+/);
  mmPre={u:m?m[0]:"",t:/^(instagram|x|twitter|tiktok|threads|youtube|lemon8)$/i.test(t.trim())?"":t.slice(0,60),n:tx.replace(m?m[0]:"\u0000","").trim()};try{if(location.search||/^\/share/.test(location.pathname))history.replaceState(history.state,"",/^\/share/.test(location.pathname)?"/":location.pathname)}catch(_){}
- if(typeof S.setup!=="undefined"&&!S.setup)return;stack=[];page="memo";mmEd="new";render(false)}
+ if(typeof S.setup!=="undefined"&&!S.setup)return;stack=[];page="memo";mmEd=null;render(false);setTimeout(()=>{const ta=document.querySelector(".mmq textarea");if(ta)mmOnInput(ta)},100)}
 addEventListener("load",()=>setTimeout(mmShare,400));
 function vMenu(){
   const sub=MSUB,hid=S.mhide=S.mhide||{},all=mnTab==="all",fixed=g=>g==="せってい";
