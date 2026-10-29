@@ -867,6 +867,12 @@ html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important
 .swst[hidden]{display:none}.swtab{margin:8px 0 4px}
 .st3 .hd button[data-act="st3x"]::after{content:none}
 .mmchips label{position:relative}.mmchips input{width:1px!important;height:1px!important;inset:0 auto auto 0!important;margin:0!important}
+.dp{position:fixed;inset:0;z-index:55;background:rgba(20,20,20,.5);display:flex;align-items:flex-end;justify-content:center}
+.dpbox{background:var(--sheet);color:var(--ink);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px max(16px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+.dpt{margin:0;font-weight:700;font-size:15px}
+.dpr{display:flex;gap:8px}.dpr select{flex:1;min-width:0;font-size:17px;padding:10px 8px}
+.dpb{display:flex;gap:10px;justify-content:flex-end;align-items:center}.dpb .btn{min-width:120px}
+input.dpin{cursor:pointer}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -3488,6 +3494,36 @@ function render(keep){
   document.getElementById("tabs").innerHTML=(S.mode==="pre"?TABS_P:TABS).map(([k,l,i])=>`<button type="button" class="${(page||"home")===k?"on":""}" data-tab="${k}"><span class="tb">${["app","korea","yume","mono"].includes(S.th)?il(TABIL[i],30):ic(i,22)}</span>${l}</button>`).join("");
   window.scrollTo(0,keep?y:0);
 }
+const DPT='input[type="date"],input[type="month"],input[type="time"],input[type="datetime-local"]';
+function dpMark(r){(r.querySelectorAll?r:document).querySelectorAll(DPT).forEach(i=>{if(!i.readOnly){i.readOnly=true;i.classList.add("dpin")}})}
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches&&n.matches(DPT)){n.readOnly=true;n.classList.add("dpin")}dpMark(n)}}).observe(document.documentElement,{childList:true,subtree:true});
+function dpOpen(el){
+  const ty=el.type,p2=n=>String(n).padStart(2,"0"),now=new Date(),v=el.value||"";
+  let y=now.getFullYear(),mo=now.getMonth()+1,d=now.getDate(),h=10,mi=0;
+  const md=v.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/);if(md){y=+md[1];mo=+md[2];if(md[3])d=+md[3]}
+  const mt=v.match(/(?:^|T)(\d{2}):(\d{2})/);if(mt){h=+mt[1];mi=+mt[2]}
+  const yrs=[y,now.getFullYear()-6,now.getFullYear()+3];[el.min,el.max].forEach(x=>{const m=(x||"").match(/^\d{4}/);if(m)yrs.push(+m[0])});
+  const y0=Math.min(...yrs),y1=Math.max(...yrs),hasD=ty!=="time",hasDay=ty==="date"||ty==="datetime-local",hasT=ty==="time"||ty==="datetime-local";
+  const opt=(a,b,c,f)=>{let s="";for(let i=a;i<=b;i++)s+=`<option value="${i}"${i===c?" selected":""}>${f(i)}</option>`;return s};
+  const lab=el.getAttribute("aria-label")||el.closest("label")?.firstChild?.textContent?.trim()||(hasT&&!hasD?"時間":"日付");
+  const ov=document.createElement("div");ov.className="dp";
+  ov.innerHTML=`<div class="dpbox" role="dialog" aria-label="${esc(lab)}"><p class="dpt">${esc(lab)}</p><div class="dpr">
+   ${hasD?`<select data-k="y" aria-label="年">${opt(y0,y1,y,i=>i+"年")}</select><select data-k="m" aria-label="月">${opt(1,12,mo,i=>i+"月")}</select>`:""}
+   ${hasDay?`<select data-k="d" aria-label="日"></select>`:""}</div>
+   ${hasT?`<div class="dpr"><select data-k="h" aria-label="時">${opt(0,23,h,i=>i+"時")}</select><select data-k="i" aria-label="分">${opt(0,59,mi,i=>p2(i)+"分")}</select></div>`:""}
+   <div class="dpb">${ty==="time"&&!el.required&&el.value?`<button type="button" class="x" data-c="clr">空にする</button>`:""}<button type="button" class="x" data-c="no">やめる</button><button type="button" class="btn" data-c="ok">✓ 決定</button></div></div>`;
+  document.body.appendChild(ov);
+  const g=k=>ov.querySelector(`[data-k="${k}"]`);
+  const days=()=>{const s=g("d");if(!s)return;const n=new Date(+g("y").value,+g("m").value,0).getDate(),cur=Math.min(+s.value||d,n);s.innerHTML=opt(1,n,cur,i=>i+"日")};days();
+  ov.addEventListener("change",e=>{if(e.target.dataset.k==="y"||e.target.dataset.k==="m")days()});
+  ov.addEventListener("click",e=>{const c=e.target.closest("[data-c]")?.dataset.c;if(!c&&e.target!==ov)return;if(!c)return;
+   if(c==="ok"||c==="clr"){let out="";if(c==="ok"){const D=hasD?`${g("y").value}-${p2(g("m").value)}`+(hasDay?`-${p2(g("d").value)}`:""):"",T=hasT?`${p2(g("h").value)}:${p2(g("i").value)}`:"";out=ty==="datetime-local"?D+"T"+T:ty==="time"?T:D;
+     if(el.min&&out<el.min){toast("その日はえらべません");return}if(el.max&&out>el.max){toast("その日はえらべません");return}}
+    el.value=out;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
+   ov.remove()});
+}
+document.addEventListener("click",e=>{const el=e.target.closest&&e.target.closest(".dpin");if(!el)return;e.preventDefault();e.stopPropagation();dpOpen(el)},true);
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("dpin")){e.preventDefault();dpOpen(e.target)}},true);
 function open(p){stack.push(page);page=p;try{history.pushState({u:stack.length},"")}catch(e){}render(false)}
 addEventListener("popstate",()=>{if(stack.length||page){page=stack.length?stack.pop():null;render(false)}});
 

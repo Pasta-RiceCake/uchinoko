@@ -867,6 +867,12 @@ html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important
 .swst[hidden]{display:none}.swtab{margin:8px 0 4px}
 .st3 .hd button[data-act="st3x"]::after{content:none}
 .mmchips label{position:relative}.mmchips input{width:1px!important;height:1px!important;inset:0 auto auto 0!important;margin:0!important}
+.dp{position:fixed;inset:0;z-index:55;background:rgba(20,20,20,.5);display:flex;align-items:flex-end;justify-content:center}
+.dpbox{background:var(--sheet);color:var(--ink);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px max(16px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+.dpt{margin:0;font-weight:700;font-size:15px}
+.dpr{display:flex;gap:8px}.dpr select{flex:1;min-width:0;font-size:17px;padding:10px 8px}
+.dpb{display:flex;gap:10px;justify-content:flex-end;align-items:center}.dpb .btn{min-width:120px}
+input.dpin{cursor:pointer}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1743,7 +1749,7 @@ html:root[data-th] .l-home .h{color:color-mix(in srgb,currentColor 60%,var(--ink
 <div class="wrap"><main id="main"><div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる"><svg class="i" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.657 17.657L9 12l5.657-5.657"></path></svg></button><h1>お金の見通し</h1><span class="bub k2"><span class="iln" style="width:38px;height:38px"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="m3 6.5l8.68 7.233a.5.5 0 0 0 .64 0L21 6.5M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"></path></svg></span></span></div><p class="lead">いつ、いくらくらい入るかの目安です。お給料を入れると計算します（このスマホの中だけに保存されます）。</p>
   <div class="sheet stack"><div class="kch"><label><input type="radio" name="job" data-act="mnjob" value="会社員" checked=""><span style="--kc:var(--ac)">会社員</span></label><label><input type="radio" name="job" data-act="mnjob" value="自営業・フリーランス"><span style="--kc:var(--ac)">自営業・フリーランス</span></label></div>
   <label>お休みする人のお給料（1か月・税金を引く前）<input type="number" inputmode="numeric" data-act="mnsal" value="" placeholder="例：250000"></label>
-  <label>育休を始める日<input type="date" data-act="mnstart" value="2026-12-25"></label>
+  <label>育休を始める日<input type="date" data-act="mnstart" value="2026-12-25" readonly="" class="dpin"></label>
   <label>育休の長さ<select data-act="mnlen"><option value="6">6か月</option><option value="9">9か月</option><option value="10">10か月</option><option value="12" selected="">12か月</option><option value="18">18か月</option><option value="24">24か月</option></select></label>
   <label class="adw"><input type="checkbox" data-act="mnpt"> パートナーも14日以上育休をとる</label></div>
   <div class="sec-t">もらえるお金</div><div class="sheet mn">
@@ -3497,6 +3503,36 @@ function render(keep){
   document.getElementById("tabs").innerHTML=(S.mode==="pre"?TABS_P:TABS).map(([k,l,i])=>`<button type="button" class="${(page||"home")===k?"on":""}" data-tab="${k}"><span class="tb">${["app","korea","yume","mono"].includes(S.th)?il(TABIL[i],30):ic(i,22)}</span>${l}</button>`).join("");
   window.scrollTo(0,keep?y:0);
 }
+const DPT='input[type="date"],input[type="month"],input[type="time"],input[type="datetime-local"]';
+function dpMark(r){(r.querySelectorAll?r:document).querySelectorAll(DPT).forEach(i=>{if(!i.readOnly){i.readOnly=true;i.classList.add("dpin")}})}
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches&&n.matches(DPT)){n.readOnly=true;n.classList.add("dpin")}dpMark(n)}}).observe(document.documentElement,{childList:true,subtree:true});
+function dpOpen(el){
+  const ty=el.type,p2=n=>String(n).padStart(2,"0"),now=new Date(),v=el.value||"";
+  let y=now.getFullYear(),mo=now.getMonth()+1,d=now.getDate(),h=10,mi=0;
+  const md=v.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/);if(md){y=+md[1];mo=+md[2];if(md[3])d=+md[3]}
+  const mt=v.match(/(?:^|T)(\d{2}):(\d{2})/);if(mt){h=+mt[1];mi=+mt[2]}
+  const yrs=[y,now.getFullYear()-6,now.getFullYear()+3];[el.min,el.max].forEach(x=>{const m=(x||"").match(/^\d{4}/);if(m)yrs.push(+m[0])});
+  const y0=Math.min(...yrs),y1=Math.max(...yrs),hasD=ty!=="time",hasDay=ty==="date"||ty==="datetime-local",hasT=ty==="time"||ty==="datetime-local";
+  const opt=(a,b,c,f)=>{let s="";for(let i=a;i<=b;i++)s+=`<option value="${i}"${i===c?" selected":""}>${f(i)}</option>`;return s};
+  const lab=el.getAttribute("aria-label")||el.closest("label")?.firstChild?.textContent?.trim()||(hasT&&!hasD?"時間":"日付");
+  const ov=document.createElement("div");ov.className="dp";
+  ov.innerHTML=`<div class="dpbox" role="dialog" aria-label="${esc(lab)}"><p class="dpt">${esc(lab)}</p><div class="dpr">
+   ${hasD?`<select data-k="y" aria-label="年">${opt(y0,y1,y,i=>i+"年")}</select><select data-k="m" aria-label="月">${opt(1,12,mo,i=>i+"月")}</select>`:""}
+   ${hasDay?`<select data-k="d" aria-label="日"></select>`:""}</div>
+   ${hasT?`<div class="dpr"><select data-k="h" aria-label="時">${opt(0,23,h,i=>i+"時")}</select><select data-k="i" aria-label="分">${opt(0,59,mi,i=>p2(i)+"分")}</select></div>`:""}
+   <div class="dpb">${ty==="time"&&!el.required&&el.value?`<button type="button" class="x" data-c="clr">空にする</button>`:""}<button type="button" class="x" data-c="no">やめる</button><button type="button" class="btn" data-c="ok">✓ 決定</button></div></div>`;
+  document.body.appendChild(ov);
+  const g=k=>ov.querySelector(`[data-k="${k}"]`);
+  const days=()=>{const s=g("d");if(!s)return;const n=new Date(+g("y").value,+g("m").value,0).getDate(),cur=Math.min(+s.value||d,n);s.innerHTML=opt(1,n,cur,i=>i+"日")};days();
+  ov.addEventListener("change",e=>{if(e.target.dataset.k==="y"||e.target.dataset.k==="m")days()});
+  ov.addEventListener("click",e=>{const c=e.target.closest("[data-c]")?.dataset.c;if(!c&&e.target!==ov)return;if(!c)return;
+   if(c==="ok"||c==="clr"){let out="";if(c==="ok"){const D=hasD?`${g("y").value}-${p2(g("m").value)}`+(hasDay?`-${p2(g("d").value)}`:""):"",T=hasT?`${p2(g("h").value)}:${p2(g("i").value)}`:"";out=ty==="datetime-local"?D+"T"+T:ty==="time"?T:D;
+     if(el.min&&out<el.min){toast("その日はえらべません");return}if(el.max&&out>el.max){toast("その日はえらべません");return}}
+    el.value=out;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
+   ov.remove()});
+}
+document.addEventListener("click",e=>{const el=e.target.closest&&e.target.closest(".dpin");if(!el)return;e.preventDefault();e.stopPropagation();dpOpen(el)},true);
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("dpin")){e.preventDefault();dpOpen(e.target)}},true);
 function open(p){stack.push(page);page=p;try{history.pushState({u:stack.length},"")}catch(e){}render(false)}
 addEventListener("popstate",()=>{if(stack.length||page){page=stack.length?stack.pop():null;render(false)}});
 
