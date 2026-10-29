@@ -845,6 +845,8 @@ html:root[data-th] .seg.hyseg{background:var(--sheet)!important;border-radius:14
 .hysep{grid-column:1/-1;height:1px;margin:6px 0;background:var(--line);z-index:1}
 .wtseg{flex-wrap:wrap}.wtseg button{flex:1 1 22%;font-size:12px;padding-inline:4px}
 .wshr{align-items:flex-start;gap:10px}.wshf{flex:none;font-size:13px;color:var(--ac);white-space:nowrap}
+.grpseg{display:flex;gap:4px;margin:0 0 12px;padding:0 8px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow-x:auto;scrollbar-width:none}.grpseg button{flex:1 0 auto;background:none!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;box-shadow:none!important;padding:8px 6px 7px;font:inherit;font-size:14px;color:inherit;opacity:.6;cursor:pointer}.grpseg button.on{opacity:1;font-weight:700;color:var(--ac);border-bottom-color:var(--ac)!important}
+html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important;border-radius:14px;padding:2px 6px}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1908,7 +1910,7 @@ function evLi(e){const dn=!!S.done[e.id];return `<label class="li"><span class="
 /* ===== 画面のしくみ ===== */
 let tab="home",page=null,calM=new Date(T0.getFullYear(),T0.getMonth(),1),calSel=iso(T0),season=(m=>m<=1||m===11?"冬":m<=4?"春":m<=8?"夏":"秋")(T0.getMonth()),symSel=0;
 const who={mama:"ママ",papa:"パパ",both:"ふたり",none:"未定"},order=["mama","papa","both","none"];
-const head=(title,icon,col)=>`<div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる">${ic("left",20)}</button><h1>${title}</h1><span class="bub ${K[col]}">${pic(icon,38)}</span></div>`;
+const head=(title,icon,col)=>grpHead(title,icon,col)||`<div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる">${ic("left",20)}</button><h1>${title}</h1><span class="bub ${K[col]}">${pic(icon,38)}</span></div>`;
 
 /* メニュー */
 const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonheart","pink"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"],["shop","買い物","basket","lemon"]]],
@@ -1919,6 +1921,20 @@ const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonhe
  ["産まれたあとに読む",[["hayami","月齢の早見表","star","lemon"],["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["chiiku","あそび・絵本","book","lemon"]]],
  ["せってい",[["sync","共有と引き継ぎ","hearthands","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"],["privacy","プライバシーポリシー","star","pink"]]]];
 const MENU_=()=>S.mode==="pre"?MENU_P:MENU_M;
+const GRP=[["赤ちゃんの服","onesie","sky",[["wear","着せ方"],["clothes","枚数"]],"季節と温度ごとの着せ方・何枚あるといいか"],
+ ["病気・ケガ","thermometer","pink",[["sick","急なとき"],["ill","よくある病気"],["visits","受診メモ"]],"熱・ケガのときの見分け方、よくある病気、受診のメモ"],
+ ["行事・お祝い","cupcake","mint",[["events","行事"],["fun","お楽しみ"],["gifts","内祝い"]],"お宮参りから七五三まで、お楽しみイベント、内祝いのメモ"],
+ ["グッズ","star","lemon",[["rank","ランキング"],["goods","話題"],["nayami","お悩み別"]],"人気ランキング・話題のグッズ・お悩み別の便利アイテム"],
+ ["妊娠中の体とすごし方","heart","pink",[["body","体のこと"],["life","すごし方"],["care","お産にそなえる"]],"体の変化、気をつけること、お産にそなえる体のケア"],
+ ["産院とバースプラン","crib","mint",[["sanin","産院の選び方"],["bplan","バースプラン"]],"産院の探し方・比べ方と、お産の希望をまとめる"],
+ ["見た目と通知","bunny","pink",[["kise","きせかえ"],["homeedit","ホーム"],["appset","アイコン・通知"]],"テーマ・色・絵、ホームに出すもの、アイコンと通知"]];
+const grpIn=()=>{const s=new Set();MENU_().forEach(([,it])=>it.forEach(x=>s.add(x[0])));return s};
+const grpOf=k=>{const s=grpIn();for(const g of GRP){const m=g[3].filter(x=>s.has(x[0]));if(m.length>1&&m.some(x=>x[0]===k))return [g,m]}return null};
+function grpHead(title,icon,col){const r=page&&grpOf(page);if(!r)return "";const [g,m]=r;
+ return `<div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる">${ic("left",20)}</button><h1>${g[0]}</h1><span class="bub ${K[g[2]]}">${pic(g[1],38)}</span></div><div class="grpseg" role="tablist">${m.map(([k,l])=>`<button type="button" class="${k===page?"on":""}" data-act="grp" data-v="${k}">${l}</button>`).join("")}</div>`}
+function mnMerge(items){const s=grpIn(),done=new Set(),out=[];
+ for(const x of items){const r=grpOf(x[0]);if(!r){out.push(x);continue}const [g,m]=r;if(done.has(g[0]))continue;done.add(g[0]);out.push([m[0][0],g[0],g[1],g[2],g[4],m.map(y=>y[0])])}
+ return out}
 const W=()=>S.mode==="pre"?(S.wantsPre=S.wantsPre||[]):S.wants;
 const JUNBI=[
  ["着るもの","肌着や服は、ユニクロ・H&M・GAPなどでも。GAPはセールのときにまとめ買いするとお得です。",[["短肌着","5〜6枚","いちばん下に着せる肌着"],["コンビ肌着（50サイズ）","5〜6枚","股をとめる肌着"],["2wayオール","2〜3枚","普段用とおでかけ用があると便利"],["カバーオール","1〜2枚",""],["半そでボディ肌着（60サイズ）","2枚",""],["長そでボディ肌着","2〜3枚","生後1〜2か月ごろから","産後でOK"],["ロンパース","2〜3枚","生後2〜3か月ごろから","産後でOK"],["おくるみ","1枚","退院のときに産院でもらえることも","病院にあることも"],["セレモニードレス","1着","退院の日やお宮参りに。なくてもOK",""],["ガーゼハンカチ","10〜30枚","ミルクやよだれふきに、とにかくたくさん使います"],["靴下","1〜2足","おでかけ用"],["ブランケット","1〜2枚",""],["スタイ","3〜4枚","よだれが増える生後2か月ごろから","産後でOK"],["ミトン","1〜2組","顔をひっかくようなら","あると安心"]]],
@@ -2440,11 +2456,11 @@ const WASH_NOTE=`<section class="h-sec" style="margin-top:12px"><div class="hd">
  ${WASH_TIP.map(([q,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b></span></summary><p>${a}</p></details>`).join("")}</section>`;
 function vMenu(){
   const sub=MSUB,hid=S.mhide=S.mhide||{},all=mnTab==="all",fixed=g=>g==="せってい";
-  const G=MENU_().map(([t,items])=>[t,all||fixed(t)?items:items.filter(x=>!hid[x[0]])]).filter(x=>x[1].length);
+  const G=MENU_().map(([t,items])=>[t,mnMerge(items)]).map(([t,items])=>[t,all||fixed(t)?items:items.filter(x=>!hid[x[0]])]).filter(x=>x[1].length);
   const nh=Object.keys(hid).filter(k=>hid[k]).length;
   return `<div class="ph"><h1>メニュー</h1></div><div class="seg segw mnseg"><button type="button" class="${all?"":"on"}" data-act="mntab" data-v="my">わたしのメニュー</button><button type="button" class="${all?"on":""}" data-act="mntab" data-v="all">すべてのメニュー</button></div>
   <p class="sub mnlead">${all?"「出す」がついているものが、わたしのメニューに出ます。いらないものは押して外してください。":nh?`いらないメニューを${nh}こ かくしています。もどすときは「すべてのメニュー」から。`:"いらないメニューは、「すべてのメニュー」でかくせます。"}</p>
-  <input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+G.map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i])=>{const q=esc(l+" "+(sub[k]||"")+" "+(MKW[k]||""));const row=`<button type="button" class="rw" data-act="open" data-v="${k}"${all?"":` data-q="${q}"`}>${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${sub[k]||""}</div></span>${all?"":`<span class="chev">${ic("chev",16)}</span>`}</button>`;
+  <input id="msearch" type="search" class="msearch" placeholder="さがす（例：熱、ミルク、お金）" aria-label="メニューをさがす"><p class="sub" id="mnone" hidden style="text-align:center">見つかりませんでした</p>`+G.map(([t,items])=>`<div class="menu-g"><h2>${t}</h2><div class="rows">${items.map(([k,l,i,,gs,mem])=>{const q=esc(l+" "+(mem||[k]).map(z=>(sub[z]||"")+" "+(MKW[z]||"")).join(" "));const row=`<button type="button" class="rw" data-act="open" data-v="${k}"${all?"":` data-q="${q}"`}>${pic(i,36)}<span class="grow"><div class="t">${l}</div><div class="s">${gs||sub[k]||""}</div></span>${all?"":`<span class="chev">${ic("chev",16)}</span>`}</button>`;
    return all?`<div class="mnrow" data-q="${q}">${row}${fixed(t)?"":`<button type="button" class="mnpick${hid[k]?"":" on"}" data-act="mnhide" data-v="${k}" aria-pressed="${!hid[k]}">${hid[k]?"出さない":"出す"}</button>`}</div>`:row}).join("")}</div></div>`).join("");
 }
 let chPick=-1;
@@ -3286,7 +3302,7 @@ document.addEventListener("click",e=>{
   const a=el.dataset.act,i=+el.dataset.i,v=el.dataset.v,k=()=>{save();render(true)};
   switch(a){
     case"share":open("fufu");break;
-    case"open":open(v);break;
+    case"open":open(v);break;case"grp":page=v;render(false);break;
     case"azpv":azPv=!azPv;render(false);break;
     case"azdaydel":azS().day.splice(i,1);k();break;
     case"azcopy":{const t=azText();try{navigator.clipboard.writeText(t).then(()=>toast("コピーしました"),()=>toast("コピーできませんでした"))}catch(_){toast("コピーできませんでした")}break}
