@@ -289,7 +289,8 @@ def probe():
     ms = get_json(f"https://generativelanguage.googleapis.com/v1beta/models?key={KEY}&pageSize=200").get("models", [])
     names = [m["name"].split("/")[1] for m in ms if "generateContent" in m.get("supportedGenerationMethods", [])]
     print("models", names)
-    for m in [x for x in names if "flash" in x][:12]:
+    want = [x for x in os.environ.get("PROBE", "").split(",") if x in names]
+    for m in want or [x for x in names if "flash" in x][:12]:
         for tools in ([], [{"google_search": {}}]):
             try:
                 r = get_json(f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={KEY}",
