@@ -28,8 +28,23 @@ def get_json(url, body=None, timeout=240):
         return json.loads(urllib.request.urlopen(req, timeout=timeout).read())
     except urllib.error.HTTPError as e:
         if e.code == 429:
-            raise Limit(e.read()[:1500])
+            raise Limit(why429(e.read()))
         raise RuntimeError(f"{e.code} {e.read()[:300]}")
+
+
+def why429(b):
+    # 429 の中身から、どの上限か（1分あたり・1日あたり・0件 など）だけを短く取り出す
+    try:
+        err = json.loads(b).get("error", {})
+    except ValueError:
+        return b[:300].decode("utf-8", "replace")
+    q = []
+    for d in err.get("details", []):
+        for v in d.get("violations", []):
+            q.append(f'{v.get("quotaId", "")} {v.get("quotaValue", "")}'.strip())
+        if d.get("retryDelay"):
+            q.append("retry " + d["retryDelay"])
+    return " | ".join([err.get("message", "")[:160]] + q)
 
 
 def host(u):
@@ -199,7 +214,7 @@ def gem(parts):
                          {"contents": [{"parts": parts}], "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"}})
         except Limit as e:
             last = e
-            print("limit", model, str(e)[-200:])
+            print("limit", model, e)
             continue
         except RuntimeError as e:
             last = e
@@ -282,7 +297,7 @@ def probe():
                 t = "".join(p.get("text", "") for p in r["candidates"][0]["content"]["parts"])
                 print("OK", m, bool(tools), t[:80].replace("\n", " "))
             except Limit as e:
-                print("429", m, bool(tools), str(e)[-400:].replace("\\n", " "))
+                print("429", m, bool(tools), e)
             except Exception as e:
                 print("ERR", m, bool(tools), str(e)[:200])
             time.sleep(4)

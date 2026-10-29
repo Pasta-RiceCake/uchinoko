@@ -42,7 +42,7 @@ url には、そのイベントがのっている公式のページのURLを入�
                          {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}], "generationConfig": {"temperature": 0.1}})
         except Limit as e:
             last = e
-            print("limit", model, str(e)[-200:])
+            print("limit", model, e)
             continue
         except RuntimeError as e:
             last = e
@@ -65,7 +65,7 @@ def gsearch(prompt):
                          {"contents": [{"parts": [{"text": prompt}]}], "tools": [{"google_search": {}}], "generationConfig": {"temperature": 0.1}})
         except Limit as e:
             last = e
-            print("limit", model, str(e)[-200:])
+            print("limit", model, e)
             continue
         except RuntimeError as e:
             last = e
