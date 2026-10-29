@@ -27,6 +27,7 @@ jobs:
           git config user.name "uchinoko-data"
           git config user.email "uchinoko-data@users.noreply.github.com"
           [ -d public/data/odk ] || exit 0
+          git add tools/odk_sites.json 2>/dev/null || true
           git add public/data/odk
           git diff --cached --quiet && exit 0
           git commit -m "子連れおでかけのイベントを更新"
