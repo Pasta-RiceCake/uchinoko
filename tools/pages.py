@@ -7,7 +7,7 @@ import json, os, re, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://uchinoko.pocket-app.workers.dev"
-PRIVATE = {"cal", "fufu", "shop", "chores", "contacts", "visits", "baby", "appset", "kise", "homeedit", "shareinfo", "menu", "sync",
+PRIVATE = {"memo", "cal", "fufu", "shop", "chores", "contacts", "visits", "baby", "appset", "kise", "homeedit", "shareinfo", "menu", "sync",
            "wants", "clothes", "azuke", "rinyu", "bplan", "names", "events"}
 EXTRA = {"privacy": ("プライバシーポリシー", "うちの子手帳のプライバシーポリシーです。")}
 

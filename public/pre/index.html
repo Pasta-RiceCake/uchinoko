@@ -847,6 +847,9 @@ html:root[data-th] .seg.hyseg{background:var(--sheet)!important;border-radius:14
 .wshr{align-items:flex-start;gap:10px}.wshf{flex:none;font-size:13px;color:var(--ac);white-space:nowrap}
 .grpseg{display:flex;gap:4px;margin:0 0 12px;padding:0 8px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow-x:auto;scrollbar-width:none}.grpseg button{flex:1 0 auto;background:none!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;box-shadow:none!important;padding:8px 6px 7px;font:inherit;font-size:14px;color:inherit;opacity:.6;cursor:pointer}.grpseg button.on{opacity:1;font-weight:700;color:var(--ac);border-bottom-color:var(--ac)!important}
 html:root[data-th="gal"] .seg.segw:not(.mnseg){background:var(--sheet)!important;border-radius:14px;padding:2px 6px}
+.mmcats{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}.mmcats button{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:inherit}.mmcats button.on{background:var(--ac);color:var(--onac);border-color:var(--ac)}
+.mmn{white-space:pre-wrap;word-break:break-word}.mmims{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mmims img{width:72px;height:72px;object-fit:cover;border-radius:8px}.mmims.big img{width:100%;height:auto;max-height:70vh;object-fit:contain}.mmth{position:relative}.mmth .x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ac);color:var(--onac);font-size:13px;line-height:1}
+.mmfile{display:block;text-align:center;margin-top:6px;cursor:pointer}.mmf label:not(.mmfile){display:flex;flex-direction:column;gap:4px}.mmf input,.mmf select,.mmf textarea{font-size:16px}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1894,7 +1897,7 @@ const who={mama:"ママ",papa:"パパ",both:"ふたり",none:"未定"},order=["m
 const head=(title,icon,col)=>grpHead(title,icon,col)||`<div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる">${ic("left",20)}</button><h1>${title}</h1><span class="bub ${K[col]}">${pic(icon,38)}</span></div>`;
 
 /* メニュー */
-const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonheart","pink"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"],["shop","買い物","basket","lemon"]]],
+const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonheart","pink"],["memo","わたしのお役立ちメモ","book","sky"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"],["shop","買い物","basket","lemon"]]],
  ["お産にそなえる",[["jintsu","陣痛かも？と思ったら","clock","pink"],["care","お産にそなえる体のケア","heart","sky"],["bplan","バースプラン","sleepbaby","pink"],["sanin","産院の選び方","crib","mint"],["contacts","連絡先","envelope","lemon"]]],
  ["体とすごし方",[["body","妊娠中の体のこと","thermometer","pink"],["life","妊娠中のすごし方","heart","sky"],["yobo","ワクチン・葉酸・アレルギー","heart","mint"],["senpai","先輩ママの知恵袋","hearthands","pink"],["nayami","お悩み別の便利アイテム","basket","lemon"],["biyou","産前産後の美容","ribbon","pink"],["fun","お楽しみイベント","ribbon","pink"]]],
  ["そろえるもの",[["junbi","出産準備品リスト","onesie","pink"],["names","名前候補","heart","pink"],["rank","人気ランキング","star","lemon"],["perk","もらえる特典・お店の教室","gift","pink"],["wants","欲しい物メモ","ribbonheart","sky"]]],
@@ -2046,7 +2049,7 @@ const TABS_P=[["home","ホーム","t-home"],["cal","カレンダー","t-cal"],["
 const MENU_M=[
   ["毎日のこと",[["chores","きょうの家事","hearthands","pink"],["shop","買い物","basket","lemon"],["cal","カレンダー","clock","sky"],["fufu","ふたりの共有メモ","hearthands","pink"]]],
   ["赤ちゃんのお世話",[["hayami","月齢の早見表","star","lemon"],["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["clothes","服の枚数","socks","lemon"],["rinyu","離乳食の食材チェック","mug","lemon"],["chiiku","あそび・絵本","book","lemon"],["azuke","預けるときの引き継ぎ","bear","sky"]]],
-  ["ママのこと",[["biyou","産前産後の美容","ribbon","pink"],["senpai","先輩ママの知恵袋","hearthands","pink"]]],
+  ["ママのこと",[["memo","わたしのお役立ちメモ","book","sky"],["senpai","先輩ママの知恵袋","hearthands","pink"],["biyou","産前産後の美容","ribbon","pink"]]],
   ["病気・もしものとき",[["sick","急な病気・ケガ","thermometer","pink"],["ill","よくある病気","pillow","sky"],["yobo","ワクチン・葉酸・アレルギー","heart","mint"],["visits","受診メモ","book","mint"],["contacts","連絡先","envelope","lemon"]]],
   ["行事・お祝い",[["events","イベント","cupcake","mint"],["fun","お楽しみイベント","ribbon","pink"],["gifts","内祝いメモ","gift","pink"]]],
   ["おでかけ・地域",[["odk","子連れおでかけ","rainbow","sky"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
@@ -2234,7 +2237,7 @@ function vCityBase(){
    <p class="note">${L?`「${cn}では」の部分は、${esc(String(L.at).slice(0,7).replace("-","年"))}月に${cn}の公式サイトから読んでまとめたものです。そのほかは国の基本です。`:(S.city&&ci&&sv==="none"?`${cn}の内容は、いま公式サイトから読んでいるところです。ふつうは次の日の朝までに出ます。それまでは国の基本を出しています。`:"金額や条件は国の基本です。市区町村によって上乗せや違いがあります。")}申しこむ前に、市の公式サイトで確かめてください。</p></section>`})()}
 `;
 }
-const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",yobo:"妊娠中のワクチン・葉酸・気をつけたい食べ物・アレルギーとアトピー",hayami:"0〜12か月の成長・服・ごはん・あそび・おでかけ・行事をひと目で",perk:"アカチャンホンポのプレママ特典・マタニティアドバイザー・お試しBoxなど",fun:"マタニティフォト・ジェンダーリビール・命名書・月齢フォトなど",jintsu:"産院への電話・間隔のはかり方・家族への連絡",senpai:"こんなとき、先輩ママはどうした？入院・授乳・寝かしつけ・離乳食など",biyou:"美容院・マツエク・ネイルはいつまで、産後の骨盤とダイエット",nayami:"むくみ・腰痛・寝苦しい・つわりに、先輩ママが助かった物",care:"会陰マッサージ・呼吸法・逆子体操・パートナーの腰押しなど",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか・医療費控除・扶養",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",privacy:"入力した内容の保存と、広告について",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
+const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",memo:"SNSで見つけた知恵やリンクを、カテゴリ別にためておく",yobo:"妊娠中のワクチン・葉酸・気をつけたい食べ物・アレルギーとアトピー",hayami:"0〜12か月の成長・服・ごはん・あそび・おでかけ・行事をひと目で",perk:"アカチャンホンポのプレママ特典・マタニティアドバイザー・お試しBoxなど",fun:"マタニティフォト・ジェンダーリビール・命名書・月齢フォトなど",jintsu:"産院への電話・間隔のはかり方・家族への連絡",senpai:"こんなとき、先輩ママはどうした？入院・授乳・寝かしつけ・離乳食など",biyou:"美容院・マツエク・ネイルはいつまで、産後の骨盤とダイエット",nayami:"むくみ・腰痛・寝苦しい・つわりに、先輩ママが助かった物",care:"会陰マッサージ・呼吸法・逆子体操・パートナーの腰押しなど",fufu:"手続きの担当決めと、ふたりで知っておきたいメモ",bplan:"どんなお産にしたいか、選んで産院に伝える",azuke:"預けるときに渡す、この子の取扱説明書",rinyu:"食べた食材と、気になった反応のメモ",money:"給付金や手当がいつ、いくら入るか・医療費控除・扶養",names:"ふたりで候補を出して♡が重なった名前",visits:"症状の経過と、受診で言われたこと",privacy:"入力した内容の保存と、広告について",appset:"ホーム画面のアイコンと、お知らせの設定",life:"気をつけること・やっておくこと・イベント",junbi:"そろえる物と枚数の目安",sanin:"種類・選ぶポイント・費用",body:"すぐ電話するときと、よくある変化",rank:"ジャンル別の売れ筋。毎週入れ替え",pre:"妊娠週ごとのやることと入院バッグ",chiiku:"月齢ごとの遊び・知育グッズ・絵本・こんなときは？",chores:"やったらチェック。相手に「ありがとう」も送れる",shop:"パートナーにも見える買い物リスト",cal:"予定と予防接種を月で見る",events:"お宮参りから七五三まで。お金の目安つき",sick:"症状ごとに、119番か病院か家で様子見か",ill:"保育園のお休みの目安つき",contacts:"病院・保育園・保険証の場所",visits:"いつ・どこで・何と言われたか",how:"沐浴・おむつ替え・ミルク",wear:"月齢と季節で、何を重ねるか",clothes:"足りない枚数とお気に入りのお店",hoiku:"何月に入るかで逆算・近くの園さがし",gifts:"もらった物とお返しの目安",goods:"気になったらメモ",wants:"サイズや色もメモできる",baby:"名前・誕生日（予定日）",kise:"テーマとカラーを選ぶ",shareinfo:"2人で同じ内容を見る",odk:"近くの遊び場・子連れOKのお店さがし",homeedit:"ホームに出すものと順番を選ぶ",city:"子育てサービスとイベントをさがす"};
 const TOYS=[[0,5,"0〜5か月",[["ベッドメリー","寝ている赤ちゃんが目で追って楽しむ。音楽つきは寝かしつけにも","star"],["白黒の布絵本・カード","生まれてすぐは白黒がいちばん見やすい","book"],["ガラガラ・ラトル","握る・振ると音が出るのが楽しい","bubbles"]]],
 [6,11,"6〜11か月",[["オーボール","穴があいていて小さい手でもつかみやすいボール","cloud"],["布絵本・しかけ絵本","めくる・引っぱる遊びができる","book"],["歯固め","歯が生えるころのむずむずに","heart"],["ティッシュ箱おもちゃ","何度でも引き出せる。手作りでも","basket"]]],
 [12,23,"1歳",[["積み木","積む・くずすをくり返して遊ぶ","star"],["型はめ・ポストボックス","形を合わせて入れる","gift"],["手押し車","歩きはじめの練習に","stroller"],["たいこ・木琴","たたくと音が出て、リズム遊びに","bubbles"]]],
@@ -2330,6 +2333,7 @@ function vPrivacy(){
   return head("プライバシーポリシー","star","pink")+
   sec("入力した内容の保存",["うちの子手帳はログインなしで使えます。名前や予定、記録などの入力した内容は、基本的にこのスマホのブラウザの中だけに保存されます。",
    "「共有と引き継ぎ」でパートナーと共有したときは、共有のためにその内容をサーバーに保存します。見られるのは、リンクとあいことばを知っている人だけです。",
+   "「わたしのお役立ちメモ」に入れたリンク・文・画像は、このスマホの中だけに保存します。サーバーには送らず、パートナーとの共有や引き継ぎにも入りません。",
    "機種変更の引き継ぎコードを作ったときは、内容を24時間だけサーバーに置き、時間がたつと消します。",
    "通知をオンにしたときは、通知を送るための情報と、送る予定の通知をサーバーに保存します。ホーム画面のアイコンに自分の画像を使ったときは、その画像を保存します。"])+
   sec("住んでいる場所",["市区町村を入れると、その市の子育てイベントやサービスを集めるために、市区町村の名前だけをサーバーに記録します（だれが入れたかは記録しません）。",
@@ -2338,7 +2342,7 @@ function vPrivacy(){
    "広告の会社が、紹介を数えるためにクッキーなどを使うことがあります。広告のあるページには、そのことを小さく書いています。"])+
   sec("のせている情報について",["市のイベントやサービスは、市の公式サイトなどから自動で集めたものです。保育園はOpenStreetMap、産院は医療情報ネットの情報をもとにしています。変わっていることもあるので、申し込む前に公式サイトで確かめてください。",
    "病気やケガのページは一般的な目安で、診断ではありません。迷ったら #8000 や病院に相談してください。"])+
-  sec("このページについて",["内容を変えるときは、このページでお知らせします。","2026年10月28日"]);
+  sec("このページについて",["内容を変えるときは、このページでお知らせします。","2026年10月29日"]);
 }
 function vAppSet(){
   S.app=S.app||{ic:"baby_face",bg:0,n:{}};const a=S.app;
@@ -2350,7 +2354,7 @@ function vAppSet(){
   <section class="h-sec"><div class="hd"><h2>通知</h2></div>${pushUI()}<div class="rows">${NOTI.map(([k,l,d])=>{const on=a.n[k]??d;return `<label class="rw"><span class="grow t">${l}</span><input type="checkbox" class="sw" data-act="noti" data-v="${k}"${on?" checked":""}></label>`}).join("")}</div>
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。</p></section>`;
 }
-const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",yobo:"ワクチン 予防接種 RSウイルス 母子免疫 インフルエンザ 風しん 葉酸 サプリ 水銀 魚 リステリア 生ハム チーズ トキソプラズマ ビタミンA アレルギー アトピー 湿疹 卵 食べ物",hayami:"早見表 月齢 成長 めやす 寝返り おすわり はいはい 服 肌着 離乳食 回数 おもちゃ 健診 お宮参り お食い初め ハーフバースデー",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"洗濯 洗う 頻度 おくるみ シーツ フィットシーツ スリーパー 布団 しみ 部屋干し 水通し SIDS 乳幼児突然死症候群 うつぶせ寝 あおむけ 窒息 添い寝 ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食 スプーン サーティワン",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"室温 温度 何度 寝るとき 着せすぎ 服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",memo:"メモ 保存 インスタ X TikTok 動画 投稿 リンク スクショ ブックマーク お気に入り",yobo:"ワクチン 予防接種 RSウイルス 母子免疫 インフルエンザ 風しん 葉酸 サプリ 水銀 魚 リステリア 生ハム チーズ トキソプラズマ ビタミンA アレルギー アトピー 湿疹 卵 食べ物",hayami:"早見表 月齢 成長 めやす 寝返り おすわり はいはい 服 肌着 離乳食 回数 おもちゃ 健診 お宮参り お食い初め ハーフバースデー",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"洗濯 洗う 頻度 おくるみ シーツ フィットシーツ スリーパー 布団 しみ 部屋干し 水通し SIDS 乳幼児突然死症候群 うつぶせ寝 あおむけ 窒息 添い寝 ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食 スプーン サーティワン",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"室温 温度 何度 寝るとき 着せすぎ 服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
 let mnTab="my";
 const HY=[
  ["成長のめやす","star",[
@@ -2435,6 +2439,56 @@ const WASH_TIP=[["大人の服といっしょに洗っていい？","肌があ�
  ["部屋干しでもいい？","大丈夫です。しっかり乾かすのが大事なので、間をあけて干して、扇風機や除湿機を使うと早く乾きます。"]];
 const WASH_NOTE=`<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>洗濯のこと</h2></div><div class="sub" style="margin:-2px 0 6px">洗う頻度の目安です。汚れたら、そのつど洗えば大丈夫。</div><div class="rows">${WASH.map(([n,f,s])=>`<div class="rw wshr"><span class="grow"><span class="t">${n}</span>${s?`<span class="sub" style="display:block;font-size:12px">${s}</span>`:""}</span><b class="wshf">${f}</b></div>`).join("")}</div>
  ${WASH_TIP.map(([q,a])=>`<details class="svc"><summary><span class="grow"><b>${q}</b></span></summary><p>${a}</p></details>`).join("")}</section>`;
+/* わたしのお役立ちメモ：IndexedDB に保存。S には入れない（夫婦共有・引き継ぎに出さない） */
+let MEMO=null,MCATS=["寝かしつけ","離乳食・ごはん","病気・ケガ","グッズ","あそび","家事・収納","お金","その他"],mmCat="",mmEd=null,mmPre=null;const mmURL={};
+function mmDB(){return new Promise((ok,ng)=>{try{const r=indexedDB.open("ukmemo",1);r.onupgradeneeded=()=>r.result.createObjectStore("m",{keyPath:"id"});r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)}catch(e){ng(e)}})}
+async function mmTx(f){const db=await mmDB();return new Promise((ok,ng)=>{const t=db.transaction("m","readwrite"),s=t.objectStore("m"),r=f(s);t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ng(t.error)})}
+async function mmLoad(){try{const all=await mmTx(s=>s.getAll());const c=all.find(x=>x.id==="_cats");if(c)MCATS=c.v;MEMO=all.filter(x=>x.id!=="_cats").sort((a,b)=>b.at-a.at)}catch(_){MEMO=[]}if(page==="memo")render(true)}
+const mmSave=x=>mmTx(s=>s.put(x)),mmDel=id=>mmTx(s=>s.delete(id)),mmCatsSave=()=>mmSave({id:"_cats",v:MCATS});
+const mmSite=u=>{try{const h=new URL(u).hostname.replace(/^www\.|^m\./,"");return /instagram/.test(h)?"Instagram":/(^|\.)x\.com$|twitter/.test(h)?"X":/tiktok/.test(h)?"TikTok":/youtu/.test(h)?"YouTube":/threads/.test(h)?"Threads":/lemon8/.test(h)?"Lemon8":h}catch(_){return ""}};
+const mmImg=(id,i,b)=>{const k=id+":"+i;return mmURL[k]=mmURL[k]||URL.createObjectURL(b)};
+function mmShrink(file){return new Promise(ok=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{const M=1280,s=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>ok(b||file),"image/jpeg",.82)};im.onerror=()=>{URL.revokeObjectURL(u);ok(null)};im.src=u})}
+function mmForm(x){const p=mmPre||{};x=x||{};const cat=x.cat||mmCat||MCATS[0];
+ return `<form class="sheet stack mmf" data-mm="save" data-id="${x.id||""}">
+  <label class="sub">リンク（なくてもOK）<input name="u" type="url" inputmode="url" value="${esc(x.u||p.u||"")}" placeholder="https://www.instagram.com/…"></label>
+  <label class="sub">タイトル<input name="t" value="${esc(x.t||p.t||"")}" placeholder="例：寝かしつけの抱っこのしかた"></label>
+  <label class="sub">カテゴリ<select name="c">${MCATS.map(c=>`<option${c===cat?" selected":""}>${esc(c)}</option>`).join("")}<option value="_new">＋ 新しいカテゴリ</option></select></label>
+  <input name="nc" placeholder="新しいカテゴリの名前" hidden>
+  <label class="sub">メモ（投稿の文をコピーして貼っても、自分の言葉でまとめてもOK）<textarea name="n" rows="5">${esc(x.n||p.n||"")}</textarea></label>
+  <div class="sub">スクショ・写真${(x.im||[]).length?`<div class="mmims">${x.im.map((b,i)=>`<span class="mmth"><img src="${mmImg(x.id,i,b)}" alt=""><button type="button" class="x" data-mm="imdel" data-i="${i}" aria-label="この画像を消す">×</button></span>`).join("")}</div>`:""}<label class="pladd mmfile"><span>スクショ・写真をえらぶ</span><input name="f" type="file" accept="image/*" multiple hidden></label></div>
+  <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-mm="cancel">やめる</button>${x.id?`<button type="button" data-mm="del">消す</button>`:""}</div></form>`}
+function vMemo(){
+ if(MEMO===null){mmLoad();return head("わたしのお役立ちメモ","book","sky")+`<p class="sub">読みこみ中…</p>`}
+ const L=MEMO.filter(x=>!mmCat||x.cat===mmCat),cnt=c=>MEMO.filter(x=>x.cat===c).length,ed=mmEd&&mmEd!=="new"?MEMO.find(x=>x.id===mmEd):null;
+ return head("わたしのお役立ちメモ","book","sky")+`<p class="lead">SNSで見つけた知恵や、自分で調べたことを、カテゴリに分けてためておけます。</p>
+ ${mmEd?mmForm(ed):`<button type="button" class="pladd" data-mm="new">＋ メモを追加する</button>`}
+ ${MEMO.length?`<div class="mmcats"><button type="button" class="${mmCat?"":"on"}" data-mm="cat" data-v="">すべて ${MEMO.length}</button>${MCATS.filter(c=>cnt(c)).map(c=>`<button type="button" class="${c===mmCat?"on":""}" data-mm="cat" data-v="${esc(c)}">${esc(c)} ${cnt(c)}</button>`).join("")}</div>
+ <input id="mmq" type="search" class="msearch" placeholder="メモをさがす" aria-label="メモをさがす">
+ <div class="stack" id="mmlist">${L.map(x=>{const s=mmSite(x.u);return `<details class="svc mmit" data-q="${esc((x.t+" "+x.n+" "+x.cat+" "+s).toLowerCase())}"><summary><span class="grow"><b>${esc(x.t||"（タイトルなし）")}</b><span class="sub" style="display:block;font-size:12px">${esc(x.cat)}${s?"・"+esc(s):""}・${new Date(x.at).toLocaleDateString("ja-JP")}</span></span></summary>
+  ${x.n?`<p class="mmn">${esc(x.n)}</p>`:""}${(x.im||[]).length?`<div class="mmims big">${x.im.map((b,i)=>`<img src="${mmImg(x.id,i,b)}" alt="保存したスクショ">`).join("")}</div>`:""}
+  <div class="plbtn">${x.u?`<a class="pri" href="${esc(x.u)}" target="_blank" rel="noopener">元の投稿を開く</a>`:""}<button type="button" data-mm="edit" data-v="${x.id}">書きかえる</button></div></details>`}).join("")||`<p class="sub">このカテゴリのメモはまだありません</p>`}</div>`:`<p class="sub" style="margin-top:12px">まだメモはありません。${/Android/.test(navigator.userAgent)?"ホーム画面に追加したアプリなら、インスタやXの「共有」から、うちの子手帳を選んでも送れます。":"インスタやXの投稿の「リンクをコピー」で、リンクを貼りつけられます。"}</p>`}
+ <p class="note" style="margin-top:14px">このメモは、このスマホの中だけに保存されます。パートナーには共有されず、機種変更の引き継ぎにも入りません。元の投稿が消えたり鍵がかかっても、ここに書いた文とスクショは残ります。人の投稿の文やスクショは、自分で見るためだけに使ってください（人に送ったり、公開したりしないでください）。</p>`}
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-mm]");if(!b||b.tagName==="FORM")return;e.stopPropagation();const a=b.dataset.mm;
+ if(a==="new"){mmEd="new";render(true)}else if(a==="cancel"){mmEd=null;mmPre=null;render(true)}else if(a==="cat"){mmCat=b.dataset.v;render(true)}else if(a==="edit"){mmEd=b.dataset.v;render(true);scrollTo(0,0)}
+ else if(a==="del"){const id=b.closest("form").dataset.id;if(b.dataset.ok!=="1"){b.dataset.ok="1";b.textContent="本当に消す";return}await mmDel(id);MEMO=MEMO.filter(x=>x.id!==id);mmEd=null;toast("消しました");render(true)}
+ else if(a==="imdel"){const x=MEMO.find(y=>y.id===mmEd);if(x){x.im.splice(+b.dataset.i,1);Object.keys(mmURL).forEach(k=>{if(k.startsWith(x.id+":"))delete mmURL[k]});await mmSave(x);render(true)}}},true);
+document.addEventListener("change",e=>{const f=e.target.closest(".mmf");if(f&&e.target.name==="f"){const n=e.target.files.length;f.querySelector(".mmfile span").textContent=n?n+"枚えらびました":"スクショ・写真をえらぶ";return}if(!f||e.target.name!=="c")return;const nc=f.elements.nc;nc.hidden=e.target.value!=="_new";if(!nc.hidden)nc.focus()},true);
+document.addEventListener("input",e=>{if(e.target.id!=="mmq")return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".mmit").forEach(d=>d.hidden=!!q&&!d.dataset.q.includes(q))},true);
+document.addEventListener("submit",async e=>{const f=e.target;if(f.dataset.mm!=="save")return;e.preventDefault();e.stopPropagation();const v=n=>(f.elements[n].value||"").trim();
+ let c=v("c");if(c==="_new"){c=v("nc");if(!c)return toast("カテゴリの名前を入れてください");if(!MCATS.includes(c)){MCATS.push(c);await mmCatsSave()}}
+ const old=f.dataset.id&&MEMO.find(x=>x.id===f.dataset.id),x=old||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:Date.now(),im:[]};
+ x.u=v("u");x.t=v("t")||(v("n").split("\n")[0]||"").slice(0,40)||mmSite(x.u);x.n=v("n");x.cat=c;
+ if(!x.u&&!x.t&&!x.n&&!f.elements.f.files.length)return toast("なにか入れてください");
+ const bt=f.querySelector("[type=submit]");bt.disabled=true;bt.textContent="保存中…";
+ for(const fl of [...f.elements.f.files].slice(0,10)){const b=await mmShrink(fl);if(b)x.im.push(b)}
+ try{await mmSave(x)}catch(_){bt.disabled=false;bt.textContent="保存する";return toast("保存できませんでした。スマホの空きを確かめてください")}
+ if(!old)MEMO.unshift(x);mmEd=null;mmPre=null;mmCat="";toast("保存しました");render(true)},true);
+/* Android の「共有」から来たとき（/?share=1&title=&text=&url=） */
+const MM_Q=new URLSearchParams(location.search),MM_P=location.pathname;
+function mmShare(){const q=MM_Q;if(!q.has("share")&&!/^\/share\/?$/.test(MM_P))return;const t=q.get("title")||"",tx=q.get("text")||"",m=(q.get("url")||tx).match(/https?:\/\/\S+/);
+ mmPre={u:m?m[0]:"",t:/^(instagram|x|twitter|tiktok|threads|youtube|lemon8)$/i.test(t.trim())?"":t.slice(0,60),n:tx.replace(m?m[0]:"\u0000","").trim()};try{if(location.search||/^\/share/.test(location.pathname))history.replaceState(history.state,"",/^\/share/.test(location.pathname)?"/":location.pathname)}catch(_){}
+ if(typeof S.setup!=="undefined"&&!S.setup)return;stack=[];page="memo";mmEd="new";render(false)}
+addEventListener("load",()=>setTimeout(mmShare,400));
 function vMenu(){
   const sub=MSUB,hid=S.mhide=S.mhide||{},all=mnTab==="all",fixed=g=>g==="せってい";
   const G=MENU_().map(([t,items])=>[t,mnMerge(items)]).map(([t,items])=>[t,all||fixed(t)?items:items.filter(x=>!hid[x[0]])]).filter(x=>x[1].length);
@@ -3249,7 +3303,7 @@ function vFun(){if(!funP){AFF_PICK.push(...Object.values(FUN).flat().flatMap(x=>
   ${L.some(x=>x[5].some(g=>affOn(g[1])))?`<p class="prnote">＊一部のリンクに広告が入っております。こちらから購入していただけると励みになります！</p>`:""}</section>`;
 }
 
-const PAGES={sync:vSync,yobo:vYobo,hayami:vHayami,perk:vPerk,fun:vFun,jintsu:vJintsu,senpai:vSenpai,biyou:vBiyou,nayami:vNayami,care:vCare,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,privacy:vPrivacy,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCityView,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
+const PAGES={sync:vSync,memo:vMemo,yobo:vYobo,hayami:vHayami,perk:vPerk,fun:vFun,jintsu:vJintsu,senpai:vSenpai,biyou:vBiyou,nayami:vNayami,care:vCare,fufu:vFufu,bplan:vBplan,azuke:vAzuke,rinyu:vRinyu,money:vMoney,names:vNames,chores:vChores,shop:vShop,cal:vCal,events:vEvents,sick:vSick,ill:vIll,how:vHow,wear:vWear,clothes:vClothes,hoiku:vHoiku,appset:vAppSet,privacy:vPrivacy,life:vLife,junbi:vJunbi,sanin:vSanin,body:vBody,rank:vRank,pre:vPreTodo,chiiku:vChiiku,odk:vOdk,city:vCityView,homeedit:vHomeEdit,goods:vGoods,wants:vWants,gifts:vGifts,contacts:vContacts,visits:vVisits,baby:vBaby,kise:vKise,shareinfo:vShareInfo,menu:vMenu};
 const TABS=[["home","ホーム","t-home"],["cal","カレンダー","t-cal"],["chores","家事","t-chore"],["menu","メニュー","t-menu"]];
 let stack=[];
 const DI={"a_00": "/a/970b27accc1991d2.webp", "a_01": "/a/f44811aa73a8d0bc.webp", "a_03": "/a/7128e8948cb168ff.webp", "a_04": "/a/a72c0979eb610073.webp", "a_05": "/a/89339aa351dca41c.webp", "a_06": "/a/24f2a25ca33a4c22.webp", "a_07": "/a/b9f9b2f15e7dd5fb.webp", "a_09": "/a/9d3d50714c69bdf5.webp", "a_10": "/a/b3968263bb7ace0c.webp", "a_11": "/a/d7be53ff23d17f08.webp", "a_12": "/a/8861f245e2bb0f0b.webp", "a_13": "/a/ba55eddc5f364867.webp", "a_14": "/a/0a45af9328a11ed4.webp", "a_18": "/a/d2871eb5e1c87721.webp", "a_25": "/a/2a7c64310fcdd3c0.webp", "a_27": "/a/54408bac3d221e73.webp", "b_00": "/a/55007e468bca4036.webp", "b_01": "/a/fb8902242a92ef8f.webp", "b_02": "/a/cc53a4dfb15bec75.webp", "b_08": "/a/e567f77d3c8a9237.webp", "b_09": "/a/b0136e3a7da0811c.webp", "b_10": "/a/ed6ae149fc818154.webp", "b_12": "/a/838d9f816a0658c6.webp", "b_14": "/a/988f96bca91b7eb0.webp", "b_15": "/a/704589f5c098b8dd.webp", "b_16": "/a/db5d8a11585ccfe8.webp", "b_18": "/a/77c3cb427a8c2918.webp", "c_00": "/a/6a16a928f7f1cbc5.webp", "c_02": "/a/0c04a0921e27bc63.webp", "c_08": "/a/ea15f18d3d5fc8b7.webp", "c_10": "/a/45555d9054e1a33c.webp", "c_12": "/a/326f07075a00f66e.webp", "c_13": "/a/934acd7c4ae21ebf.webp", "d_03": "/a/99f6ad7915c19383.webp", "d_12": "/a/390fc2be0957b24a.webp", "d_13": "/a/b733529a0f39c6a7.webp", "d_14": "/a/8331a97a48e16a89.webp", "d_17": "/a/4d0dcaaa744056fb.webp", "d_25": "/a/203f16a30e2611f3.webp", "d_29": "/a/147ace85fa039767.webp", "d_31": "/a/bfa2f6c36f61994c.webp", "d_42": "/a/019c98f8280598e6.webp", "d_60": "/a/623e77517a58ee26.webp"};const DECO={"elegant": ["a_05", ["a_09", "a_04", "a_11", "a_14", "a_27"]], "doll": ["a_12", ["a_13", "a_06", "a_07", "a_25", "a_18"]], "korea": ["a_01", ["a_00", "a_03", "a_10"]], "yume": ["b_09", ["b_08", "b_01", "b_15", "b_00", "b_18"]], "natural": ["b_16", ["b_02", "b_14", "b_10", "b_12"]], "app": ["c_02", ["c_00", "c_08", "c_13", "c_10", "c_12"]], "pop": ["d_13", ["d_17", "d_25", "d_03", "d_31"]]};const DSTK=["d_25", "d_60", "d_29", "d_42", "d_13", "d_03", "d_12", "d_17"];const DTHX="d_14";

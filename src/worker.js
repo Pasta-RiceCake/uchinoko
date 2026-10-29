@@ -172,6 +172,8 @@ async function manifest(env, id, url) {
       name: "うちの子手帳", short_name: "うちの子手帳", lang: "ja", start_url: start, scope: "/", display: "standalone",
       background_color: "#fdf3f5", theme_color: "#f7e9ec",
       icons: [{ src, sizes: "512x512", type: "image/png", purpose: "any" }, { src, sizes: "512x512", type: "image/png", purpose: "maskable" }],
+      // Android：インスタやXの「共有」から「わたしのお役立ちメモ」に送れるようにする
+      share_target: { action: "/share/", method: "GET", params: { title: "title", text: "text", url: "url" } },
     }),
     { headers: { "content-type": "application/manifest+json; charset=utf-8", "cache-control": "no-store" } }
   );
