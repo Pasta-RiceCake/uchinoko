@@ -843,6 +843,7 @@ html:root[data-th] .seg.hyseg{background:var(--sheet)!important;border-radius:14
 .hycell{z-index:1;margin:3px;padding:8px 6px;border-radius:10px;background:color-mix(in srgb,var(--hc) 20%,var(--sheet));font-size:11px;line-height:1.45;display:flex;align-items:center;justify-content:center;text-align:center;min-height:30px}
 .hycell.long{justify-content:flex-start}.hyt{position:sticky;left:76px;padding:0 6px}
 .hysep{grid-column:1/-1;height:1px;margin:6px 0;background:var(--line);z-index:1}
+.wtseg{flex-wrap:wrap}.wtseg button{flex:1 1 22%;font-size:12px;padding-inline:4px}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2341,7 +2342,7 @@ function vAppSet(){
   <section class="h-sec"><div class="hd"><h2>通知</h2></div>${pushUI()}<div class="rows">${NOTI.map(([k,l,d])=>{const on=a.n[k]??d;return `<label class="rw"><span class="grow t">${l}</span><input type="checkbox" class="sw" data-act="noti" data-v="${k}"${on?" checked":""}></label>`}).join("")}</div>
    <p class="note">カレンダーに自分で入れた予定は、予定ごとにリマインドの日を選べます。</p></section>`;
 }
-const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",yobo:"ワクチン 予防接種 RSウイルス 母子免疫 インフルエンザ 風しん 葉酸 サプリ 水銀 魚 リステリア 生ハム チーズ トキソプラズマ ビタミンA アレルギー アトピー 湿疹 卵 食べ物",hayami:"早見表 月齢 成長 めやす 寝返り おすわり はいはい 服 肌着 離乳食 回数 おもちゃ 健診 お宮参り お食い初め ハーフバースデー",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"SIDS 乳幼児突然死症候群 うつぶせ寝 あおむけ 窒息 添い寝 ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
+const MKW={sync:"機種変更 引き継ぎ 共有 パートナー あいことば バックアップ",yobo:"ワクチン 予防接種 RSウイルス 母子免疫 インフルエンザ 風しん 葉酸 サプリ 水銀 魚 リステリア 生ハム チーズ トキソプラズマ ビタミンA アレルギー アトピー 湿疹 卵 食べ物",hayami:"早見表 月齢 成長 めやす 寝返り おすわり はいはい 服 肌着 離乳食 回数 おもちゃ 健診 お宮参り お食い初め ハーフバースデー",perk:"特典 プレゼント 無料 サンプル もらえる アカチャンホンポ ベビーザらス マタニティアドバイザー 教室 マタニティマーク",fun:"ジェンダーリビール 性別 マタニティフォト ニューボーンフォト 命名書 お七夜 月齢フォト マンスリーフォト 月齢カード 手形 足形 ハーフバースデー 誕生日 一升餅 ベビーシャワー",sick:"熱 発熱 けが ひきつけ 吐いた 下痢 やけど 119 救急",ill:"かぜ 熱 発しん 病気 RSウイルス 手足口病",visits:"熱 体温 症状 病院 薬",how:"SIDS 乳幼児突然死症候群 うつぶせ寝 あおむけ 窒息 添い寝 ミルク 授乳 沐浴 おふろ おむつ げっぷ 寝かしつけ",rinyu:"ごはん 食べ物 アレルギー 離乳食",money:"お金 給付金 手当 育休 産休 児童手当 医療費控除 確定申告 扶養 年末調整 配偶者控除 高額療養費 健康保険",city:"手続き 役所 支援 助成",hoiku:"保育園 入園 保活",shop:"買い物 おむつ ミルク",wear:"室温 温度 何度 寝るとき 着せすぎ 服 肌着 着せ方",clothes:"服 サイズ 枚数",chiiku:"絵本 おもちゃ 知育 遊び",odk:"おでかけ 公園 カフェ",azuke:"預ける じいじ ばあば 一時保育 シッター",jintsu:"陣痛 破水 出産 産院 電話",senpai:"先輩 ママ つわり 食べづわり におい 吐く 抱き枕 足がつる 腰痛 陣痛 夜泣き 熱 下痢 嘔吐 手づかみ 遊び食べ 歯みがき イヤイヤ期 卒乳 断乳 新幹線 飛行機 帰省 里帰り 仕事復帰 育休明け 帝王切開 入院 持ち物 新生児 背中スイッチ 授乳 乳首 寝かしつけ 夜泣き お風呂 ワンオペ 便秘 離乳食 乳児湿疹 おでかけ 産後 メンタル 赤ちゃん返り 上の子 保育園 慣らし保育 記録 写真 やってよかった パパ",life:"戌の日 安産祈願 腹帯 帯祝い 神社 マタニティフォト 歯医者 美容院",biyou:"美容 美容院 美容室 カラー マツエク ネイル 脱毛 骨盤 ダイエット 体型 抜け毛 肌荒れ 産後",nayami:"むくみ 腰痛 つわり 眠れない 妊娠線 足がつる 尿もれ 着圧 骨盤ベルト 抱き枕 グッズ",care:"会陰 マッサージ 乳頭 おっぱい 骨盤 ストレッチ 呼吸 ラマーズ いきみ逃し 池崎 骨盤底筋 尿もれ 散歩 ウォーキング テニスボール 腰 逆子",bplan:"お産 出産 希望",junbi:"準備 出産準備 買う",names:"名前 名づけ",fufu:"夫婦 パートナー 共有 担当 メモ",gifts:"内祝い お返し お祝い",events:"お宮参り お食い初め 予防接種 健診 行事"};
 let mnTab="my";
 const HY=[
  ["成長のめやす","star",[
@@ -2600,12 +2601,25 @@ let wEd=false;
 const wRows=w=>{const c=S.wearc?.[w.label]?.[season];if(c)return c;return w[season].map(l=>({l:l.filter(x=>!wkey(x)).join(""),it:l.filter(wkey)}))};
 const wText=rows=>rows.map(r=>(r.l?r.l+"：":"")+r.it.join("＋")).join("\n");
 const wParse=t=>t.split(/\n/).map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.+?)[：:](.*)$/);const l=m?m[1].trim():"",s=m?m[2]:x;return {l,it:s.split(/[＋+、,]/).map(y=>y.trim()).filter(Boolean)}}).filter(r=>r.it.length);
+let wT=null;
+const WTMP=[["28℃以上","暑い",["半そで肌着"],["半そで肌着"],"お腹にガーゼケットをかけるくらい。エアコンで26〜28℃くらいにすると楽です。"],
+ ["24〜27℃","すずしい〜ちょうどいい",["半そで肌着","薄手のロンパース"],["半そで肌着","薄手のロンパース"],"かけ物はガーゼケットかタオルケット1枚。"],
+ ["20〜23℃","すこし涼しい",["長そで肌着","カバーオール"],["長そで肌着","カバーオール","薄手のスリーパー"],"冬の部屋はこのくらいが目安です。"],
+ ["16〜19℃","寒い",["長そで肌着","厚手のカバーオール","ベスト"],["長そで肌着","厚手のカバーオール","厚手のスリーパー"],"できれば暖房で20℃前後に。"]];
+const WT_S={春:2,夏:1,秋:2,冬:3};
+function wTemp(){const i=wT??WT_S[season]??2,[t,s,a,n,tip]=WTMP[i],small=Math.max(0,months())<1;
+ const lay=it=>`<div class="wlay">${it.map((x,j)=>(j?`<em>＋</em>`:"")+`<span class="wc">${wsvg(wkey(x),56)||`<span class="wno">${ic("heart",30)}</span>`}<b>${x}</b></span>`).join("")}</div>`;
+ return `<div class="sec-t">へやの温度で見る目安</div><div class="sheet stack"><div class="seg segw wtseg">${WTMP.map((x,j)=>`<button type="button" class="${j===i?"on":""}" data-act="wtmp" data-v="${j}">${x[0]}</button>`).join("")}</div>
+ <div class="wrow"><span class="wlab">ふだん</span>${lay(a)}</div><div class="wrow"><span class="wlab">寝るとき</span>${lay(n)}</div>
+ <div class="sub">${tip}</div>
+ <div class="sub">・${small?"生まれて1か月ごろまでは、大人と同じか1枚多めに":"1か月をすぎたら、大人より1枚少なめが目安"}<br>・背中や首のうしろをさわって、汗ばんでいたら1枚へらす。ひんやりしていたら1枚たす<br>・手足が冷たいのはよくあること。背中が温かければ大丈夫<br>・寝るときは着せすぎない、帽子はかぶせない、顔のまわりに布団を置かない（SIDS・窒息の予防）<br>・湿度は40〜60%くらいに</div>
+ ${i<=1?`<p class="note">ぐったりしている・汗をかかないのに体が熱い・おしっこが少ないときは、熱中症かもしれません。すぐに受診を。</p>`:""}</div>`}
 function vWear(){
   const w=WEAR.find(x=>Math.max(0,months())<x.to),rows=wRows(w),mine=!!S.wearc?.[w.label]?.[season];
   return head("服の着せ方","onesie","mint")+`<p class="lead">今は ${w.label}・${curSize()[0]}cm くらい。季節を選んでください。</p>${seasonsBar()}
   <div class="sec-t">${season}の着せ方${mine?`<span class="hwtag">わが家</span>`:""}</div><div class="sheet stack">${wEd?`<form class="hwed" data-form="weare"><label class="sub" for="wtx">1行に1つ。「寝るとき：短肌着＋スリーパー」のように、下に着るものから「＋」でつなげます</label><textarea id="wtx" name="s" rows="${Math.max(4,rows.length+2)}">${esc(wText(rows))}</textarea>
    <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-act="weared">やめる</button>${mine?`<button type="button" data-act="wearreset">もとに戻す</button>`:""}</div></form>`:rows.map(({l,it})=>`<div class="wrow">${l?`<span class="wlab">${esc(l)}</span>`:""}<div class="wlay">${it.map((x,i)=>(i?`<em>＋</em>`:"")+`<span class="wc">${wsvg(wkey(x),56)||`<span class="wno">${ic("heart",30)}</span>`}<b>${esc(x)}</b>${it.length>1?`<small>${i===0?"いちばん下":i===it.length-1?"いちばん上":"まん中"}</small>`:""}</span>`).join("")}</div></div>`).join("")+`<div class="sub">${w.tip}</div><button type="button" class="pladd" data-act="weared">${mine?"書きかえる":"わが家の着せ方に書きかえる"}</button>`}</div>
-  <div class="sec-t">服の名前と形</div><div class="wgrid">${WORDS.map(x=>`<div class="wcard">${wsvg(wkey(x[0]),72)}<b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>`;
+  ${wTemp()}<div class="sec-t">服の名前と形</div><div class="wgrid">${WORDS.map(x=>`<div class="wcard">${wsvg(wkey(x[0]),72)}<b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>`;
 }
 const NEED={春:[["長肌着・コンビ肌着",5],["カバーオール",4],["薄手のはおりもの",1],["靴下",2],["帽子",1]],夏:[["短肌着",5],["半そでロンパース",5],["日よけの帽子",1],["ガーゼケット",1],["スタイ",4]],秋:[["長肌着・コンビ肌着",5],["カバーオール",4],["ベスト",1],["靴下",3],["スリーパー",1]],冬:[["長肌着・コンビ肌着",6],["厚手のカバーオール",4],["スリーパー",2],["ジャンプスーツ",1],["靴下",3],["ニット帽",1]]};
 let clEd=false;
@@ -3279,7 +3293,7 @@ document.addEventListener("click",e=>{
     case"howed":howEd=el.dataset.v||null;render(true);if(howEd)setTimeout(()=>document.querySelector(".hwed textarea")?.focus(),50);break;
     case"howreset":delete howS().e[el.dataset.v];howEd=null;save();render(true);toast("もとのやり方に戻しました");break;
     case"howdel":howS().my.splice(+el.dataset.v.slice(1),1);howEd=null;save();render(true);toast("消しました");break;
-    case"weared":wEd=!wEd;render(true);break;
+    case"weared":wEd=!wEd;render(true);break;case"wtmp":wT=+v;render(true);break;
     case"wearreset":{const w=WEAR.find(x=>Math.max(0,months())<x.to);if(S.wearc?.[w.label])delete S.wearc[w.label][season];wEd=false;save();render(true);toast("もとの着せ方に戻しました");break}
     case"cled":clEd=!clEd;render(true);break;
     case"clq":{const c=clS();if(i>=100){const x=c.my[i-100];x.q=Math.max(0,x.q+(+v))}else c.q[i]=Math.max(0,(c.q[i]??NEED[season][i][1])+(+v));k();break}
