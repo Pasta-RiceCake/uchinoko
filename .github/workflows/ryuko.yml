@@ -1,0 +1,25 @@
+name: ryuko
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 3 * * 3,4"
+permissions:
+  contents: write
+concurrency: ${{ github.workflow }}
+jobs:
+  ryuko:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        run: python3 tools/build_ryuko.py
+      - name: commit
+        run: |
+          git config user.name "uchinoko-data"
+          git config user.email "uchinoko-data@users.noreply.github.com"
+          [ -f public/data/ryuko.json ] || exit 0
+          git add public/data/ryuko.json
+          git diff --cached --quiet && exit 0
+          git commit -m "はやっている病気（感染症の週報）を更新"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push && break; sleep $((i*7)); done
