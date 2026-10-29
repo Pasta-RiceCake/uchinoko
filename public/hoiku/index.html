@@ -2999,7 +2999,8 @@ const a8px=k=>`<img class="a8px" src="https://www${A8[k][1]}.a8.net/0.gif?a8mat=
 const AFF={rakuten:"58e1dcc5.ffbb96dd.58e1dcc6.c118f976",amazon:""};
 const AFF_PICK=[]; // 報酬つきリンクにする商品名だけここに入れる（例 "ベッドメリー"）。ほかはふつうのリンク // rakuten: 楽天アフィリエイトID（例 1234abcd.5678efgh.1234abcd.5678efgh） / amazon: トラッキングID（例 xxxx-22）
 const affOn=q=>AFF_PICK.includes(q)&&(AFF.rakuten||AFF.amazon);
-const rkURL=q=>{const u="https://search.rakuten.co.jp/search/mall/"+encodeURIComponent(q)+"/";return AFF.rakuten&&AFF_PICK.includes(q)?"https://hb.afl.rakuten.co.jp/ichiba/"+AFF.rakuten+"/?pc="+encodeURIComponent(u)+"&m="+encodeURIComponent(u):u};
+const rkURL=q=>{const u="https://search.rakuten.co.jp/search/mall/"+encodeURIComponent(q)+"/";return AFF.rakuten&&AFF_PICK.includes(q)?a8rk(u):u};
+const a8rk=u=>"https://rpx.a8.net/svt/ejp?a8mat=44Z3ZF+6Y22UQ+2HOM+BWGDT&rakuten=y&a8ejpredirect="+encodeURIComponent("https://hb.afl.rakuten.co.jp/hgc/g00twkc4.2bo11c58.g00twkc4.2bo12a04/a25022153683_44Z3ZF_6Y22UQ_2HOM_BWGDT?pc="+encodeURIComponent(u)+"&m="+encodeURIComponent(u));
 const MS_AMZ=null;
 const azURL=(q,pk)=>{const u="https://www.amazon.co.jp/s?k="+encodeURIComponent(q),on=pk||AFF_PICK.includes(q);return MS_AMZ&&on?"https://af.moshimo.com/af/c/click?a_id="+MS_AMZ[0]+"&p_id="+MS_AMZ[1]+"&pc_id="+MS_AMZ[2]+"&pl_id="+MS_AMZ[3]+"&url="+encodeURIComponent(u):u+(AFF.amazon&&on?"&tag="+encodeURIComponent(AFF.amazon):"")};
 const azQ=n=>String(n).replace(/【[^】]*】|［[^］]*］|\[[^\]]*\]|＼[^／]*／|送料無料|楽天[^ 　]*/g," ").replace(/\s+/g," ").trim().slice(0,40);

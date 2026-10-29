@@ -66,8 +66,18 @@ def aff(u):
         if pc:
             u = pc[0]
     u = u.split("?")[0] if "item.rakuten.co.jp" in u else u
+    return a8rk(u)
+
+
+# 楽天の商品は A8.net の「楽天市場」経由のリンクにする（紹介料がポイントでなく現金で入るように）
+A8RK = "44Z3ZF+6Y22UQ+2HOM+BWGDT"
+A8RK_HGC = "g00twkc4.2bo11c58.g00twkc4.2bo12a04/a25022153683_44Z3ZF_6Y22UQ_2HOM_BWGDT"
+
+
+def a8rk(u):
     q = urllib.parse.quote(u, safe="")
-    return f"https://hb.afl.rakuten.co.jp/ichiba/{AFF}/?pc={q}&m={q}"
+    r = f"https://hb.afl.rakuten.co.jp/hgc/{A8RK_HGC}?pc={q}&m={q}"
+    return f"https://rpx.a8.net/svt/ejp?a8mat={A8RK}&rakuten=y&a8ejpredirect={urllib.parse.quote(r, safe='')}"
 
 
 def item(x):
