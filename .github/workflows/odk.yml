@@ -23,6 +23,7 @@ jobs:
           MAX_PREFS: "12"
         run: python3 tools/build_odk.py
       - name: commit
+        if: always()
         run: |
           git config user.name "uchinoko-data"
           git config user.email "uchinoko-data@users.noreply.github.com"

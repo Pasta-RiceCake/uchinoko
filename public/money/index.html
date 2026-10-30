@@ -883,6 +883,7 @@ button.lnk{background:none;border:0;padding:0;color:var(--ac);text-decoration:un
 .calls a b{display:block;font-size:24px;letter-spacing:.03em;color:var(--ink)}.calls a span{font-size:12px;display:block}
 .calls a.c119{grid-column:1/-1;background:color-mix(in srgb,var(--red) 14%,var(--sheet))}.calls a.c119 b{color:var(--red)}
 .telb{flex:0 0 auto;align-self:center;background:var(--ac);color:var(--onac);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;text-decoration:none}
+.jtrow .telb{align-self:auto;padding:7px 14px;font-size:12px;margin-bottom:10px;border:1.5px solid var(--ac);line-height:normal}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -1759,7 +1760,7 @@ html:root[data-th] .l-home .h{color:color-mix(in srgb,currentColor 60%,var(--ink
 <div class="wrap"><main id="main"><div class="ph"><button type="button" class="bk" data-act="back" aria-label="もどる"><svg class="i" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.657 17.657L9 12l5.657-5.657"></path></svg></button><h1>お金の見通し</h1><span class="bub k2"><span class="iln" style="width:38px;height:38px"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="m3 6.5l8.68 7.233a.5.5 0 0 0 .64 0L21 6.5M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"></path></svg></span></span></div><p class="lead">いつ、いくらくらい入るかの目安です。お給料を入れると計算します（このスマホの中だけに保存されます）。</p>
   <div class="sheet stack"><div class="kch"><label><input type="radio" name="job" data-act="mnjob" value="会社員" checked=""><span style="--kc:var(--ac)">会社員</span></label><label><input type="radio" name="job" data-act="mnjob" value="自営業・フリーランス"><span style="--kc:var(--ac)">自営業・フリーランス</span></label></div>
   <label>お休みする人のお給料（1か月・税金を引く前）<input type="number" inputmode="numeric" data-act="mnsal" value="" placeholder="例：250000"></label>
-  <label>育休を始める日<input type="date" data-act="mnstart" value="2026-12-25" readonly="" class="dpin"></label>
+  <label>育休を始める日<input type="date" data-act="mnstart" value="2026-12-26" readonly="" class="dpin"></label>
   <label>育休の長さ<select data-act="mnlen"><option value="6">6か月</option><option value="9">9か月</option><option value="10">10か月</option><option value="12" selected="">12か月</option><option value="18">18か月</option><option value="24">24か月</option></select></label>
   <label class="adw"><input type="checkbox" data-act="mnpt"> パートナーも14日以上育休をとる</label></div>
   <div class="sec-t">もらえるお金</div><div class="sheet mn">
@@ -3460,7 +3461,7 @@ function vJintsu(){const j=jtS(),L=j.log.slice(-8),iv=L.slice(1).map((t,i)=>Math
    ${avg!==null?`<p class="jtavg">最近の間隔は <b>約${avg}分</b></p>`:""}
    <p class="note" style="margin:6px 0 10px">目安：初めてのお産は<b>10分おき</b>（1時間に6回）、2人目以降は<b>15分おき</b>になったら電話。産院から言われた目安があれば、そちらを優先してください。${L.length?` <button type="button" class="lk" data-act="jtclr">記録を消す</button>`:""}</p></section>
   <section class="h-sec"><div class="hd"><h2>3. 陣痛タクシー・家族に連絡</h2></div>
-   <div class="jtrow"><label class="azf grow"><span class="sub">陣痛タクシーの番号</span><input data-act="jtf" data-v="taxi" value="${esc(j.taxi)}" inputmode="tel" placeholder="登録した番号"></label>${cp(j.taxi,"タクシーの番号")}</div>
+   <div class="jtrow"><label class="azf grow"><span class="sub">陣痛タクシーの番号</span><input data-act="jtf" data-v="taxi" value="${esc(j.taxi)}" inputmode="tel" placeholder="登録した番号"></label>${cp(j.taxi,"タクシーの番号")}${telB(j.taxi)}</div>
    <label class="azf"><span class="sub">家族に送る文（LINEに貼れます）</span><textarea rows="2" data-act="jtf" data-v="msg">${esc(j.msg)}</textarea></label>
    <div style="padding:8px 0 10px"><button type="button" class="btn" data-act="jtcopy" data-v="${esc(j.msg)}" style="width:100%">文をコピーする</button></div></section>
   <section class="h-sec"><div class="hd"><h2>4. 持っていくもの</h2></div><div class="rows">${jtBr().map((x,i)=>`<label class="rw"><input type="checkbox" class="ck" data-act="jtbck" data-i="${i}"${x.c?" checked":""}><span class="grow t${x.c?" done":""}">${esc(x.t)}</span>${x.t==="入院バッグ"?`<button type="button" class="x" data-act="open" data-v="pre">中身を見る</button>`:""}<button type="button" class="x" data-act="jtbdel" data-i="${i}">消す</button></label>`).join("")}</div>

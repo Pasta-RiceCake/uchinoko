@@ -35,7 +35,7 @@ def gem(prompt):
             last = e
             print("limit", model, e)
             continue
-        except RuntimeError as e:
+        except Exception as e:  # 時間切れ（TimeoutError）なども、次のモデルで続ける
             last = e
             print("error", model, str(e)[:200])
             continue
@@ -203,6 +203,9 @@ def main():
         except Limit:
             print("無料の上限に来たので、今日はここまで")
             break
+        except Exception as e:
+            print(p, "とばします", str(e)[:200])
+            continue
         evs = clean(text, names, today)
         print(p, model, len(evs), "件", "サイト", sum(1 for n in names if sites.get(n)), "/", len(names))
         json.dump({"at": today.isoformat(timespec="seconds"), "pref": p, "ev": evs, "sp": []},
