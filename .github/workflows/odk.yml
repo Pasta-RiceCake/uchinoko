@@ -13,14 +13,14 @@ concurrency: ${{ github.workflow }}
 jobs:
   odk:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - name: build
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PREF: ${{ github.event.inputs.pref }}
-          MAX_PREFS: "12"
+          MAX_PREFS: "47"
         run: python3 tools/build_odk.py
       - name: commit
         if: always()
