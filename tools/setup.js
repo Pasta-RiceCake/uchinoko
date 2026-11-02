@@ -51,7 +51,7 @@ function joinGate(id){
 async function startGate(){
   const m=location.pathname.match(/^\/j\/([a-z0-9]{10})\/?$/);
   if(m){if(S.share.on&&S.share.id===m[1])history.replaceState(null,"","/");else{joinGate(m[1]);return}}
-  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),cp=location.pathname.match(/^\/city\/c\/(\d{5})\/?$/),seo=(sp&&typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]]&&PAGES[sp[1]])||(cp&&typeof CITY_PAGES!=="undefined"&&CITY_PAGES[cp[1]]);
+  const sp=location.pathname.match(/^\/([a-z]+)\/?$/),cp=location.pathname.match(/^\/city\/c\/(\d{5})\/?$/),seo=(sp&&(sp[1]==="fufu"||typeof SEO_PAGES!=="undefined"&&SEO_PAGES[sp[1]])&&PAGES[sp[1]])||(cp&&typeof CITY_PAGES!=="undefined"&&CITY_PAGES[cp[1]]);
   pathReady=true;
   if(cp&&seo){cityV=cp[1];page="city";stack=[];render(false)}
   else if(seo){page=sp[1];stack=[];render(false)}

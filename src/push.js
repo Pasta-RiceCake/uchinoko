@@ -142,7 +142,7 @@ export async function pushTest(env, b) {
   return { ok: st >= 200 && st < 300, status: st };
 }
 
-// パートナーが予定や買い物を足したら、同じ家族のほかのスマホへ
+// パートナーが予定・買い物・共有メモを足したら、同じ家族のほかのスマホへ
 export async function pushPartner(env, fam, dev, oldData, put) {
   const subs = await env.DB.prepare("SELECT dev, sub, prefs FROM push WHERE fam = ? AND dev != ?").bind(fam, String(dev || "")).all();
   if (!subs.results.length) return;
@@ -158,6 +158,16 @@ export async function pushPartner(env, fam, dev, oldData, put) {
     const old = new Set(((oldData.shop && oldData.shop.v) || []).map((x) => x.t));
     const add = put.shop.filter((x) => x && !x.d && !old.has(x.t));
     if (add.length) msgs.push({ t: `${who}が買い物リストに追加しました`, b: add.slice(0, 4).map((x) => clip(x.t, 30)).join("、") + (add.length > 4 ? ` ほか${add.length - 4}件` : ""), u: "/" });
+  }
+  if (put.ff && typeof put.ff === "object") {
+    const ff0 = (oldData.ff && oldData.ff.v) || {};
+    const nm = (x) => (Array.isArray(x) ? x[0] : x && x.t) || "";
+    const oldT = new Set((ff0.t || []).map(nm));
+    const addT = (Array.isArray(put.ff.t) ? put.ff.t : []).map(nm).filter((t) => t && !oldT.has(t));
+    const oldN = new Set((ff0.n || []).map((x) => x && x.h));
+    const addN = (Array.isArray(put.ff.n) ? put.ff.n : []).filter((x) => x && x.h && !oldN.has(x.h)).map((x) => x.h);
+    const add = [...addT, ...addN];
+    if (add.length) msgs.push({ t: `${who}が共有メモに追加しました`, b: add.slice(0, 3).map((t) => clip(t, 30)).join("、") + (add.length > 3 ? ` ほか${add.length - 3}件` : ""), u: "/fufu/" });
   }
   for (const s of subs.results) {
     let p = {};

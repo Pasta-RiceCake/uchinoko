@@ -107,7 +107,7 @@ async function sync(req, env, id, ctx) {
         continue;
       }
     }
-    if (ctx && (put.plans || put.shop)) ctx.waitUntil(pushPartner(env, id, b.dev, JSON.parse(cur.data), put).catch(() => {}));
+    if (ctx && (put.plans || put.shop || put.ff)) ctx.waitUntil(pushPartner(env, id, b.dev, JSON.parse(cur.data), put).catch(() => {}));
     const upd = {};
     for (const k of Object.keys(data)) if (data[k].r > since && !(k in put)) upd[k] = data[k].v;
     return json({ rev, upd });
