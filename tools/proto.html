@@ -2281,7 +2281,7 @@ function vRank(){if(!rkP){AFF_PICK.push(...RANK.flatMap(r=>r[1].map(x=>x[0])));r
 const APPIC=Object.keys(IMG);
 const APPBG=["#fde8ec","#e5f4ee","#e8effc","#fdf3dc","#f3e8fd","#fff"];
 const NOTI=[["vac","予防接種・健診の前日",true],["ev","イベントの1週間前（お宮参り・お食い初めなど）",true],["gift","内祝いのお返しの期限",true],["chore","その日の家事のリマインド（夜8時）",false],["shop","パートナーが買い物リストに追加したとき",false],["hoiku","保活の締め切り",true]];
-const ABOUT_SRC=[["こども家庭庁", "https://www.cfa.go.jp/", "保育・手当・子育ての制度"], ["厚生労働省", "https://www.mhlw.go.jp/", "予防接種・妊娠中の食べ物・医療"], ["国立健康危機管理研究機構（JIHS）", "https://www.jihs.go.jp/", "はやっている病気・予防接種のスケジュール"], ["日本小児科学会", "https://www.jpeds.or.jp/", "子どもの病気とケガ"], ["日本産科婦人科学会", "https://www.jsog.or.jp/", "妊娠とお産"], ["日本小児アレルギー学会", "https://www.jspaci.jp/", "食物アレルギーと離乳食"], ["消費者庁", "https://www.caa.go.jp/", "子どもの事故の防ぎ方"], ["国立成育医療研究センター", "https://www.ncchd.go.jp/", "妊娠と薬・子どもの成長"], ["国税庁", "https://www.nta.go.jp/", "医療費控除・扶養"], ["医療情報ネット（厚生労働省）", "https://www.iryou.teikyouseido.mhlw.go.jp/", "産院の一覧"], ["OpenStreetMap", "https://www.openstreetmap.org/copyright", "保育園の地図"], ["各市区町村・スポットの公式サイト", "", "子育てイベント・サービス・おでかけイベント"]],ABOUT_MAIL="";
+const ABOUT_SRC=[["こども家庭庁", "https://www.cfa.go.jp/", "保育・手当・子育ての制度"], ["厚生労働省", "https://www.mhlw.go.jp/", "予防接種・妊娠中の食べ物・医療"], ["国立健康危機管理研究機構（JIHS）", "https://www.jihs.go.jp/", "はやっている病気・予防接種のスケジュール"], ["日本小児科学会", "https://www.jpeds.or.jp/", "子どもの病気とケガ"], ["日本産科婦人科学会", "https://www.jsog.or.jp/", "妊娠とお産"], ["日本小児アレルギー学会", "https://www.jspaci.jp/", "食物アレルギーと離乳食"], ["消費者庁", "https://www.caa.go.jp/", "子どもの事故の防ぎ方"], ["国立成育医療研究センター", "https://www.ncchd.go.jp/", "妊娠と薬・子どもの成長"], ["国税庁", "https://www.nta.go.jp/", "医療費控除・扶養"], ["医療情報ネット（厚生労働省）", "https://www.iryou.teikyouseido.mhlw.go.jp/", "産院の一覧"], ["OpenStreetMap", "https://www.openstreetmap.org/copyright", "保育園の地図"], ["各市区町村・スポットの公式サイト", "", "子育てイベント・サービス・おでかけイベント"]],ABOUT_MAIL="https://x.com/xlicjt";
 function vAbout(){
   const sec=(h,ps)=>`<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>${h}</h2></div>${ps.map(p=>`<p class="note">${p}</p>`).join("")}</section>`;
   return head("このサイトについて","book","sky")+
@@ -2292,7 +2292,7 @@ function vAbout(){
    "読み取りまちがいや、あとから変わることがあります。申し込む前や大事なことは、のっているリンクから公式サイトで確かめてください。"])+
   sec("病気やケガのページについて",["一般的な目安で、診断ではありません。迷ったときは、子どもの医療相談 #8000（夜間・休日）やかかりつけの病院に相談してください。ぐったりしている、息が苦しそう、けいれんが止まらないときは、すぐに119番です。"])+
   sec("広告について",["サイトを無料で続けるために、グッズの紹介などに広告のリンクを使っています。リンクから買うと紹介料が入ることがありますが、値段は変わりません。広告だからといって、おすすめの順番を変えることはしていません。"])+
-  `<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>まちがいを見つけたら</h2></div><p class="note">内容のまちがいや、古くなっている情報に気づいたら、教えてもらえるとうれしいです。</p>${ABOUT_MAIL?`<p class="note">${ABOUT_MAIL.startsWith("http")?`<a class="ext" href="${ABOUT_MAIL}" target="_blank" rel="noopener">連絡フォーム</a>`:esc(ABOUT_MAIL)}</p>`:""}</section>`+
+  `<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>お問い合わせ</h2></div><p class="note">内容のまちがいや、古くなっている情報に気づいたら、教えてもらえるとうれしいです。X（旧Twitter）のDMで受けつけています。</p>${ABOUT_MAIL?`<p class="note">${ABOUT_MAIL.startsWith("http")?`<a class="ext" href="${ABOUT_MAIL}" target="_blank" rel="noopener">X　@xlicjt</a>`:esc(ABOUT_MAIL)}</p>`:""}</section>`+
   `<section class="h-sec" style="margin-top:12px"><button type="button" class="rw" data-act="open" data-v="privacy" style="border:0"><span class="grow t">プライバシーポリシー</span><span class="chev">${ic("chev",16)}</span></button></section>`;
 }
 function vPrivacy(){
@@ -2309,7 +2309,8 @@ function vPrivacy(){
    "広告の会社が、紹介を数えるためにクッキーなどを使うことがあります。広告のあるページには、そのことを小さく書いています。"])+
   sec("のせている情報について",["市のイベントやサービスは、市の公式サイトなどから自動で集めたものです。保育園はOpenStreetMap、産院は医療情報ネットの情報をもとにしています。変わっていることもあるので、申し込む前に公式サイトで確かめてください。",
    "病気やケガのページは一般的な目安で、診断ではありません。迷ったら #8000 や病院に相談してください。"])+
-  sec("このページについて",["内容を変えるときは、このページでお知らせします。","2026年10月29日"]);
+  sec("お問い合わせ",["X（旧Twitter）の @xlicjt にDMでご連絡ください。"])+
+  sec("このページについて",["内容を変えるときは、このページでお知らせします。","2026年11月3日"]);
 }
 function vAppSet(){
   S.app=S.app||{ic:"baby_face",bg:0,n:{}};const a=S.app;
