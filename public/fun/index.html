@@ -1959,7 +1959,7 @@ const MENU_P=[["毎日のこと",[["pre","出産までにやること","ribbonhe
  ["そろえるもの",[["junbi","出産準備品リスト","onesie","pink"],["names","名前候補","heart","pink"],["rank","人気ランキング","star","lemon"],["goods","話題のグッズ","bear","lemon"],["kaden","あると助かる家電","star","lemon"],["perk","もらえる特典・お店の教室","gift","pink"],["wants","欲しい物メモ","ribbonheart","sky"]]],
  ["お金・手続き",[["money","お金の見通し","envelope","lemon"],["city","わが家の市区町村","envelope","lemon"],["hoiku","保活・保育園","stroller","mint"]]],
  ["産まれたあとに読む",[["hayami","月齢の早見表","star","lemon"],["how","育児のやり方","bottle","pink"],["wear","服の着せ方","onesie","sky"],["chiiku","あそび・絵本","book","lemon"]]],
- ["せってい",[["sync","共有と引き継ぎ","hearthands","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"],["about","このサイトについて","book","sky"],["privacy","プライバシーポリシー","star","pink"]]]];
+ ["せってい",[["sync","共有と引き継ぎ","hearthands","mint"],["homeedit","ホームをカスタマイズ","star","mint"],["appset","アイコンと通知","bunny","pink"],["kise","きせかえ","ribbon","pink"],["about","このサイトについて","book","sky"],["privacy","プライバシーポリシー","star","pink"]]]];
 const MENU_=()=>S.mode==="pre"?MENU_P:MENU_M;
 const GRP=[["赤ちゃんの服","onesie","sky",[["wear","着せ方"],["clothes","枚数"]],"季節と温度ごとの着せ方・何枚あるといいか"],
  ["病気・ケガ","thermometer","pink",[["sick","急なとき"],["ill","よくある病気"],["visits","受診メモ"]],"熱・ケガのときの見分け方、よくある病気、受診のメモ"],
@@ -2142,12 +2142,19 @@ function vHomePre(){
     <div class="big"><span class="sub">あと</span><span class="num n${String(Math.max(0,left)).length}">${Math.max(0,left)}</span><span>日</span></div>
     <div class="age2">妊娠${w}週${d}日</div></div>${photoBox()}</div>
   ${w>=36?`<button type="button" class="bornb" data-act="born"><span class="grow"><b>生まれました！</b><span>誕生日を入れて、子育て中に切りかえる</span></span>${ic("chev",16)}</button>`:""}<button type="button" class="jthome${w>=36?" big":""}" data-act="open" data-v="jintsu"><span class="grow"><b>陣痛かも？と思ったら</b><span>産院の電話・間隔のはかり方・家族への連絡</span></span>${ic("chev",16)}</button>
-  ${st3()}<section class="h-sec"><div class="hd"><h2>いまやること（${cur[2]}）</h2><button type="button" data-act="open" data-v="pre">ぜんぶ</button></div><div class="rows">
-   ${todo.map(([k,t])=>preRow(k,t,"")).join("")||'<p class="sub" style="margin:4px 0 10px">この時期のやることは全部できました</p>'}</div></section>
-  <section class="h-sec"><div class="hd"><h2>よく使う</h2></div><div class="icgrid">${[["pre","やること","ribbonheart"],["junbi","準備品","onesie"],["sanin","産院","crib"],["body","体のこと","thermometer"],["life","すごし方","heart"],["rank","ランキング","star"],["wants","欲しい物","basket"],["city","市区町村","envelope"]].slice(0,8).map(([k,l,i])=>`<button type="button" data-act="open" data-v="${k}"><span class="cir">${il(i,40)}</span>${l}</button>`).join("")}</div></section>
-  <section class="h-sec"><div class="hd"><h2>出産予定日</h2></div><div class="row" style="padding-bottom:10px"><input type="date" id="dueIn" data-act="due" value="${iso(due())}" aria-label="出産予定日"></div>
-   <p class="note">生まれたら、<button type="button" class="lnk" data-act="born">「生まれました」を押して</button>誕生日を入れてください。</p></section>`;
+  ${st3()}${(()=>{const B={todo:()=>`<section class="h-sec"><div class="hd"><h2>いまやること（${cur[2]}）</h2><button type="button" data-act="open" data-v="pre">ぜんぶ</button></div><div class="rows">
+   ${todo.map(([k,t])=>preRow(k,t,"")).join("")||'<p class="sub" style="margin:4px 0 10px">この時期のやることは全部できました</p>'}</div></section>`,
+  short:()=>`<section class="h-sec"><div class="hd"><h2>よく使う</h2></div><div class="icgrid">${[["pre","やること","ribbonheart"],["junbi","準備品","onesie"],["sanin","産院","crib"],["body","体のこと","thermometer"],["life","すごし方","heart"],["rank","ランキング","star"],["wants","欲しい物","basket"],["city","市区町村","envelope"]].slice(0,8).map(([k,l,i])=>`<button type="button" data-act="open" data-v="${k}"><span class="cir">${il(i,40)}</span>${l}</button>`).join("")}</div></section>`,
+  due:()=>`<section class="h-sec"><div class="hd"><h2>出産予定日</h2></div><div class="row" style="padding-bottom:10px"><input type="date" id="dueIn" data-act="due" value="${iso(due())}" aria-label="出産予定日"></div>
+   <p class="note">生まれたら、<button type="button" class="lnk" data-act="born">「生まれました」を押して</button>誕生日を入れてください。</p></section>`,
+  shop:()=>`<section class="h-sec"><div class="hd"><h2>買い物</h2><button type="button" data-act="open" data-v="shop">編集</button></div><div class="rows">${shOrder().slice(0,4).map(([s,i])=>`<label class="rw"><input type="checkbox" class="ck" data-act="shop" data-i="${i}"${s.d?" checked":""}><span class="grow t">${esc(s.t)}</span></label>`).join("")||'<p class="sub" style="margin:8px 0">買うものはありません</p>'}</div></section>`,
+  city:()=>`<section class="h-sec"><div class="hd"><h2>${esc(S.pref+(S.city||""))}</h2><button type="button" data-act="open" data-v="city">ひらく</button></div><p class="sub" style="margin:0">${S.city?"子育てイベントとサービスを探す":"市区町村を入れると、子育てのサービスやイベントが探せます"}</p></section>`};
+  return hList().map(k=>B[k]?B[k]():k.startsWith("pg:")?pgCard(k.slice(3)):"").join("")})()}
+  <section class="h-sec" style="text-align:center"><button type="button" class="kise" data-act="open" data-v="homeedit" style="font-size:13px;color:var(--sub)">ホームをカスタマイズ</button></section>`;
 }
+const HOMEB_P=[["todo","いまやること"],["short","よく使う（アイコン）"],["due","出産予定日"],["shop","買い物"],["city","市区町村のサービス"]];
+const HK=()=>S.mode==="pre"?"homeP":"home";
+const hList=()=>{if(!Array.isArray(S.homeP))S.homeP=["todo","short","due"];return S[HK()]};
 function openCrop(f,cb,sq){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
   const V=260,base=Math.max(V/im.width,V/im.height);let z=1,x=0,y=0,drag=null;
   const ov=document.createElement("div");ov.className="crop"+(sq?" sq":"");ov.innerHTML=`<div class="cbox"><p class="ct">位置と大きさを合わせてください</p><div class="cv"><img alt=""></div><label class="cz">小<input type="range" min="1" max="3" step="0.01" value="1" aria-label="大きさ">大</label><div class="cb"><button type="button" class="x" data-c="no">やめる</button><button type="button" class="btn" data-c="ok">決定</button></div></div>`;
@@ -2198,8 +2205,8 @@ const MITEM=k=>{for(const[,it]of [...MENU_M,...MENU_P])for(const x of it)if(x[0]
 function pgCard(k){const x=MITEM(k);if(!x)return "";return `<section class="h-sec"><button type="button" class="rw" data-act="open" data-v="${k}" style="border:0;padding-block:2px 10px">${pic(x[2],40)}<span class="grow"><div class="t">${x[1]}</div><div class="s">${MSUB[k]||""}</div></span><span class="chev">${ic("chev",16)}</span></button></section>`}
 const HOMEB=[["short","よく使う（アイコン）"],["next","次の予定"],["chores","きょうの家事"],["shop","買い物"],["hoiku","保活の次にやること"],["odk","おでかけ"],["gifts","内祝いの残り"],["city","市区町村のサービス"],["sos","急な病気・ケガのとき"]];
 function vHomeEdit(){
-  const on=S.home,off=HOMEB.filter(([k])=>!on.includes(k));
-  const nm=k=>k.startsWith("pg:")?((MITEM(k.slice(3))||[,k])[1]+"（入口）"):(HOMEB.find(x=>x[0]===k)||[,k])[1];
+  const on=hList(),off=(S.mode==="pre"?HOMEB_P:HOMEB).filter(([k])=>!on.includes(k));
+  const nm=k=>k.startsWith("pg:")?((MITEM(k.slice(3))||[,k])[1]+"（入口）"):([...HOMEB,...HOMEB_P].find(x=>x[0]===k)||[,k])[1];
   return head("ホームをカスタマイズ","star","pink")+`<p class="lead">メニューのどれでもホームに出せます。上下の順番も変えられます。</p>
   <section class="h-sec"><div class="hd"><h2>出すもの</h2></div><p class="sub" style="margin:-6px 0 6px;font-size:12px">右の <b>≡</b> を押さえたまま上下に動かすと、順番が変わります。</p><div class="rows" id="hord">${on.map((k,i)=>`<div class="rw dr" data-k="${k}"><span class="grow t">${nm(k)}</span><button type="button" class="x" data-act="hoff" data-v="${k}">外す</button><span class="grip" aria-label="ドラッグして並べ替え">≡</span></div>`).join("")||'<p class="sub">ホームには赤ちゃんの日数だけが出ます</p>'}</div></section>
   ${off.length?`<section class="h-sec"><div class="hd"><h2>中身が見えるまとめ</h2></div><p class="sub" style="margin:-6px 0 6px;font-size:12px">ホームでそのまま押したりチェックしたりできます</p><div class="rows">${off.map(([k,l])=>`<div class="rw"><span class="grow t">${l}</span><button type="button" class="fav" data-act="hon" data-v="${k}">ホームに出す</button></div>`).join("")}</div></section>`:""}
@@ -3685,9 +3692,9 @@ document.addEventListener("click",e=>{
     case"odev":odev=v;render(true);break;
     case"odfav":{const j=S.odk.fav.indexOf(v);if(j>=0)S.odk.fav.splice(j,1);else{S.odk.fav.push(v);toast("お気に入りに入れました")}k();break}
     case"odkdel":S.odk.my.splice(i,1);k();break;
-    case"hmv":{const j=i+(+v);[S.home[i],S.home[j]]=[S.home[j],S.home[i]];k();break}
-    case"hoff":S.home=S.home.filter(x=>x!==v);k();break;
-    case"hon":S.home.push(v);k();break;
+    case"hmv":{const L=hList(),j=i+(+v);[L[i],L[j]]=[L[j],L[i]];k();break}
+    case"hoff":S[HK()]=hList().filter(x=>x!==v);k();break;
+    case"hon":hList().push(v);k();break;
     case"bphdel":S.photo="";k();break;
     case"cityedit":cityEdit=true;render(true);break;
     case"citycancel":cityEdit=false;render(true);break;
@@ -3851,7 +3858,7 @@ addEventListener("submit",e=>{
 (()=>{let row=null,box=null;
  document.addEventListener("pointerdown",e=>{const g=e.target.closest(".grip");if(!g)return;row=g.closest(".dr");box=row.parentNode;row.classList.add("drag");g.setPointerCapture(e.pointerId);e.preventDefault()});
  document.addEventListener("pointermove",e=>{if(!row)return;const rs=[...box.children].filter(x=>x!==row);let ref=null;for(const r of rs){const b=r.getBoundingClientRect();if(e.clientY<b.top+b.height/2){ref=r;break}}box.insertBefore(row,ref)});
- const end=()=>{if(!row)return;row.classList.remove("drag");S.home=[...box.children].map(x=>x.dataset.k);row=null;save();render(true)};
+ const end=()=>{if(!row)return;row.classList.remove("drag");S[HK()]=[...box.children].map(x=>x.dataset.k);row=null;save();render(true)};
  document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
 })();
 document.addEventListener("change",e=>{if(e.target.id!=="ownic")return;const f=e.target.files?.[0];if(!f)return;openCrop(f,u=>{S.app.own=u;S.app.ic="own";save();render(true);toast("アイコンにしました")},true);e.target.value=""});

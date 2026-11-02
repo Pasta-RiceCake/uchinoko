@@ -80,7 +80,7 @@ s = s.replace('S.share.on', 'shOn()').replace('if(!s.on)return', 'if(!shOn())ret
 rep('const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};', open(os.path.join(ROOT, 'tools/sync.js'), encoding='utf-8').read())
 
 # ---- せってい「共有と引き継ぎ」 ----
-for g in ['["せってい",[["appset","アイコンと通知","bunny","pink"]', '["せってい",[["baby","赤ちゃんの情報","chick","mint"]']:
+for g in ['["せってい",[["homeedit","ホームをカスタマイズ","star","mint"]', '["せってい",[["baby","赤ちゃんの情報","chick","mint"]']:
     rep(g, g.replace('[["', '[["sync","共有と引き継ぎ","hearthands","mint"],["', 1))
 rep('const PAGES={', 'const PAGES={sync:vSync,')
 rep('const MSUB={', 'const MSUB={sync:"パートナーと共有・機種変更のときの引き継ぎ",')
