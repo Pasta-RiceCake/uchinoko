@@ -2,7 +2,7 @@
 #  - サイトにのせているスポットの公式サイトを読んで、Gemini（無料枠）に今月と来月のイベントを抜き出してもらう
 #    （Gemini の Google 検索は無料枠では使えなくなったので、検索はしない）
 #  - スポットの公式サイトのURLは tools/odk_sites.json にためておく。まだ無いスポットは Gemini に聞いて、開けるか確かめてから入れる
-#  - 1回の実行で MAX_PREFS 県まで。古い県から順に、14日たったら読み直す
+#  - 1回の実行で MAX_PREFS 県まで。古い県から順に、7日たったら読み直す
 import datetime, json, os, re, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -183,7 +183,7 @@ def main():
         age = 999
         if os.path.exists(f):
             age = (today - datetime.datetime.fromisoformat(json.load(open(f, encoding="utf-8"))["at"])).days
-        if ONLY or age >= 14:
+        if ONLY or age >= 7:
             todo.append((age, p, f))
     todo.sort(key=lambda x: -x[0])
     print("読む都道府県", len(todo))

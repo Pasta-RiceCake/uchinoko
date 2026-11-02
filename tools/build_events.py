@@ -1,5 +1,5 @@
 # 家族のいる市区町村の子育てイベントを、Gemini（無料枠）に公式サイトから探してもらい public/data/events/ に置く
-#  - 1回の実行で MAX_CITIES 市まで。古い市から順に、25日たったら読み直す
+#  - 1回の実行で MAX_CITIES 市まで。古い市から順に、7日たったら読み直す
 #  - 無料の上限に来たら（429）、そこで止めて、作れた分だけ保存する
 import base64, datetime, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 
@@ -328,7 +328,7 @@ def main():
         age = 999
         if os.path.exists(p):
             age = (today - datetime.datetime.fromisoformat(json.load(open(p, encoding="utf-8"))["at"])).days
-        if ONLY or age >= 25:
+        if ONLY or age >= 7:
             todo.append((age, name, c, p))
     todo.sort(key=lambda x: -x[0])
     print("読む市区町村", len(todo), "のうち", min(len(todo), MAX_CITIES))
