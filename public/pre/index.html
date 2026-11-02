@@ -884,6 +884,18 @@ button.lnk{background:none;border:0;padding:0;color:var(--ac);text-decoration:un
 .calls a.c119{grid-column:1/-1;background:color-mix(in srgb,var(--red) 14%,var(--sheet))}.calls a.c119 b{color:var(--red)}
 .telb{flex:0 0 auto;align-self:center;background:var(--ac);color:var(--onac);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;text-decoration:none}
 .jtrow .telb{align-self:auto;padding:7px 14px;font-size:12px;margin-bottom:10px;border:1.5px solid var(--ac);line-height:normal}
+.dayt{background:var(--sheet);border-radius:var(--r2);border:var(--bd);overflow:hidden;font-size:13px}
+.dayt>div{display:grid;grid-template-columns:3.2em 1fr 1fr;gap:8px;padding:7px 12px;border-top:1px dotted var(--line,rgba(0,0,0,.12));align-items:baseline}
+.dayt>div:first-child{border-top:0}
+.dayt>div>span:first-child{color:var(--ac);font-weight:700}
+.dayt .dh b{font-size:12px;color:var(--sub)}
+.dayt>div>span{min-width:0}
+.rn1{margin:10px 0}
+.rn1t{background:var(--bg2,rgba(0,0,0,.03));border-radius:12px;overflow:hidden;font-size:13px;margin:6px 0 10px}
+.rn1t>div{display:grid;grid-template-columns:5.6em 1fr 1fr 1fr;gap:6px;padding:6px 10px;border-top:1px dotted var(--line,rgba(0,0,0,.12));align-items:baseline}
+.rn1t>div:first-child{border-top:0}
+.rn1t>div>span:first-child{color:var(--ac);font-weight:700;font-size:12px}
+.rn1t .dh b{font-size:11px;color:var(--sub);line-height:1.3}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2290,9 +2302,9 @@ const PLAY=[[0,3,"0〜3か月","目を見て話しかけたり歌ったりする
 [12,23,"1歳","積み木や型はめ。外を歩く。まねっこ遊び。クレヨンでなぐり描き。"],
 [24,35,"2歳","ままごとなどのごっこ遊び。ねんど。公園で走る。「じぶんで」はできるだけやらせてみる。"],
 [36,99,"3歳から","かくれんぼなどルールのある遊び。はさみ（大人が見ているときに）。ひらがなは興味が出てからで大丈夫。"]];
-const BOOKS=[["0歳から",[["じゃあじゃあびりびり","まつい のりこ"],["いないいないばあ","松谷 みよ子"],["がたん ごとん がたん ごとん","安西 水丸"],["もこ もこもこ","谷川 俊太郎・元永 定正"]]],
-["1歳から",[["だるまさんが","かがくい ひろし"],["しろくまちゃんのほっとけーき","わかやま けん"],["きんぎょが にげた","五味 太郎"],["ノンタン ぶらんこのせて","キヨノ サチコ"]]],
-["2歳から",[["はらぺこあおむし","エリック・カール"],["ぐりとぐら","中川 李枝子・大村 百合子"],["ねないこ だれだ","せな けいこ"],["おおきなかぶ","A.トルストイ再話・佐藤 忠良 画"]]]];
+const BOOKS=[["0歳から",[["じゃあじゃあびりびり","まつい のりこ"],["いないいないばあ","松谷 みよ子"],["がたん ごとん がたん ごとん","安西 水丸"],["もこ もこもこ","谷川 俊太郎・元永 定正"],["だーれの あかちゃん？","にへい たもつ・わたなべ さとこ"],["だっこ むぎゅー","いりやま さとし"],["こーちょ こちょ","にへい たもつ・わたなべ さとこ"]]],
+["1歳から",[["だるまさんが","かがくい ひろし"],["しろくまちゃんのほっとけーき","わかやま けん"],["きんぎょが にげた","五味 太郎"],["ノンタン ぶらんこのせて","キヨノ サチコ"],["パンダのあかちゃん おっとっと","まつもと さとみ・うしろ よしあき・わたなべ さとこ"],["いっせーの ばあ","新井 洋行"],["はっ はっ はくしょーん","たあ先生・あいはら ひろゆき・ちゅうがんじ たかむ"],["どんどん ぱっ","いしかわ こうじ"]]],
+["2歳から",[["はらぺこあおむし","エリック・カール"],["ぐりとぐら","中川 李枝子・大村 百合子"],["ねないこ だれだ","せな けいこ"],["おおきなかぶ","A.トルストイ再話・佐藤 忠良 画"],["たちねぶたくん","中川 ひろたか・村上 康成"],["ひだり みぎ","新井 洋行"],["りすのおふろやさん","たなか しん"]]]];
 const QA=[["泣きやまない","おなか・おむつ・暑さ寒さをまず確認。抱っこでゆらゆら、外の空気を吸う、換気扇やドライヤーのような音を聞かせるのもよく効きます。どうしても泣きやまないときは、安全な場所に寝かせて少し離れても大丈夫です。赤ちゃんを強くゆさぶるのは絶対にやめましょう。"],
 ["夜なかなか寝ない","朝は同じ時間にカーテンを開けて光を入れ、夜は暗く静かに。寝る前の流れ（お風呂→授乳→絵本など）を毎日同じにすると、だんだん眠るリズムができます。"],
 ["離乳食を食べない","日によってムラがあるのは普通です。無理に食べさせず、時間を決めて切り上げましょう。体重が増えていれば心配いらないことが多いです。気になるときは健診や保健センターで相談を。"],
@@ -2788,9 +2800,9 @@ function vIll(){
   <div class="stack">${ILL.map(x=>`<details class="acc"><summary><span class="bub">${ic("face-with-thermometer",22)}</span><span>${x[0]}<div class="sub" style="font-weight:400">${x[1]}</div></span></summary><div style="margin-top:10px;background:var(--sky-soft);border-radius:12px;padding:10px 12px"><b style="color:var(--sky);font-size:13px">お休みの目安</b><div>${x[2]}</div></div></details>`).join("")}</div>
   <p class="note">参考：こども家庭庁「保育所における感染症対策ガイドライン」</p>`;
 }
-const HOW=[["沐浴","bathtub",["着替え・おむつ・バスタオルを先に広げておく","お湯は38〜40℃。ひじを入れて少しぬるいくらい","授乳の直後とお腹がすいている時はさける","ガーゼを胸にかけると安心します","顔 → 頭 → 首 → わき → 腕 → 胸とお腹 → 足 → 背中 → おしり","全部で5〜10分。上がったらすぐ拭いて保湿"]],
+const HOW=[["沐浴","bathtub",["着替え・おむつ・バスタオルを先に広げておく","お湯は38〜40℃。ひじを入れて少しぬるいくらい","授乳の直後とお腹がすいている時はさける","ガーゼを胸にかけると安心します","顔 → 頭 → 首 → わき → 腕 → 胸とお腹 → 足 → 背中 → おしり","目やには、ぬらしたガーゼで目頭から目じりへ","全部で5〜10分。上がったらすぐ拭いて保湿","耳と鼻は、綿棒で入り口の水気をとるだけでOK","大人と同じお風呂は、1か月健診で大丈夫と言われてから"]],
   ["おむつ替え","baby",["新しいおむつを、今のおむつの下に先に敷く","女の子は前から後ろへ拭く。男の子は裏や付け根も","うんちはこすらず、押さえるように拭く","おしりが乾いてから付ける","足まわりのギャザーを外に出す","お腹に指が1〜2本入るゆるさで留める"]],
-  ["ミルク","baby-bottle",["粉ミルクは70℃以上のお湯で溶かす","腕の内側にたらして、温かいくらいまで冷ます","作って2時間たったら残りは捨てる"]],
+  ["ミルク","baby-bottle",["作る前に手を洗う","粉ミルクは、一度わかした70℃以上のお湯で溶かす","できあがりの量までお湯を足す（泡の下が目もりに合うように）","腕の内側にたらして、温かいくらいまで冷ます","乳首の根元までくわえさせ、びんを傾けて乳首をミルクで満たす（空気を飲みにくい）","作り置きはしない。作って2時間たったら残りは捨てる","飲んだらすぐ洗い、消毒する（煮る・レンジ・消毒液など）","夜中や外出には、そのまま飲める液体ミルクも便利。ふたりで、あやす人と作る人に分かれると楽"]],
   ["げっぷ","smiling-face-with-hearts",["たて抱きで背中を下から上にさするか、やさしくトントン","5分ほどで出なければOK。顔を横に向けて寝かせる"]],
   ["寝かせ方（SIDS・窒息を防ぐ）","sleeping-face",["1歳までは、あおむけで寝かせる（SIDSのリスクを下げる）","できるだけ母乳で（ミルクでも大丈夫。できる範囲で）","たばこはやめる。家族も、妊娠中から","敷き布団はかためのもの。枕・ぬいぐるみ・タオルは顔のまわりに置かない","大人のベッドで寝かせるときは、すき間や落ちることに気をつける。ベビーベッドの柵は必ず上げる","着せすぎ・暖めすぎない。手足が冷たくても、背中が温かければ大丈夫","寝返りし始めたら、自分で戻れないうちは、あおむけに戻してあげる"]]];
 let howEd=null;
@@ -2801,12 +2813,19 @@ function howEdit(id,title,steps,canTitle){
    <label class="sub" for="hw${id}">1行に1つずつ書いてください</label><textarea id="hw${id}" name="s" rows="${Math.max(5,steps.length+1)}">${esc(steps.join("\n"))}</textarea>
    <div class="plbtn"><button type="submit" class="pri">保存する</button><button type="button" data-act="howed" data-v="">やめる</button>
    ${id[0]==="m"?`<button type="button" class="del" data-act="howdel" data-v="${id}">このやり方を消す</button>`:S.howc?.e?.[id]?`<button type="button" data-act="howreset" data-v="${id}">もとに戻す</button>`:""}</div></form>`}
+const DAY1=[["0時","ねむる","おむつ替え・授乳"],["2時","ねむる。少し起きて飲む","おむつ替え・授乳"],["4時","ねむる。少し起きて飲む","おむつ替え・授乳"],["6時","ねむる","大人の朝ごはん・ゴミ出し"],["8時","起きる・飲む","おむつ替え・洗濯"],["10時","ねむる","かんたんな掃除"],["12時","起きる・飲む","おむつ替え・大人の昼ごはん"],["14時","ねむる","買い物（ネットでも）"],["16時","起きる・飲む・沐浴","沐浴・おむつ替え"],["18時","ねむる","夕ごはんのしたく"],["20時","ねむる。少し起きて飲む","大人の夕ごはん"],["22時","ねむる","大人のお風呂"]];
+const DAY3=[["0時","ねむる。ときどき泣く","泣いたらトントン・授乳"],["2時","ねむる。ときどき泣く","泣いたらトントン・授乳"],["4時","ねむる。少し起きて飲む","おむつ替え・授乳"],["6時","ねむる","大人の朝ごはん・ゴミ出し"],["8時","起きる・飲む","おむつ替え・洗濯"],["10時","起きて遊ぶ","いっしょに遊ぶ・お散歩"],["12時","ねむる","大人の昼ごはん"],["14時","ねむる。少し起きて飲む","おむつ替え・授乳"],["16時","起きる・飲む・お風呂","お風呂"],["18時","ねむる","夕ごはんのしたく"],["20時","起きる・飲む","おむつ替え・大人の夕ごはん"],["22時","ねむる。少し起きて飲む","大人のお風呂"]];
+let dayM=1;
+const DAYSEC=()=>{const d=dayM===3?DAY3:DAY1;return `<section class="h-sec" style="margin-top:12px"><div class="hd"><h2>赤ちゃんの1日（例）</h2></div><div class="sub" style="margin:-2px 0 6px">ひとつの例です。時間どおりにいかないのがふつうです。</div>
+ <div class="seg" style="margin:0 0 8px">${[1,3].map(m=>`<button type="button" class="${dayM===m?"on":""}" data-act="daym" data-v="${m}">生後${m}か月ごろ</button>`).join("")}</div>
+ <div class="dayt"><div class="dh"><span></span><b>赤ちゃん</b><b>大人がすること</b></div>${d.map(([t,b,a])=>`<div><span>${t}</span><span>${b}</span><span>${a}</span></div>`).join("")}</div>
+ <p class="note">${dayM===3?"3か月ごろになると、起きている時間が長くなり、まわりをよく見たり音に反応したりします。夜泣きが始まる子もいます。夜は交代でみると、どちらも少し眠れます。":"生まれてすぐは、1日のほとんどをねむってすごします。起きているあいだは、授乳とおむつ替えがほとんど。2〜3時間おきに起きるので、大人も赤ちゃんがねむったら一緒に休みましょう。"}</p></section>`};
 function vHow(){
   const c=howS();
   const L=[...HOW.map((h,i)=>({id:""+i,t:h[0],icn:h[1],st:c.e[i]||h[2],mine:!!c.e[i]})),...c.my.map((m,j)=>({id:"m"+j,t:m[0],icn:"heart",st:m[1],mine:true,own:true}))];
   return head("育児のやり方","bottle","pink")+`<p class="lead">一般的なやり方です。産院で教わったやり方や、おうちのやり方があれば、書きかえて「わが家のやり方」にできます。</p>
   <div class="stack">${L.map((h,i)=>`<details class="acc"${i===0||howEd===h.id?" open":""}><summary><span class="bub">${ic(h.icn,22)}</span><span class="grow">${esc(h.t)}</span>${h.mine?`<span class="hwtag">わが家</span>`:""}</summary>
-   ${howEd===h.id?howEdit(h.id,h.t,h.st,h.own):`<ol class="steps">${h.st.map(x=>`<li>${esc(x)}</li>`).join("")}</ol><button type="button" class="pladd" data-act="howed" data-v="${h.id}">${h.mine?"書きかえる":"わが家のやり方に書きかえる"}</button>`}</details>`).join("")}</div>${SIDS_NOTE}${SWAD}${WASH_NOTE}
+   ${howEd===h.id?howEdit(h.id,h.t,h.st,h.own):`<ol class="steps">${h.st.map(x=>`<li>${esc(x)}</li>`).join("")}</ol><button type="button" class="pladd" data-act="howed" data-v="${h.id}">${h.mine?"書きかえる":"わが家のやり方に書きかえる"}</button>`}</details>`).join("")}</div>${DAYSEC()}${SIDS_NOTE}${SWAD}${WASH_NOTE}
   <details class="acc" style="margin-top:12px"><summary><span class="bub">${ic("heart",22)}</span>やり方を追加する</summary>
    <form class="hwed" data-form="howmy"><input name="n" placeholder="名前（例：寝かしつけ）" aria-label="名前" required><label class="sub" for="hwnew">1行に1つずつ書いてください</label><textarea id="hwnew" name="s" rows="5" placeholder="部屋を暗くする&#10;トントンする"></textarea><div class="plbtn"><button type="submit" class="pri">追加する</button></div></form></details>`;
 }
@@ -3078,11 +3097,21 @@ function vRnLog(){const E=Object.entries(rnS().f).filter(e=>!rnDate||e[1].d===rn
   const ok=E.filter(e=>e[1].s==="ok").length,ng=E.length-ok;
   const dbar=`<div class="sheet rndt"><label class="grow">日付をえらぶ<input type="date" data-act="rndate" value="${rnDate}" max="${iso(T0)}"></label>${rnDate?`<button type="button" class="lk" data-act="rndate0">すべての日</button>`:""}</div>${rnDate?`<button type="button" class="pladd" data-act="rnadd" style="margin:0 0 4px">＋ ${md(new Date(rnDate+"T00:00:00"))}に食べたものを追加</button>`:""}`;
   return head("離乳食の食材チェック","mug","lemon")+rnSeg()+dbar+(E.length?`<div class="rnsum" style="margin-top:4px"><span>食べた <b>${ok}</b> 品目</span>${ng?`<span class="ng">気になる <b>${ng}</b></span>`:""}</div>`+Object.keys(by).map(d=>{const dt=new Date(d+"T00:00:00");return `<div class="sec-t">${md(dt)}（${WD[dt.getDay()]}）</div><div class="sheet">${by[d].map(([f,x])=>`<button type="button" class="li plr" data-act="rnf" data-v="${esc(f)}"><span class="rnst2 ${x.s}">${x.s==="ok"?"食べた":"気になる"}</span><span class="grow"><div class="t">${esc(f)}${RN_AL.includes(f)?`<i class="al">注意</i>`:""}</div>${x.m?`<div class="sub">${esc(x.m)}</div>`:""}</span><span class="sub">開く</span></button>`).join("")}</div>`}).join(""):`<div class="sheet"><p class="sub" style="margin:0">${rnDate?"この日の記録はありません。":"まだ記録がありません。「食材をえらぶ」から、食べた食材を押してください。"}</p></div>`)+(rnSel!==null?rnSheet():"")}
+const RN1=[["1〜2日目","1さじ","",""],["3〜4日目","2さじ","",""],["5〜6日目","3さじ","",""],["7〜10日目","4さじ","1さじ",""],["11〜15日目","5さじ","2さじ","1さじ"],["16〜25日目","6さじ","3さじ","2さじ"],["26〜30日目","30gくらい","15gくらい","5〜10gくらい"]];
+const RN1SEC=open=>`<details class="svc rn1"${open?" open":""}><summary><span class="grow"><b>はじめの1か月の進め方（例）</b><span class="sub" style="display:block;font-size:12px;margin-top:2px">量・かたさ・授乳との回数</span></span></summary>
+ <p>さじは、離乳食用の小さいスプーン1さじです。様子を見ながら、少しずつ増やします。</p>
+ <div class="rn1t"><div class="dh"><span></span><b>おかゆ</b><b>野菜</b><b>豆腐・白身魚・卵黄</b></div>${RN1.map(r=>`<div>${r.map(x=>`<span>${x||"—"}</span>`).join("")}</div>`).join("")}</div>
+ <p><b>おかゆ</b>：お米1に、水10で炊く「10倍がゆ」。なめらかにすりつぶします。</p>
+ <p><b>かたさ</b>：火を通して、ヨーグルトくらいのなめらかさに。野菜も魚も、すりつぶすか裏ごしします。</p>
+ <p><b>回数</b>：はじめは1日1回、午前中に。慣れてきた1か月後くらいから1日2回に。</p>
+ <p><b>授乳</b>：母乳やミルクは、これまでどおり飲みたいだけ。離乳食のあとにも飲ませます。</p>
+ <p class="sub" style="font-size:12px">例：6時 授乳／10時 離乳食＋授乳／14時 授乳／18時 授乳（2回食になったら、ここも離乳食＋授乳）／22時 授乳</p>
+ <p class="sub" style="font-size:12px">進め方は、赤ちゃんの様子や、健診・保健センターで言われたことを優先してください。</p></details>`;
 function vRinyu(){if(rnTab==="log")return vRnLog();const r=rnS(),mo=months(),cur=RN_ST.find(([a,b])=>mo>=a&&mo<=b);
   const all=[...RN,...(r.my.length?[["自分で追加",r.my]]:[])],ok=Object.values(r.f).filter(x=>x.s==="ok").length,ng=Object.entries(r.f).filter(([,x])=>x.s==="ng");
   return head("離乳食の食材チェック","mug","lemon")+rnSeg()+(rnDate?`<div class="calsh"><span class="dotg"></span><span class="grow">${md(new Date(rnDate+"T00:00:00"))}の分として記録します</span><button type="button" data-act="rndate0">今日に戻す</button></div>`:"")+`<p class="lead">食材を押すと、「食べた」か「気になる反応があった」かを記録できます。はじめて食べた日とメモも残せます。</p>
   <div class="rnst">${RN_ST.map(([a,b,n,m,t])=>`<div class="${cur&&cur[2]===n?"now":""}"><b>${n}</b><span>${m}</span><small>${t}</small></div>`).join("")}</div>
-  <div class="sheet tip"><b>はじめての食材は</b><div>・1日1種類、小さじ1から</div><div>・病院があいている<b>平日の午前中</b>に</div><div>・<span class="al">アレルギー注意</span>の印は、特に少しずつ</div><div>・ナッツは、粉やペーストにして料理にまぜます。<b>粒のままや砕いたものは、のどにつまるので5歳ごろまでは食べさせない</b>でください。木の実（くるみなど）は、卵・牛乳の次に多いアレルギーの原因になっています。湿疹がある子は、始める前に小児科で相談を</div><div>・はちみつは<b>1歳まで食べさせない</b></div></div>
+  ${RN1SEC(mo<=6)}<div class="sheet tip"><b>はじめての食材は</b><div>・1日1種類、小さじ1から</div><div>・病院があいている<b>平日の午前中</b>に</div><div>・<span class="al">アレルギー注意</span>の印は、特に少しずつ</div><div>・ナッツは、粉やペーストにして料理にまぜます。<b>粒のままや砕いたものは、のどにつまるので5歳ごろまでは食べさせない</b>でください。木の実（くるみなど）は、卵・牛乳の次に多いアレルギーの原因になっています。湿疹がある子は、始める前に小児科で相談を</div><div>・はちみつは<b>1歳まで食べさせない</b></div></div>
   <div class="rnsum"><span>食べた <b>${ok}</b> 品目</span>${ng.length?`<span class="ng">気になる <b>${ng.length}</b></span>`:""}</div>
   <div class="rnlg"><span><i class="ok"></i>食べた</span><span><i class="ng"></i>気になる反応があった</span><span><i></i>まだ</span></div>
   ${ng.length?`<div class="sec-t">気になった食材</div><div class="sheet">${ng.map(([k,x])=>`<button type="button" class="li plr" data-act="rnf" data-v="${esc(k)}"><span class="grow"><div class="t">${esc(k)} <span class="sub">${md(new Date(x.d+"T00:00:00"))}</span></div><div class="sub">${x.m?esc(x.m):"メモなし（押して書く）"}</div></span><span class="sub">開く</span></button>`).join("")}</div>`:""}
@@ -3667,6 +3696,7 @@ document.addEventListener("click",e=>{
     case"icm":S.icm=v;k();break;
     case"ils":S.icm=v==="line"?"line":"ill";k();break;
     case"chtab":chTab=v;render(true);break;
+    case"daym":dayM=+v;render(true);break;
     case"bytab":byTab=v;render(true);break;
     case"sptab":spTab=v;render(true);break;
     case"hyview":hyView=v;render(true);if(v==="table")setTimeout(()=>{const w=document.getElementById("hywrap"),c=w&&w.querySelector(".hyhd.now");if(c&&hyNow()>=3)w.scrollLeft=Math.max(0,c.offsetLeft-76-92)},30);break;
