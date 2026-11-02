@@ -9,7 +9,8 @@
    "how": "無料（有料の回もあり）・公式アプリから予約",
    "url": "https://www.akachan.jp/",
    "icon": "stroller",
-   "title0": "プレママ・プレパパスクール"
+   "title0": "プレママ・プレパパスクール",
+   "ok": "2026-11-02"
   },
   {
    "shop": "アカチャンホンポ",
@@ -20,7 +21,8 @@
    "icon": "bottle",
    "why": "予約には公式アプリと会員登録が必要なため、その内容に修正しました。",
    "upd": "2026-10-29",
-   "title0": "マタニティアドバイザーに相談"
+   "title0": "マタニティアドバイザーに相談",
+   "ok": "2026-11-02"
   },
   {
    "shop": "ベビーザらス",
@@ -29,7 +31,8 @@
    "how": "無料・ネットで予約",
    "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
    "icon": "onesie",
-   "title0": "ハローベビー ストアツアー"
+   "title0": "ハローベビー ストアツアー",
+   "nf": 1
   },
   {
    "shop": "ベビーザらス",
@@ -38,7 +41,8 @@
    "how": "無料・会員向け",
    "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
    "icon": "heart",
-   "title0": "オンラインセミナー"
+   "title0": "オンラインセミナー",
+   "nf": 1
   }
  ],
  "gift": [
@@ -50,7 +54,8 @@
    "who": "全員（店舗で受け取り）",
    "url": "https://chirashi.akachan.jp/chirashi/early/index_ydn.html",
    "icon": "ribbon",
-   "title0": "プレママ特典"
+   "title0": "プレママ特典",
+   "ok": "2026-11-02"
   },
   {
    "shop": "ベビーザらス",
@@ -60,7 +65,8 @@
    "who": "全員（買い物の割引）",
    "url": "https://www.toysrus.co.jp/ja-jp/service-starcard-baby01.html",
    "icon": "star",
-   "title0": "スターカードのプレママ特典"
+   "title0": "スターカードのプレママ特典",
+   "nf": 1
   },
   {
    "shop": "Amazon",
@@ -70,7 +76,8 @@
    "who": "条件を満たした人",
    "url": "https://www.amazon.co.jp/baby-reg/homepage",
    "icon": "gift",
-   "title0": "らくらくベビー 出産準備お試しBox"
+   "title0": "らくらくベビー 出産準備お試しBox",
+   "nf": 1
   },
   {
    "shop": "楽天",
@@ -80,7 +87,8 @@
    "who": "抽選",
    "url": "https://event.rakuten.co.jp/family/",
    "icon": "basket",
-   "title0": "楽天ママ割"
+   "title0": "楽天ママ割",
+   "ok": "2026-11-02"
   },
   {
    "shop": "こどもちゃれんじ",
@@ -92,7 +100,8 @@
    "icon": "bunny",
    "why": "もらえる物にSOU・SOUコラボのスタイと資料が追加されていることと、対象者を公式ページに合わせて「妊娠中の人（全員）」に修正しました。",
    "upd": "2026-10-29",
-   "title0": "妊娠中の資料請求プレゼント"
+   "title0": "妊娠中の資料請求プレゼント",
+   "ok": "2026-11-02"
   },
   {
    "shop": "ピジョン",
@@ -104,7 +113,8 @@
    "icon": "bottle2",
    "why": "公式ページでお届け内容に「母乳パッド」などが追加されていたため、whatの内容をやさしい日本語に直しました。",
    "upd": "2026-10-29",
-   "title0": "会員プレゼント"
+   "title0": "会員プレゼント",
+   "ok": "2026-11-02"
   },
   {
    "shop": "ベビーカレンダー",
@@ -114,7 +124,8 @@
    "who": "全員",
    "url": "https://baby-calendar.jp/present/",
    "icon": "book",
-   "title0": "プレママ全員プレゼント"
+   "title0": "プレママ全員プレゼント",
+   "ok": "2026-11-02"
   },
   {
    "shop": "トツキトオカ",
@@ -124,7 +135,8 @@
    "who": "全員",
    "url": "https://www.totsukitoka-apps.com/",
    "icon": "heart",
-   "title0": "アプリのプレゼント"
+   "title0": "アプリのプレゼント",
+   "ok": "2026-11-02"
   },
   {
    "shop": "ママびより（カラダノート）",
@@ -137,7 +149,8 @@
    "ended": true,
    "why": "公式ページにてプレゼントの提供が終了していることが確認できたため、内容を更新しました。",
    "upd": "2026-10-29",
-   "title0": "全員プレゼント"
+   "title0": "全員プレゼント",
+   "ok": "2026-11-02"
   }
  ],
  "hash": {

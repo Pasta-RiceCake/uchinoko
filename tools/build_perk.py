@@ -72,7 +72,7 @@ def main():
         for b in base[kind]:
             n_all += 1
             key = (b["shop"], b["title"])
-            cur = {**b, **{k: v for k, v in prev.get(key, {}).items() if k in FIELDS[kind] or k in ("ended", "why", "upd")}, "title0": b["title"]}
+            cur = {**b, **{k: v for k, v in prev.get(key, {}).items() if k in FIELDS[kind] or k in ("ended", "why", "upd", "ok")}, "title0": b["title"]}
             u = b["url"]
             try:
                 if u not in cache:
@@ -82,8 +82,10 @@ def main():
             except Exception as e:
                 print(b["shop"], b["title"], "fetch fail", str(e)[:80])
                 ng += 1
+                cur["nf"] = 1
                 res[kind].append(cur)
                 continue
+            cur["ok"] = today
             h = hashlib.sha1((norm(text) + json.dumps(b, ensure_ascii=False)).encode()).hexdigest()
             hk = kind + "|" + b["shop"] + "|" + b["title"]
             print(b["shop"], b["title"], "changed" if hashes.get(hk) != h else "same")
