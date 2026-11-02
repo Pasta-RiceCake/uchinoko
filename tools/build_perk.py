@@ -64,12 +64,13 @@ def main():
         old = json.load(open(OUT))
     except Exception:
         old = {}
-    hashes, ok_all, res = dict(old.get("hash", {})), True, {}
+    hashes, ng, n_all, res = dict(old.get("hash", {})), 0, 0, {}
     cache = {}
     for kind in ("ev", "gift"):
         prev = {(x["shop"], x["title0"]): x for x in old.get(kind, []) if "title0" in x}
         res[kind] = []
         for b in base[kind]:
+            n_all += 1
             key = (b["shop"], b["title"])
             cur = {**b, **{k: v for k, v in prev.get(key, {}).items() if k in FIELDS[kind] or k in ("ended", "why", "upd")}, "title0": b["title"]}
             u = b["url"]
@@ -80,7 +81,7 @@ def main():
                 text = cache[u]
             except Exception as e:
                 print(b["shop"], b["title"], "fetch fail", str(e)[:80])
-                ok_all = False
+                ng += 1
                 res[kind].append(cur)
                 continue
             h = hashlib.sha1((norm(text) + json.dumps(b, ensure_ascii=False)).encode()).hexdigest()
@@ -93,7 +94,7 @@ def main():
                     print("  gemini limit, keep")
                     r = None
                 if r is None:
-                    ok_all = False
+                    ng += 1
                     hashes.pop(hk, None)
                 else:
                     if r is not cur:
@@ -101,9 +102,9 @@ def main():
                     cur = r
                     hashes[hk] = h
             elif hashes.get(hk) != h:
-                ok_all = False
+                ng += 1
             res[kind].append(cur)
-    json.dump({"checked": today if ok_all else old.get("checked", ""), **res, "hash": hashes}, open(OUT, "w"), ensure_ascii=False, indent=1)
+    json.dump({"checked": today if ng * 2 <= n_all else old.get("checked", ""), "ng": ng, **res, "hash": hashes}, open(OUT, "w"), ensure_ascii=False, indent=1)
     print("wrote", OUT)
 
 

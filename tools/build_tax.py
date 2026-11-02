@@ -96,8 +96,9 @@ def main(BASE=BASE, OUT=OUT, SRC=SRC, FORCE=FORCE):
     except Exception:
         old = {"items": {}, "hash": {}}
     items, hashes = {}, dict(old.get("hash", {}))
-    ok_all = True
+    ng, n_all = 0, 0
     for b in base:
+        n_all += 1
         t = b["title"]
         prev = old["items"].get(t) or {}
         cur = {"title": t, "when": prev.get("when", b["when"]), "points": prev.get("points", b["points"])}
@@ -115,7 +116,7 @@ def main(BASE=BASE, OUT=OUT, SRC=SRC, FORCE=FORCE):
             texts.append((n, x))
         print(t, "changed" if changed else "same")
         if len(texts) < len(SRC.get(t, [])):
-            ok_all = False
+            ng += 1
         res = cur
         if changed and texts and KEY:
             try:
@@ -126,7 +127,7 @@ def main(BASE=BASE, OUT=OUT, SRC=SRC, FORCE=FORCE):
                 for n, u in SRC.get(t, []):
                     hashes.pop(u, None)  # 次回もう一度
             if r is None:
-                ok_all = False
+                ng += 1
                 for n, u in SRC.get(t, []):
                     hashes.pop(u, None)
             else:
@@ -134,13 +135,13 @@ def main(BASE=BASE, OUT=OUT, SRC=SRC, FORCE=FORCE):
                 if r is not cur:
                     res["upd"] = today
         elif changed:
-            ok_all = False
+            ng += 1
             for n, u in SRC.get(t, []):
                 hashes.pop(u, None)
         items[t] = {"when": res["when"], "points": res["points"], "src": SRC.get(t, []),
                     **({"upd": res.get("upd") or prev.get("upd")} if (res.get("upd") or prev.get("upd")) else {}),
                     **({"why": res.get("why") or prev.get("why")} if (res.get("why") or prev.get("why")) else {})}
-    json.dump({"checked": today if ok_all else old.get("checked", ""), "items": items, "hash": hashes}, open(OUT, "w"), ensure_ascii=False, indent=1)
+    json.dump({"checked": today if ng * 2 <= n_all else old.get("checked", ""), "ng": ng, "items": items, "hash": hashes}, open(OUT, "w"), ensure_ascii=False, indent=1)
     print("wrote", OUT)
 
 
