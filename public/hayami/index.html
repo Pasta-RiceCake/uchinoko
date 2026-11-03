@@ -897,8 +897,8 @@ button.lnk{background:none;border:0;padding:0;color:var(--ac);text-decoration:un
 .rn1t>div>span:first-child{color:var(--ac);font-weight:700;font-size:12px}
 .rn1t .dh b{font-size:11px;color:var(--sub);line-height:1.3}
 .pknf{font-size:12px;color:var(--sub);margin:6px 0 2px;line-height:1.6}
-.tdkw{font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff;margin-left:auto;white-space:nowrap;flex-shrink:0}
-.tdkw.p{background:#7d9be0}.tdkw.m{background:#e88a9a}
+.tdkw{font-size:12px;font-weight:700;padding:3px 12px;border-radius:99px;margin-top:6px;border:1px solid var(--line,rgba(0,0,0,.15));background:transparent;color:var(--sub)}
+.tdkw.w1{background:#e88a9a;color:#fff;border-color:#e88a9a}.tdkw.w2{background:#7d9be0;color:#fff;border-color:#7d9be0}.tdkw.w3{background:#6fae9c;color:#fff;border-color:#6fae9c}
 /* はじめての画面 */
 .gated body{overflow:hidden}
 .gate{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -2404,25 +2404,25 @@ function vAbout(){
 const TDK=[
  ["生まれた日に残しておきたいこと","あとから聞かれることが多いので、余裕があればパートナーにお願いしておきます。","",[
   ["t1","生まれた時刻（時計やスマホの画面を写真に）"],["t2","体重・身長・頭のまわり（母子手帳にも書いてもらえます）"],["t3","その日の天気と、外の写真"],["t4","生まれた直後の写真・動画（撮っていいか産院に確認）"],["t5","家族への連絡（だれに、どの順番で）"]]],
- ["14〜15日以内（パパにまかせられる）","退院後すぐに役所をまわらなくていいように、パートナーの担当にしておくのがおすすめです。窓口は住んでいる市区町村の役所です。","パパ",[
+ ["14〜15日以内（役所の手続き）","どれも、産んだ本人でなくてもできます。退院後すぐに役所をまわらなくていいように、産んでいないほうや家族の担当にしておくと楽です。窓口は住んでいる市区町村の役所です。","",[
   ["s1","出生届を出す","生まれた日を含めて14日以内。届け出る人は父か母ですが、役所に持っていくのは代わりの人でもよい市区町村がほとんどです。名前が決まっていないと出せません。"],
   ["s2","赤ちゃんのマイナンバーカードを申しこむ","出生届と一緒に申しこめる市区町村が多いです。カードがあると、健康保険や手当の手続きが進めやすくなります。"],
-  ["s3","児童手当を申請する","生まれた日の次の日から15日以内。遅れると、その月の分がもらえないことがあります。受け取る人は、ふつう父母のうち収入の多いほうです。その人の名前の口座が必要です。オンラインで申請できる市区町村もあります。"],
+  ["s3","児童手当を申請する","生まれた日の次の日から15日以内。遅れると、その月の分がもらえないことがあります。受け取る人は、ふつう父母のうち収入の多いほうです（ママのこともパパのこともあります）。申請はその人が行い、その人の名前の口座が必要です。オンラインで申請できる市区町村もあります。"],
   ["s4","子どもの医療費助成（医療証）を申しこむ","赤ちゃんの健康保険証（資格確認書）が届いたら申しこみます。1か月健診までにあると安心です。オンラインや郵送でできる市区町村もあります。"]]],
- ["ママ側ですること","会社の手続きは、本人からの連絡が必要なことが多いです。","ママ",[
+ ["勤め先・健康保険の手続き","会社の手続きは、働いている本人からの連絡が必要なことが多いです。あてはまるものだけで大丈夫です。","",[
   ["m1","赤ちゃんを健康保険に入れる","ふつうは、父母のうち収入の多いほうの保険に入れます。会社の保険なら勤め先に連絡、国民健康保険なら役所で手続きします。"],
-  ["m2","出産手当金・育児休業給付金の書類","会社員の人。勤め先に、いつ・何を出すか聞いておきます。"],
+  ["m2","出産手当金の書類","産んだ人が会社の健康保険に入っているとき。勤め先に、いつ・何を出すか聞いておきます。"],["m5","育児休業給付金の書類","育休をとる人（ママでもパパでも）。勤め先を通して申請します。"],
   ["m3","妊婦のための支援給付（2回目）","生まれたあとに、赤ちゃん1人につき5万円。市区町村によって申しこみ方がちがうので、確認しておきます。"],
   ["m4","出産育児一時金の差額","出産費用が50万円より少なかったときは、差額を受け取れます。健康保険に申請します。"]]],
  ["次の年に","","",[
-  ["y1","年末調整か確定申告で、赤ちゃんを扶養親族として書く","16歳未満なので所得税の控除はありませんが、住民税の計算などに使われるので書いておきます。マイナンバーも書きます。"]]]];
-const TDK_SET=[["k1","出生届（病院でもらう出生証明書と一枚になっています）"],["k2","母子手帳"],["k3","行く人の本人確認書類（運転免許証など）"],["k4","行く人のマイナンバーカード"],["k5","児童手当を受け取る人の名前の通帳かキャッシュカード"],["k6","赤ちゃんのマイナンバーカードの申請書（出生届のときにもらえることも）"],["k7","健康保険の情報（どちらの保険に入れるか）"],["k8","印鑑（いらないことが多いけれど念のため）"],["k9","スマホ（その場で調べたり連絡したりするため）"]];
-const tdkS=()=>{S.tdk=S.tdk||{};return S.tdk};
-function vTodoke(){const c=tdkS(),row=(id,t,s)=>`<label class="rw" style="align-items:flex-start"><input type="checkbox" class="ck" data-act="tdk" data-v="${id}"${c[id]?" checked":""}><span class="grow"><div class="t">${t}</div>${s?`<div class="s" style="font-size:13px;line-height:1.7">${s}</div>`:""}</span></label>`;
-  return head("産後の手続きのやり方","envelope","mint")+`<p class="lead">産後すぐは体がつらい時期です。役所の手続きはパートナーにまとめてお願いできるように、出産前に分担と持ち物を決めておきましょう。</p>`+
-  TDK.map(([h,n,w,it])=>`<section class="h-sec"><div class="hd"><h2>${h}</h2>${w?`<span class="tdkw ${w==="パパ"?"p":"m"}">${w}</span>`:""}</div>${n?`<p class="note" style="margin:0 0 6px">${n}</p>`:""}<div class="rows">${it.map(([id,t,s])=>row(id,t,s)).join("")}</div></section>`).join("")+
-  `<section class="h-sec"><div class="hd"><h2>パートナーに渡しておく「出産後セット」</h2></div><p class="note" style="margin:0 0 6px">ひとつの袋やファイルにまとめておくと、生まれたあとに迷いません。</p><div class="rows">${TDK_SET.map(([id,t])=>row(id,t,"")).join("")}</div></section>
-  <section class="h-sec"><button type="button" class="rw" data-act="open" data-v="fufu" style="border:0"><span class="grow"><div class="t">ふたりの共有メモで分担する</div><div class="s">出生届・児童手当などは、最初からパパの担当で入っています</div></span><span class="chev">${ic("chev",16)}</span></button>
+  ["y1","赤ちゃんを扶養親族として書く","会社員なら年末調整の書類に、自営業などで確定申告をする人は申告書に書きます。ふつうは収入の多いほうの扶養にします。16歳未満なので所得税は変わりませんが、住民税の計算などに使われます。収入がなく、どちらもしない人は何もしなくて大丈夫です。"]]]];
+const TDK_SET=[["k1","出生届（病院でもらう出生証明書と一枚になっています）"],["k2","母子手帳"],["k3","役所に行く人の本人確認書類（運転免許証など）"],["k4","役所に行く人のマイナンバーカード"],["k5","児童手当を受け取る人の名前の通帳かキャッシュカード"],["k6","赤ちゃんのマイナンバーカードの申請書（出生届のときにもらえることも）"],["k7","健康保険の情報（どちらの保険に入れるか）"],["k8","印鑑（いらないことが多いけれど念のため）"],["k9","スマホ（その場で調べたり連絡したりするため）"]];
+const tdkS=()=>{S.tdk=S.tdk||{};return S.tdk};const TDKW=["未定","ママ","パパ","ふたり"];
+function vTodoke(){const c=tdkS(),row=(id,t,s)=>`<label class="rw" style="align-items:flex-start"><input type="checkbox" class="ck" data-act="tdk" data-v="${id}"${c[id]?" checked":""}><span class="grow"><div class="t">${t}</div>${s?`<div class="s" style="font-size:13px;line-height:1.7">${s}</div>`:""}${s&&id[0]!=="t"?(w=>`<button type="button" class="tdkw w${TDKW.indexOf(w)}" data-act="tdkw" data-v="${id}">担当：${w}</button>`)(c["w_"+id]||"未定"):""}</span></label>`;
+  return head("産後の手続きのやり方","envelope","mint")+`<p class="lead">産後すぐは体がつらい時期です。だれが何をするか、出産前にふたりで決めておきましょう。項目ごとに担当を選べます。</p>`+
+  TDK.map(([h,n,w,it])=>`<section class="h-sec"><div class="hd"><h2>${h}</h2></div>${n?`<p class="note" style="margin:0 0 6px">${n}</p>`:""}<div class="rows">${it.map(([id,t,s])=>row(id,t,s)).join("")}</div></section>`).join("")+
+  `<section class="h-sec"><div class="hd"><h2>役所に行く人に渡しておく「出産後セット」</h2></div><p class="note" style="margin:0 0 6px">ひとつの袋やファイルにまとめておくと、生まれたあとに迷いません。</p><div class="rows">${TDK_SET.map(([id,t])=>row(id,t,"")).join("")}</div></section>
+  <section class="h-sec"><button type="button" class="rw" data-act="open" data-v="fufu" style="border:0"><span class="grow"><div class="t">ふたりの共有メモで分担する</div><div class="s">決めた分担を、やることとして入れておけます</div></span><span class="chev">${ic("chev",16)}</span></button>
   <button type="button" class="rw" data-act="open" data-v="city" style="border:0"><span class="grow"><div class="t">${esc(S.pref+(S.city||""))}の手続きを見る</div><div class="s">期限や持ち物は市区町村で少しちがいます</div></span><span class="chev">${ic("chev",16)}</span></button></section>
   <p class="note">期限は全国共通のものですが、窓口・持ち物・オンライン申請ができるかは市区町村によってちがいます。出生届を出すときに、役所で産後の手続きの案内をもらえることも多いです。</p>`}
 function vPrivacy(){
@@ -3240,7 +3240,7 @@ function vBplan(){const b=bpS();
 /* ===== ふたりの共有メモ ===== */
 const FFW=["未定","ママ","パパ","ふたり"],FFC={未定:"#a3a3a3",ママ:"#e88a9a",パパ:"#7d9be0",ふたり:"#6fae9c"};
 let ffF="すべて";
-const ffS=()=>{S.ff=S.ff||{t:[["出生届を出す","産まれた日を含めて14日以内・役所","パパ"],["児童手当の申請","産まれた次の日から15日以内","パパ"],["赤ちゃんを健康保険に入れる","勤め先に連絡","未定"],["子どもの医療証の申請","保険証が届いたら役所へ","未定"],["出産手当金の申請","産後、会社の健康保険へ","ママ"],["内祝いを手配する","いただいてから1か月以内","ふたり"],["お宮参り・写真の予約","","未定"],["1か月健診の予約","","ママ"]].map(([t,s,w])=>({t,s,w,d:false})),
+const ffS=()=>{S.ff=S.ff||{t:[["出生届を出す","産まれた日を含めて14日以内・役所","未定"],["児童手当の申請","産まれた次の日から15日以内","未定"],["赤ちゃんを健康保険に入れる","勤め先に連絡","未定"],["子どもの医療証の申請","保険証が届いたら役所へ","未定"],["出産手当金の申請","産後、会社の健康保険へ","ママ"],["内祝いを手配する","いただいてから1か月以内","ふたり"],["お宮参り・写真の予約","","未定"],["1か月健診の予約","","ママ"]].map(([t,s,w])=>({t,s,w,d:false})),
   n:[]};return S.ff};
 function vFufu(){const f=ffS(),cnt=w=>f.t.filter(x=>x.w===w&&!x.d).length,L=f.t.map((x,i)=>[x,i]).filter(([x])=>ffF==="すべて"||x.w===ffF||(x.w==="ふたり"&&ffF!=="未定"));
   return head("ふたりの共有メモ","hearthands","pink")+`<p class="lead">「この手続きはパパ」のように担当を決めたり、ふたりで知っておきたいことを残したりできます。</p>${shareCard()}
@@ -3733,6 +3733,7 @@ document.addEventListener("click",e=>{
     case"icm":S.icm=v;k();break;
     case"ils":S.icm=v==="line"?"line":"ill";k();break;
     case"chtab":chTab=v;render(true);break;
+    case"tdkw":{e.preventDefault();const c=tdkS(),w=c["w_"+v]||"未定";c["w_"+v]=TDKW[(TDKW.indexOf(w)+1)%4];k();break}
     case"daym":dayM=+v;render(true);break;
     case"bytab":byTab=v;render(true);break;
     case"sptab":spTab=v;render(true);break;
