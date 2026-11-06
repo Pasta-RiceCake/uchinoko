@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-05",
+ "checked": "2026-11-06",
  "ng": 0,
  "items": {
   "RSウイルスのワクチン（母子免疫）": {
@@ -40,12 +40,13 @@
    "upd": "2026-10-29"
   },
   "風しん（ママは妊娠中は受けられません）": {
-   "when": "妊娠中は受けられません。接種後は2か月程度、妊娠を避ける必要があります。",
+   "when": "妊娠中は受けられません。接種前は1か月程度、接種後は2か月程度、妊娠を避ける必要があります。",
    "points": [
     "妊娠中にかかると、赤ちゃんの目・耳・心臓に影響が出ることがあります。風しんのワクチンは妊娠中は受けられません。",
     "妊婦健診で「抗体が低い」と言われたら、産後に受けるのがすすめられています。",
     "パートナーや一緒に住む家族は、抗体検査やワクチンを受けておくと安心です。",
-    "妊娠を希望する女性や、抗体がない妊婦の家族は、抗体検査を受けて、抗体が低い場合は接種を検討しましょう。"
+    "妊娠を希望する女性や、抗体がない妊婦の家族は、抗体検査を受けて、抗体が低い場合は接種を検討しましょう。",
+    "妊娠を希望する女性は、接種前に1か月程度避妊してください。"
    ],
    "src": [
     [
@@ -53,14 +54,14 @@
      "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/mr/index.html"
     ]
    ],
-   "upd": "2026-11-05",
-   "why": "公式ページに基づき、避妊期間の表現を「2か月程度」に修正し、妊娠を希望する女性や家族への推奨事項を追記しました。また、費用に関する記述は公式ページに記載がないため削除しました。"
+   "upd": "2026-11-06",
+   "why": "公式ページに基づき、接種前の避妊期間（1か月程度）を追記し、接種後の避妊期間の注意喚起をより正確にしました。"
   }
  },
  "hash": {
   "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/rs/index.html": "0bb0abcc4ed33fdec93079a1f6cb4d8336e6b7fc",
   "https://id-info.jihs.go.jp/relevant/vaccine/topics/040/schedule.html": "3d53bde17f6b87b7614442e77705e3ecb571995a",
   "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/dpt-ipv-hib/index.html": "5341c48184540dbcd0821e1c7278321edad06c50",
-  "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/mr/index.html": "86d81b53c90cc7151c3f338704a76b5bf3dd8c92"
+  "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/mr/index.html": "bb4aeb1ced9958c4f653229ab495f03c618a4789"
  }
 }
